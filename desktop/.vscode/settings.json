@@ -1,0 +1,47 @@
+{
+  //搜索排除
+  "search.exclude": {
+    "**/.vscode": true,
+    "**/.git": true,
+    "**/node_modules": true
+  },
+  //文件排除
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  //字符串变单引号
+  "prettier.singleQuote": true,
+  //行尾自动分号
+  "prettier.semi": false,
+  //对齐注释
+  "prettier.trailingComma": "none",
+  //tab键转换成两个空格
+  "editor.tabSize": 2,
+  //开启tab转换空格模式
+  "editor.detectIndentation": true,
+  "editor.insertSpaces": true,
+  //html单行最大字符数量
+  "html.format.wrapLineLength": 400,
+  //html格式化为系统默认
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  //javascripte格式化为prettier
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  //json格式化为prettier
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  //json配置文件格式化为prettier
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  //vue文件格式化为prettier
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
