@@ -19,7 +19,9 @@ const route = useRoute();
 
 // 登录用户信息相关
 const storeInfo = store();
-const loginUser = storeToRefs(storeInfo);
+const { loginUser } = storeToRefs(storeInfo);
+
+tools.changeTitle('测试页');
 
 // 业务逻辑
 const echo = ref('');

@@ -5,7 +5,7 @@ import store from '../../store/index';
 const title = '教学演示项目用户信息测试页面';
 // 登录用户信息相关
 const storeInfo = store();
-const loginUser = storeToRefs(storeInfo);
+const { loginUser } = storeToRefs(storeInfo);
 
 // 路由相关
 const router = useRouter();
