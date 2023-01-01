@@ -1,4 +1,5 @@
 import LoginUser from "../entity/LoginUser";
+import logger from "../tools/logger";
 
 class UserInfoDAO {
   private static instance: UserInfoDAO = new UserInfoDAO();
@@ -11,6 +12,7 @@ class UserInfoDAO {
     return new LoginUser()
   }
   save(loginUser: LoginUser | null): void {
+    logger.debug('保存用户信息：', loginUser)
     if (loginUser == null) {
       localStorage.removeItem(this.localKey)
     } else {
