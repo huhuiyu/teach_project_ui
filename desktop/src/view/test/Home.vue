@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router';
-import { ref } from 'vue';
+import {
+  ref,
+  onBeforeMount,
+  onMounted,
+  onBeforeUpdate,
+  onUpdated,
+  onBeforeUnmount,
+  onUnmounted,
+  computed,
+} from 'vue';
 import { storeToRefs } from 'pinia';
 import store from '../../store/index';
 import logger from '../../tools/logger';
@@ -121,6 +130,35 @@ logger.debug(
     'https://service.huhuiyu.top/teach_project_download/32bataman-01.jpg'
   )
 );
+
+// 生命周期和计算属性================================================
+onBeforeMount(() => {
+  logger.debug('页面挂载之前');
+});
+onMounted(() => {
+  logger.debug('页面挂载完成');
+});
+onBeforeUpdate(() => {
+  logger.debug('页面更新之前');
+});
+onUpdated(() => {
+  logger.debug('页面更新完成');
+});
+onBeforeUnmount(() => {
+  logger.debug('页面销毁之前');
+});
+onUnmounted(() => {
+  logger.debug('页面销毁完成');
+});
+
+const x = ref(0);
+const y = ref(0);
+
+const add = computed(() => {
+  return `${x.value}+${y.value}=${
+    parseInt(x.value.toString()) + parseInt(y.value.toString())
+  }`;
+});
 </script>
 
 <template>
@@ -167,6 +205,12 @@ logger.debug(
     {{ tools.formatDate(new Date()) }}
     <br />
     {{ tools.formatFileSize(1125024) }}
+  </div>
+  <hr />
+  <div>
+    <input type="number" v-model="x" />
+    <input type="number" v-model="y" />
+    {{ add }}
   </div>
 </template>
 <style>
