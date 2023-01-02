@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "vue-tsc && vite build --base=/teach_project_ui/",
     "preview": "vite preview"
   },
   "dependencies": {

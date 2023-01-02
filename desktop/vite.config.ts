@@ -7,5 +7,4 @@ export default defineConfig({
   server: {
     port: 12500,
   },
-  base: './',
 })

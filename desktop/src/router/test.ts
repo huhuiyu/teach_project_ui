@@ -16,7 +16,7 @@ const routes = [
 let exportRouter = routes
 // 生产环境中不输出测试相关路由
 if (import.meta.env.PROD) {
-  exportRouter = []
+  // exportRouter = []
 }
 
 export default exportRouter
