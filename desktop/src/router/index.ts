@@ -1,6 +1,7 @@
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router';
 import logger from '../tools/logger';
 import testRouter from './test'
+import dialog from '../tools/dialog'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -24,12 +25,14 @@ const router = createRouter({
 
 // 设置前置路由守卫
 router.beforeEach((to, from, next) => {
+  dialog.startLoading()
   logger.debug("路由前置：", to, from)
   next()
 })
 
 // 设置后置路由守卫
 router.afterEach((to, from, failure) => {
+  dialog.finishLoading()
   logger.debug("路由后置：", to, from, failure)
 })
 

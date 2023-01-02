@@ -13,3 +13,4 @@
   - axios：`npm install axios`
   - qs：`npm install qs`,`npm i --save--dev  @types/qs`
   - spark-md5：`npm install spark-md5`,`npm i --save-dev @types/spark-md5`
+  - naive-ui：`npm i -D naive-ui`

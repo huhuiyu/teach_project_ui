@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router';
+import { NSpin } from 'naive-ui';
 import {
   ref,
   onBeforeMount,
@@ -49,25 +50,55 @@ const sendEcho = () => {
   });
 };
 
+const loading = ref(false);
+const password = ref('');
+
 const login = () => {
+  loading.value = true;
   server.post(
     '/user/auth/login',
     {
       username: 'user',
-      password: tools.md5('user-pwd'),
+      password: tools.md5(password.value),
     },
     (data: any) => {
+      password.value = '';
       logger.debug(data);
-      storeInfo.updateLoginUser((user: any) => {
-        logger.debug('用户信息：', user);
-      });
+      if (data.success) {
+        storeInfo.updateLoginUser((user: any) => {
+          loading.value = false;
+          logger.debug('用户信息：', user);
+        });
+        return;
+      }
+      loading.value = false;
     }
+  );
+};
+// 如果自动弹出信息，就无法处理处理回调
+const errorLogin = () => {
+  loading.value = true;
+  server.post(
+    '/user/auth/login',
+    {
+      username: 'user',
+      password: '',
+    },
+    (data: any) => {
+      loading.value = false;
+      logger.debug(data);
+      alert(data.message);
+    },
+    true
   );
 };
 
 const logout = () => {
+  loading.value = true;
   server.post('/user/auth/logout', {}, () => {
-    storeInfo.updateLoginUser(() => {});
+    storeInfo.updateLoginUser(() => {
+      loading.value = false;
+    });
   });
 };
 
@@ -109,11 +140,9 @@ const upload = () => {
     },
     (data: any) => {
       logger.debug('文件上传的结果：', data);
-      alert(data.message);
       if (data.success) {
         logger.debug('文件地址：', server.getDownloadUrl(data.data.fid));
         alert(server.getDownloadUrl(data.data.fid));
-        //
       }
     }
   );
@@ -178,9 +207,13 @@ const add = computed(() => {
   </div>
   <hr />
   <div>
-    <button @click="login">登录测试</button>
-    <button @click="logout">安全退出</button>
-    <button @click="toUserInfo">跳转用户测试页面</button>
+    <n-spin :show="loading" size="medium">
+      <input type="password" v-model="password" placeholder="密码" />
+      <button @click="login">登录测试</button>
+      <button @click="logout">安全退出</button>
+      <button @click="toUserInfo">跳转用户测试页面</button>
+      <button @click="errorLogin">错误登录测试</button>
+    </n-spin>
   </div>
   <div>
     <TestUserInfoComp></TestUserInfoComp>
@@ -194,7 +227,7 @@ const add = computed(() => {
     >上传文件</button
   >
   <div>{{ upfileinfo }}</div>
-  <div>{{ imgdata }}</div>
+  <!-- <div>{{ imgdata }}</div> -->
   <div v-if="upfileinfo.type == 'image'">
     <img :src="imgdata" alt="" />
   </div>

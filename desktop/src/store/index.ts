@@ -25,7 +25,7 @@ const store = defineStore('main', {
         }
         this.loginUser = UserInfoDAO.getInstance().load()
         cb(this.loginUser)
-      })
+      }, true)
     },
   }
 });

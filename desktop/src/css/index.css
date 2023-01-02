@@ -1,0 +1,62 @@
+body {
+  margin: 0px;
+}
+* {
+  box-sizing: border-box;
+  word-break: break-all;
+}
+
+span,
+i {
+  display: inline-block;
+}
+
+/* 内边距 */
+.pd05 {
+  padding: 0.5rem;
+}
+.pd10 {
+  padding: 1rem;
+}
+.pd15 {
+  padding: 1.5rem;
+}
+.pd20 {
+  padding: 2rem;
+}
+
+/* 外边距 */
+.mr05 {
+  margin: 0.5rem;
+}
+.mr10 {
+  margin: 1rem;
+}
+.mr15 {
+  margin: 1.5rem;
+}
+.mr20 {
+  margin: 2rem;
+}
+
+/* 文字对齐 */
+.tc {
+  text-align: center;
+}
+.tl {
+  text-align: left;
+}
+.tr {
+  text-align: right;
+}
+
+/* 压力布局 */
+.flex-box {
+  display: flex;
+}
+
+.flex-box-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

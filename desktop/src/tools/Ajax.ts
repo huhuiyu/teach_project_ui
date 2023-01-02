@@ -1,6 +1,7 @@
 import AjaxConfig from "../entity/AjaxConfig"
 import axios from 'axios'
 import logger from "./logger"
+import dialogApi from './dialog';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 const MAX_FILE_SIZE_MESSAGE = { code: 500, success: false, message: '上传文件大小不能超过' + (MAX_FILE_SIZE / 1024 / 1024) + 'MB' }
@@ -53,6 +54,10 @@ class Ajax {
       logger.debug('请求结果====>', resp)
       // 应答拦截处理
       instance.after(resp.data)
+      // 错误自动弹框
+      if (!config.handleMessage && !resp.data.success) {
+        dialogApi.messageError(resp.data.message, { keepAliveOnHover: true, duration: 3000 })
+      }
       // 应答回调处理
       config.cb(resp.data);
     }).catch((err: any) => {
@@ -79,6 +84,10 @@ class Ajax {
       logger.debug('请求结果====>', resp)
       // 应答拦截处理
       instance.after(resp.data)
+      // 错误自动弹框
+      if (!config.handleMessage && !resp.data.success) {
+        dialogApi.messageError(resp.data.message, { keepAliveOnHover: true, duration: 3000 })
+      }
       // 应答回调处理
       config.cb(resp.data);
     }).catch((err: any) => {
