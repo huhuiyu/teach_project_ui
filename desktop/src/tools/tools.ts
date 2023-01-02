@@ -59,7 +59,7 @@ let tools = {
       logger.debug('文件选中变化', file.files)
       if (file.files && file.files.length == 1) {
         tools.getFileInfo(file.files[0], result)
-        logger.debug("获取文件信息：", tools.getFileInfo(file.files[0]))
+        logger.debug('获取文件信息：', tools.getFileInfo(file.files[0]))
         cb(result)
       }
     })
@@ -95,7 +95,7 @@ let tools = {
       cb('')
       return
     }
-    let reader = new FileReader();
+    let reader = new FileReader()
     reader.addEventListener('load', () => {
       cb(reader.result)
     })
@@ -113,8 +113,8 @@ let tools = {
     let sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
     let i = Math.floor(Math.log(filesize) / Math.log(k))
     //.toPrecision(3)
-    return ((filesize / Math.pow(k, i)).toFixed(1)) + '' + sizes[i]
-  }
+    return (filesize / Math.pow(k, i)).toFixed(1) + '' + sizes[i]
+  },
 }
 
 export default tools

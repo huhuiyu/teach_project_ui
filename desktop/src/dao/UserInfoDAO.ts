@@ -1,9 +1,9 @@
-import LoginUser from "../entity/LoginUser";
-import logger from "../tools/logger";
+import LoginUser from '../entity/LoginUser'
+import logger from '../tools/logger'
 
 class UserInfoDAO {
-  private static instance: UserInfoDAO = new UserInfoDAO();
-  localKey: string = 'huhuiyu.teach-project-userinfo';
+  private static instance: UserInfoDAO = new UserInfoDAO()
+  localKey: string = 'huhuiyu.teach-project-userinfo'
   load(): LoginUser {
     let user = localStorage.getItem(this.localKey)
     if (user) {
@@ -24,9 +24,6 @@ class UserInfoDAO {
     return this.instance
   }
 
-  private constructor() { }
-
-
-
+  private constructor() {}
 }
 export default UserInfoDAO

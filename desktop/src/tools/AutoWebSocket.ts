@@ -8,12 +8,12 @@ const TIMESTAMP_RESPONSE = 'teach_manage_service_timestamp'
  * 自动重连的websocket对象
  */
 class AutoWebSocket {
-  destroyed: boolean = false;
-  isConnect: boolean = false;
-  url: string;
-  listeners: Map<string, any>;
-  timer: number | null;
-  ws: WebSocket | null;
+  destroyed: boolean = false
+  isConnect: boolean = false
+  url: string
+  listeners: Map<string, any>
+  timer: number | null
+  ws: WebSocket | null
 
   /**
    * @param {string} url websocket服务器地址

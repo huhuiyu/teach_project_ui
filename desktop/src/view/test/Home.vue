@@ -1,60 +1,46 @@
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router';
-import { NSpin } from 'naive-ui';
-import {
-  ref,
-  onBeforeMount,
-  onMounted,
-  onBeforeUpdate,
-  onUpdated,
-  onBeforeUnmount,
-  onUnmounted,
-  computed,
-} from 'vue';
-import { storeToRefs } from 'pinia';
-import store from '../../store/index';
-import logger from '../../tools/logger';
-import server from '../../tools/server';
-import tools from '../../tools/tools';
-import TestUserInfoComp from './TestUserInfoComp.vue';
-import FileInfo from '../../entity/FileInfo';
+import { useRouter, useRoute } from 'vue-router'
+import { NSpin } from 'naive-ui'
+import { ref, onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onBeforeUnmount, onUnmounted, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import store from '../../store/index'
+import logger from '../../tools/logger'
+import server from '../../tools/server'
+import tools from '../../tools/tools'
+import TestUserInfoComp from './TestUserInfoComp.vue'
+import FileInfo from '../../entity/FileInfo'
 
-const title = '教学演示项目测试页面';
-logger.debug('测试debug输出', { message: 'debug' });
-logger.info('测试info输出', { message: 'info' });
-logger.error('测试错误输出', { message: 'error' });
-logger.debug(
-  '格式化时间：',
-  tools.formatDate(new Date()),
-  tools.formatDate(1671952711000, 'yyyy-MM-dd ms yyyy年'),
-  tools.formatDate(new Date(), 'hh:mm:ss:ms')
-);
+const title = '教学演示项目测试页面'
+logger.debug('测试debug输出', { message: 'debug' })
+logger.info('测试info输出', { message: 'info' })
+logger.error('测试错误输出', { message: 'error' })
+logger.debug('格式化时间：', tools.formatDate(new Date()), tools.formatDate(1671952711000, 'yyyy-MM-dd ms yyyy年'), tools.formatDate(new Date(), 'hh:mm:ss:ms'))
 
 // 路由相关
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
 // 登录用户信息相关
-const storeInfo = store();
-const { loginUser } = storeToRefs(storeInfo);
+const storeInfo = store()
+const { loginUser } = storeToRefs(storeInfo)
 
-tools.changeTitle('测试页');
+tools.changeTitle('测试页')
 
 // 业务逻辑
-const echo = ref('');
-const echoResult = ref({});
+const echo = ref('')
+const echoResult = ref({})
 
 const sendEcho = () => {
   server.get('/', { echo: echo.value }, (data: any) => {
-    echoResult.value = data;
-  });
-};
+    echoResult.value = data
+  })
+}
 
-const loading = ref(false);
-const password = ref('');
+const loading = ref(false)
+const password = ref('')
 
 const login = () => {
-  loading.value = true;
+  loading.value = true
   server.post(
     '/user/auth/login',
     {
@@ -62,22 +48,22 @@ const login = () => {
       password: tools.md5(password.value),
     },
     (data: any) => {
-      password.value = '';
-      logger.debug(data);
+      password.value = ''
+      logger.debug(data)
       if (data.success) {
         storeInfo.updateLoginUser((user: any) => {
-          loading.value = false;
-          logger.debug('用户信息：', user);
-        });
-        return;
+          loading.value = false
+          logger.debug('用户信息：', user)
+        })
+        return
       }
-      loading.value = false;
+      loading.value = false
     }
-  );
-};
+  )
+}
 // 如果自动弹出信息，就无法处理处理回调
 const errorLogin = () => {
-  loading.value = true;
+  loading.value = true
   server.post(
     '/user/auth/login',
     {
@@ -85,22 +71,22 @@ const errorLogin = () => {
       password: '',
     },
     (data: any) => {
-      loading.value = false;
-      logger.debug(data);
-      alert(data.message);
+      loading.value = false
+      logger.debug(data)
+      alert(data.message)
     },
     true
-  );
-};
+  )
+}
 
 const logout = () => {
-  loading.value = true;
+  loading.value = true
   server.post('/user/auth/logout', {}, () => {
     storeInfo.updateLoginUser(() => {
-      loading.value = false;
-    });
-  });
-};
+      loading.value = false
+    })
+  })
+}
 
 const toUserInfo = () => {
   router.push({
@@ -108,29 +94,29 @@ const toUserInfo = () => {
     query: {
       formurl: route.path,
     },
-  });
-};
+  })
+}
 // 文件上传的部分 =================================================
-const fileinfo = ref('');
-const upfileinfo = ref(new FileInfo());
+const fileinfo = ref('')
+const upfileinfo = ref(new FileInfo())
 const browserFile = () => {
-  upfileinfo.value = new FileInfo();
-  imgdata.value = '';
+  upfileinfo.value = new FileInfo()
+  imgdata.value = ''
   tools.openFile((file: FileInfo) => {
-    upfileinfo.value = file;
+    upfileinfo.value = file
     if (file.file == null) {
-      return;
+      return
     }
     tools.readImg(file.file, (result: string) => {
-      imgdata.value = result;
-    });
-  });
-};
-const imgdata = ref('');
+      imgdata.value = result
+    })
+  })
+}
+const imgdata = ref('')
 const upload = () => {
-  logger.debug('上传文件中。。。');
+  logger.debug('上传文件中。。。')
   if (upfileinfo.value.file == null) {
-    return;
+    return
   }
   server.upload(
     '/user/file/upload',
@@ -139,55 +125,42 @@ const upload = () => {
       fileinfo: fileinfo.value,
     },
     (data: any) => {
-      logger.debug('文件上传的结果：', data);
+      logger.debug('文件上传的结果：', data)
       if (data.success) {
-        logger.debug('文件地址：', server.getDownloadUrl(data.data.fid));
-        alert(server.getDownloadUrl(data.data.fid));
+        logger.debug('文件地址：', server.getDownloadUrl(data.data.fid))
+        alert(server.getDownloadUrl(data.data.fid))
       }
     }
-  );
-};
-logger.debug(
-  '下载地址信息判定：',
-  server.isDownloadUrl(
-    'https://service.huhuiyu.top/teach_project_service/user/file/download?fid=32'
-  ),
-  server.isDownloadUrl(
-    '1https://service.huhuiyu.top/teach_project_service/user/file/download?fid=32'
-  ),
-  server.isDownloadUrl(
-    'https://service.huhuiyu.top/teach_project_download/32bataman-01.jpg'
   )
-);
+}
+logger.debug('下载地址信息判定：', server.isDownloadUrl('https://service.huhuiyu.top/teach_project_service/user/file/download?fid=32'), server.isDownloadUrl('1https://service.huhuiyu.top/teach_project_service/user/file/download?fid=32'), server.isDownloadUrl('https://service.huhuiyu.top/teach_project_download/32bataman-01.jpg'))
 
 // 生命周期和计算属性================================================
 onBeforeMount(() => {
-  logger.debug('页面挂载之前');
-});
+  logger.debug('页面挂载之前')
+})
 onMounted(() => {
-  logger.debug('页面挂载完成');
-});
+  logger.debug('页面挂载完成')
+})
 onBeforeUpdate(() => {
-  logger.debug('页面更新之前');
-});
+  logger.debug('页面更新之前')
+})
 onUpdated(() => {
-  logger.debug('页面更新完成');
-});
+  logger.debug('页面更新完成')
+})
 onBeforeUnmount(() => {
-  logger.debug('页面销毁之前');
-});
+  logger.debug('页面销毁之前')
+})
 onUnmounted(() => {
-  logger.debug('页面销毁完成');
-});
+  logger.debug('页面销毁完成')
+})
 
-const x = ref(0);
-const y = ref(0);
+const x = ref(0)
+const y = ref(0)
 
 const add = computed(() => {
-  return `${x.value}+${y.value}=${
-    parseInt(x.value.toString()) + parseInt(y.value.toString())
-  }`;
-});
+  return `${x.value}+${y.value}=${parseInt(x.value.toString()) + parseInt(y.value.toString())}`
+})
 </script>
 
 <template>
@@ -221,11 +194,7 @@ const add = computed(() => {
   <hr />
   <input type="text" v-model="fileinfo" placeholder="文件描述信息" />
   <button @click="browserFile">浏览文件</button>
-  <button
-    :disabled="upfileinfo.file == null || !loginUser.isLogin"
-    @click="upload"
-    >上传文件</button
-  >
+  <button :disabled="upfileinfo.file == null || !loginUser.isLogin" @click="upload">上传文件</button>
   <div>{{ upfileinfo }}</div>
   <!-- <div>{{ imgdata }}</div> -->
   <div v-if="upfileinfo.type == 'image'">

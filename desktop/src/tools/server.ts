@@ -1,4 +1,4 @@
-import Ajax from './Ajax';
+import Ajax from './Ajax'
 import AjaxConfig from '../entity/AjaxConfig'
 import qs from 'qs'
 
@@ -10,10 +10,11 @@ let serverInfo = {
     if (data && data.token) {
       localStorage.setItem(serverInfo.tokenKey, data.token)
     }
-  }, loadToken() {
+  },
+  loadToken() {
     let token = localStorage.getItem(serverInfo.tokenKey)
     return token ? token : ''
-  }
+  },
 }
 
 // 创建ajax实例
@@ -50,8 +51,8 @@ const server = {
     ajax.send(AjaxConfig.buildGetConfig(url, param, cb, handleMessage))
   },
   upload: (url: string, file: File, param: any, cb: any, handleMessage = false) => {
-    let config = AjaxConfig.buildPostConfig(url, param, cb, handleMessage);
-    ajax.upload(config, file);
+    let config = AjaxConfig.buildPostConfig(url, param, cb, handleMessage)
+    ajax.upload(config, file)
   },
   // 获取文件下载地址
   getDownloadUrl: (fid: number | string) => {
@@ -60,13 +61,13 @@ const server = {
   // 是否为文件下载地址，如果是返回fid信息，否则返回-1
   isDownloadUrl: (url: string) => {
     const baseUrl = serverInfo.url + '/user/file/download?fid='
-    let index = url.indexOf(baseUrl);
+    let index = url.indexOf(baseUrl)
     if (index == 0) {
       return url.replace(baseUrl, '')
     } else {
       return -1
     }
-  }
+  },
 }
 
 export default server

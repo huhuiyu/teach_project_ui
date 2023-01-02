@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import tools from '../tools/tools';
+import tools from '../tools/tools'
 
-const title = '教学演示项目';
-tools.changeTitle('首页');
+const title = '教学演示项目'
+tools.changeTitle('首页')
 </script>
 
 <template>

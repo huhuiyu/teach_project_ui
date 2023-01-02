@@ -6,7 +6,6 @@ class FileInfo {
   size: number = 0
   suffix: string = ''
   name: string = ''
-
 }
 
 export default FileInfo

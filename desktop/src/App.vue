@@ -10,11 +10,5 @@
   </n-dialog-provider>
 </template>
 <script setup lang="ts">
-import {
-  NDialogProvider,
-  NLoadingBarProvider,
-  NNotificationProvider,
-  NMessageProvider,
-} from 'naive-ui';
+import { NDialogProvider, NLoadingBarProvider, NNotificationProvider, NMessageProvider } from 'naive-ui'
 </script>
-

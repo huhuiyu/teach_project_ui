@@ -1,13 +1,15 @@
 const routes = [
   {
-    path: "/test",
-    component: () => import('../view/test/Home.vue')
-  }, {
-    path: "/test/userinfo",
-    component: () => import('../view/test/TestUserInfo.vue')
-  }, {
-    path: "/test/naiveui",
-    component: () => import('../view/test/NaiveUI.vue')
+    path: '/test',
+    component: () => import('../view/test/Home.vue'),
+  },
+  {
+    path: '/test/userinfo',
+    component: () => import('../view/test/TestUserInfo.vue'),
+  },
+  {
+    path: '/test/naiveui',
+    component: () => import('../view/test/NaiveUI.vue'),
   },
 ]
 

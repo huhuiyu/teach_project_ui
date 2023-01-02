@@ -3,12 +3,12 @@ class AjaxConfig {
   method: string = 'POST'
   url: string = ''
   param: any = {}
-  cb: any = () => { }
+  cb: any = () => {}
   handleMessage: boolean = false
   returnPromise: boolean = false
   headers: any = {}
   paramObj: any = {}
-  constructor() { }
+  constructor() {}
 
   static buildConfig(url: string, param: any, cb: any, method: string, handleMessage: boolean, returnPromise = false): AjaxConfig {
     let config = new AjaxConfig()
