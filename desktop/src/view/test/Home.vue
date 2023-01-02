@@ -16,7 +16,8 @@ logger.error('测试错误输出', { message: 'error' });
 logger.debug(
   '格式化时间：',
   tools.formatDate(new Date()),
-  tools.formatDate(1671952711000, 'yyyy-MM-dd ms yyyy年')
+  tools.formatDate(1671952711000, 'yyyy-MM-dd ms yyyy年'),
+  tools.formatDate(new Date(), 'hh:mm:ss:ms')
 );
 
 // 路由相关
@@ -158,6 +159,14 @@ logger.debug(
   <div>{{ imgdata }}</div>
   <div v-if="upfileinfo.type == 'image'">
     <img :src="imgdata" alt="" />
+  </div>
+  <hr />
+  <div>
+    {{ tools.md5('abc') }}
+    <br />
+    {{ tools.formatDate(new Date()) }}
+    <br />
+    {{ tools.formatFileSize(1125024) }}
   </div>
 </template>
 <style>

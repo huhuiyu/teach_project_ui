@@ -59,9 +59,10 @@ const server = {
   },
   // 是否为文件下载地址，如果是返回fid信息，否则返回-1
   isDownloadUrl: (url: string) => {
-    let index = url.indexOf(serverInfo.url + '/user/file/download?fid=');
+    const baseUrl = serverInfo.url + '/user/file/download?fid='
+    let index = url.indexOf(baseUrl);
     if (index == 0) {
-      return url.replace(serverInfo.url + '/user/file/download?fid=', '')
+      return url.replace(baseUrl, '')
     } else {
       return -1
     }

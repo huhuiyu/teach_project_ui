@@ -101,6 +101,19 @@ let tools = {
     })
 
     reader.readAsDataURL(file)
+  },
+  // 格式化显示文件大小
+  formatFileSize: (filesize: number) => {
+    logger.debug('in filesize====>', filesize)
+    if (filesize === 0) {
+      return '0 B'
+    }
+    let k = 1024
+    //单位值
+    let sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    let i = Math.floor(Math.log(filesize) / Math.log(k))
+    //.toPrecision(3)
+    return ((filesize / Math.pow(k, i)).toFixed(1)) + '' + sizes[i]
   }
 }
 
