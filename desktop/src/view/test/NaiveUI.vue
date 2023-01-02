@@ -34,8 +34,8 @@ const showMessage = () => {
   <div class="pd10 tc">
     {{ info }}
     <n-input v-model:value="info"></n-input>
-    <n-button type="primary" size="medium" @click="visible = true" class="mr05">对话框1</n-button>
-    <n-button type="primary" size="medium" @click="showDialog" class="mr05">对话框2</n-button>
+    <n-button type="primary" size="medium" @click="visible = true" class="mr05"> <i class="iconfont">&#xe60d;</i> 对话框1 </n-button>
+    <n-button type="primary" size="medium" @click="showDialog" class="mr05"> <i class="iconfont">&#xe696;</i> 对话框2</n-button>
     <n-button type="primary" size="medium" @click="showNotify" class="mr05">对话框3</n-button>
     <n-button type="primary" size="medium" @click="showMessage" class="mr05">对话框4</n-button>
   </div>
