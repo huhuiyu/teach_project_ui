@@ -7,6 +7,7 @@ class AjaxConfig {
   handleMessage: boolean = false
   returnPromise: boolean = false
   headers: any = {}
+  paramObj: any = {}
   constructor() { }
 
   static buildConfig(url: string, param: any, cb: any, method: string, handleMessage: boolean, returnPromise = false): AjaxConfig {

@@ -48,6 +48,23 @@ const server = {
   },
   get: (url: string, param: any, cb: any, handleMessage = false) => {
     ajax.send(AjaxConfig.buildGetConfig(url, param, cb, handleMessage))
+  },
+  upload: (url: string, file: File, param: any, cb: any, handleMessage = false) => {
+    let config = AjaxConfig.buildPostConfig(url, param, cb, handleMessage);
+    ajax.upload(config, file);
+  },
+  // 获取文件下载地址
+  getDownloadUrl: (fid: number | string) => {
+    return serverInfo.url + `/user/file/download?fid=${fid}`
+  },
+  // 是否为文件下载地址，如果是返回fid信息，否则返回-1
+  isDownloadUrl: (url: string) => {
+    let index = url.indexOf(serverInfo.url + '/user/file/download?fid=');
+    if (index == 0) {
+      return url.replace(serverInfo.url + '/user/file/download?fid=', '')
+    } else {
+      return -1
+    }
   }
 }
 
