@@ -13,7 +13,7 @@ const routes: RouteRecordRaw[] = [
 // 创建router
 const router = createRouter({
   // 配置为Hash模式
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   // 配置toures
   routes,
   // 路由跳转时返回顶部

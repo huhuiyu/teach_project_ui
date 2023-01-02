@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build --base=/teach_project_ui/",
+    "build-nobase": "vue-tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
