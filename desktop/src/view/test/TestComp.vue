@@ -11,6 +11,11 @@ import server from '../../tools/server'
 import tools from '../../tools/tools'
 import BaseResult from '../../entity/BaseResult'
 
+import { storeToRefs } from 'pinia'
+import store from '../../store/index'
+
+const { loginUser } = storeToRefs(store())
+
 const router = useRouter()
 const route = useRoute()
 
@@ -61,6 +66,8 @@ query()
   </div>
 
   <div v-if="route.params.comp == 'user'">
+    <div>{{ loginUser }}</div>
+    <hr />
     <UserInfoComp></UserInfoComp>
   </div>
   <div v-else-if="route.params.comp == 'page'">
