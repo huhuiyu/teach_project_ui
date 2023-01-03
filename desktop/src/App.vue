@@ -1,11 +1,11 @@
 <template>
   <n-dialog-provider>
     <n-loading-bar-provider>
-      <n-nofitication-provider>
+      <n-notification-provider>
         <n-message-provider>
           <router-view></router-view>
         </n-message-provider>
-      </n-nofitication-provider>
+      </n-notification-provider>
     </n-loading-bar-provider>
   </n-dialog-provider>
 </template>
