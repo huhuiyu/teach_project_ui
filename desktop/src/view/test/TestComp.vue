@@ -9,10 +9,13 @@ import dialogApi from '../../tools/dialog'
 import logger from '../../tools/logger'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
-import BaseResult from '../../entity/BaseResult'
+import { BaseListResult } from '../../entity/BaseResult'
 
 import { storeToRefs } from 'pinia'
 import store from '../../store/index'
+import { MessageDetail, MessageReply, MessageDetailResult } from '../../entity/MessageDetailResult'
+
+import { PageInfo } from '../../entity/BaseResult'
 
 const { loginUser } = storeToRefs(store())
 
@@ -32,16 +35,14 @@ const toPage = (link: string) => {
 }
 
 const queryInfo = ref({
-  orderBy: 1,
+  orderBy: 3,
 })
 const list = ref([] as any[])
-const page = ref({
-  pageSize: 5,
-  pageNumber: 1,
-} as any)
+const page = ref(new PageInfo())
 
+// 帖子列表
 const query = () => {
-  server.post('/message/queryAll', tools.concatJson(queryInfo.value, page.value), (data: BaseResult) => {
+  server.post('/message/queryAll', tools.concatJson(queryInfo.value, page.value), (data: BaseListResult<any>) => {
     if (data.success) {
       list.value = data.list
       page.value = data.page
@@ -58,6 +59,31 @@ const changePage = (pageInfo: any) => {
 }
 
 query()
+
+// 帖子详情
+const detail = ref(new MessageDetail())
+const dlist = ref([] as MessageReply[])
+const dpage = ref(new PageInfo())
+const dquery = ref({
+  umid: 0,
+  orderBy: 1,
+})
+
+const queryDetail = (umid: number) => {
+  dquery.value.umid = umid
+  server.post('/message/queryDetail', tools.concatJson(dquery.value, dpage.value), (data: MessageDetailResult) => {
+    if (data.success) {
+      detail.value = data.info
+      dlist.value = data.list
+      dpage.value = data.page
+    }
+  })
+}
+const changeDPage = (pageInfo: any) => {
+  logger.debug('更新的page信息：', pageInfo)
+  dpage.value = pageInfo
+  queryDetail(detail.value.umid)
+}
 </script>
 
 <template>
@@ -71,14 +97,22 @@ query()
     <UserInfoComp></UserInfoComp>
   </div>
   <div v-else-if="route.params.comp == 'page'">
-    <span class="mr05" v-for="d in list">{{ d.title }}</span>
+    <span class="mr05" v-for="d in list" @click="queryDetail(d.umid)">{{ d.title }}</span>
     <PageComp @page-change="changePage" :page="page" show-size-picker>
       <span>帖子分页：</span>
       <template v-slot:page-end>
         <span>总页数：{{ page.pageCount }}</span>
       </template>
     </PageComp>
-    <PageComp @page-change="changePage" :page="page"></PageComp>
+
+    <h1>详情部分</h1>
+    <div v-if="detail.title.length > 0">
+      <div v-html="detail.info"></div>
+      <div>
+        <span class="mr05" v-for="d in dlist" :key="d.umrid">{{ d.info }}</span>
+      </div>
+      <PageComp @page-change="changeDPage" :page="dpage"></PageComp>
+    </div>
   </div>
   <div v-else> 无效的组件选择 </div>
   <div>
