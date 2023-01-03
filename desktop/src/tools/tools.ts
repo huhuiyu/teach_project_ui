@@ -115,6 +115,57 @@ let tools = {
     //.toPrecision(3)
     return (filesize / Math.pow(k, i)).toFixed(1) + '' + sizes[i]
   },
+
+  // 是否为手机模式
+  isMobile: () => {
+    return tools.getBrowserInfo().versions.mobile
+  },
+  // 是否为ios
+  isIos: () => {
+    return tools.getBrowserInfo().versions.ios
+  },
+  // 是否为android
+  isAndroid: () => {
+    return tools.getBrowserInfo().versions.android
+  },
+  // 是否为weixin
+  isWx: () => {
+    return tools.getBrowserInfo().versions.weixin
+  },
+  // 获取浏览器信息
+  getBrowserInfo: () => {
+    let browser = {
+      versions: (function () {
+        let u = navigator.userAgent
+        // let app = navigator.appVersion;
+        return {
+          trident: u.indexOf('Trident') > -1, //IE内核
+          presto: u.indexOf('Presto') > -1, //opera内核
+          webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+          gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+          mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+          ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+          android: u.indexOf('Android') > -1 || u.indexOf('Adr') > -1, //android终端
+          iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
+          iPad: u.indexOf('iPad') > -1, //是否iPad
+          webApp: u.indexOf('Safari') == -1, //是否web应该程序，没有头部与底部
+          weixin: u.indexOf('MicroMessenger') > -1, //是否微信 （2015-01-22新增）
+        }
+      })(),
+    }
+    return browser
+  },
+  // 合并json
+  concatJson: (...jsons: any) => {
+    let json = {}
+    for (let index = 0; index < jsons.length; index++) {
+      const element = jsons[index]
+      for (let key in element) {
+        json[key] = element[key]
+      }
+    }
+    return json
+  },
 }
 
 export default tools

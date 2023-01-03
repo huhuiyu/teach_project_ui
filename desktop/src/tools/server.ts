@@ -70,4 +70,6 @@ const server = {
   },
 }
 
+export { server as server, serverInfo as serverInfo }
+
 export default server

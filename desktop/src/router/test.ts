@@ -11,6 +11,10 @@ const routes = [
     path: '/test/naiveui',
     component: () => import('../view/test/NaiveUI.vue'),
   },
+  {
+    path: '/test/comp/:comp',
+    component: () => import('../view/test/TestComp.vue'),
+  },
 ]
 
 let exportRouter = routes

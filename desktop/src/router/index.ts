@@ -8,6 +8,10 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: () => import('../view/Home.vue'),
   },
+  {
+    path: '/chatroom',
+    component: () => import('../view/ChatRoom.vue'),
+  },
 ].concat(testRouter)
 
 // 创建router
