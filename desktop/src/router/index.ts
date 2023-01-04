@@ -1,6 +1,7 @@
 import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router'
 import logger from '../tools/logger'
 import testRouter from './test'
+import userRouter from './user';
 import dialog from '../tools/dialog'
 
 const routes: RouteRecordRaw[] = [
@@ -12,7 +13,7 @@ const routes: RouteRecordRaw[] = [
     path: '/chatroom',
     component: () => import('../view/ChatRoom.vue'),
   },
-].concat(testRouter)
+].concat(testRouter).concat(userRouter)
 
 // 创建router
 const router = createRouter({
