@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { keyBy } from 'lodash'
 import { NButton, NCard, NForm, NFormItem, NInput, NRadio, NTabPane, NTabs, NRadioGroup, NSpace, NImage, NSpin, FormRules, FormItemRule, FormInst } from 'naive-ui'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
