@@ -2,8 +2,8 @@ import { createRouter, RouteRecordRaw, createWebHistory } from 'vue-router'
 import logger from '../tools/logger'
 import testRouter from './test'
 import userRouter from './user'
-import classManage from './classManage'
-import manage from './manage'
+import messageRouter from './message'
+import manageRouter from './manage'
 import dialog from '../tools/dialog'
 
 const routes: RouteRecordRaw[] = [
@@ -18,8 +18,9 @@ const routes: RouteRecordRaw[] = [
 ]
   .concat(testRouter)
   .concat(userRouter)
-  .concat(classManage)
-  .concat(manage)
+  .concat(messageRouter)
+  .concat(manageRouter)
+
 
 // 创建router
 const router = createRouter({
