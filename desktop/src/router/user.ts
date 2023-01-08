@@ -9,6 +9,4 @@ const routes = [
   },
 ]
 
-let exportRouter = routes
-
-export default exportRouter
+export default routes
