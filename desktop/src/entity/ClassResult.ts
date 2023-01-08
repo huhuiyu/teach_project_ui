@@ -2,7 +2,7 @@ class ClassInfo {
   cid: number = 0
   cinfo: string = ''
   cname: string = ''
-  lastupdate: string = ''
+  lastupdate: number = 0
 }
 
 class StudentInfo {
@@ -13,14 +13,8 @@ class StudentInfo {
   wechat: string = ''
   qq: string = ''
   address: string = ''
-  lastupdate: string = ''
-  tbUser: TbClass = new TbClass()
-}
-class TbClass {
-  cid: number = 0
-  cname: string = ''
-  cinfo: string = ''
-  lastupdate: string = ''
+  lastupdate: number = 0
+  tbClass: ClassInfo = new ClassInfo()
 }
 
 export { ClassInfo as ClassInfo, StudentInfo as StudentInfo }
