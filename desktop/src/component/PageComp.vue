@@ -30,6 +30,8 @@ const changeNumber = (pageNumber: number) => {
 }
 const changeSize = (pageSize: number) => {
   pageInfo.value.pageSize = pageSize
+  // 改变分页大小会强制返回第一页，也可以将此业务逻辑转移给size-change事件处理
+  pageInfo.value.pageNumber = 1
   emits('size-change', pageSize, props.page)
   emits('page-change', props.page)
 }
@@ -38,12 +40,15 @@ logger.debug('初始化分页组件')
 </script>
 
 <template>
-  <div class="flex-box-center">
-    <div><slot></slot></div>
-    <div class="mr05">
-      {{ pageInfo }}
-      <n-pagination :item-count="pageInfo.total" :page-size="pageInfo.pageSize" :page="pageInfo.pageNumber" :page-sizes="[5, 10, 20]" :showSizePicker="showSizePicker" @update-page="changeNumber" @update:page-size="changeSize" />
+  <div v-if="page.total > 0">
+    <div class="flex-box-center">
+      <div><slot></slot></div>
+      <div class="mr05">
+        <n-pagination :item-count="page.total" :page-size="page.pageSize" :page="page.pageNumber" :page-sizes="[5, 10, 20]" :showSizePicker="showSizePicker" @update-page="changeNumber" @update:page-size="changeSize">
+          <template #prefix="{ itemCount }">记录数：{{ itemCount }}</template>
+        </n-pagination>
+      </div>
+      <div> <slot name="page-end"></slot></div>
     </div>
-    <div> <slot name="page-end"></slot></div>
   </div>
 </template>

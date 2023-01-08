@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NButton } from 'naive-ui'
-import { ref } from 'vue'
+import { reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import UserInfoComp from '../../component/UserInfoComp.vue'
 import PageComp from '../../component/PageComp.vue'
@@ -25,64 +25,71 @@ const route = useRoute()
 const title = '教学演示项目'
 logger.debug('路由参数', route.params.comp)
 
-const links = ref([
+const links = reactive([
   { title: '分页', link: 'page' },
   { title: '用户', link: 'user' },
 ])
+
+const queryData = reactive({
+  queryInfo: { orderBy: 3 },
+  page: new PageInfo(),
+  list: new Array<MessageDetail>(),
+})
+
+queryData.page.pageSize = 5
 
 const toPage = (link: string) => {
   router.push(`/test/comp/${link}`)
 }
 
-const queryInfo = ref({
-  orderBy: 3,
-})
-const list = ref([] as any[])
-const page = ref(new PageInfo())
-
 // 帖子列表
 const query = () => {
-  server.post('/message/queryAll', tools.concatJson(queryInfo.value, page.value), (data: BaseListResult<any>) => {
+  server.post('/message/queryAll', tools.concatJson(queryData.queryInfo, queryData.page), (data: BaseListResult<MessageDetail>) => {
     if (data.success) {
-      list.value = data.list
-      page.value = data.page
+      queryData.list = data.list
+      queryData.page = data.page
       return
     }
     dialogApi.messageError(data.message)
   })
 }
 
-const changePage = (pageInfo: any) => {
+const changePage = (pageInfo: PageInfo) => {
   logger.debug('更新的page信息：', pageInfo)
-  page.value = pageInfo
+  queryData.page = pageInfo
   query()
 }
 
 query()
 
 // 帖子详情
-const detail = ref(new MessageDetail())
-const dlist = ref([] as MessageReply[])
-const dpage = ref(new PageInfo())
-const dquery = ref({
-  umid: 0,
-  orderBy: 1,
+
+const queryReplyData = reactive({
+  detail: new MessageDetail(),
+  page: new PageInfo(),
+  list: new Array<MessageReply>(),
+  queryInfo: {
+    umid: 0,
+    orderBy: 1,
+  },
 })
 
+queryReplyData.page.pageSize = 5
+
 const queryDetail = (umid: number) => {
-  dquery.value.umid = umid
-  server.post('/message/queryDetail', tools.concatJson(dquery.value, dpage.value), (data: MessageDetailResult) => {
+  queryReplyData.queryInfo.umid = umid
+  server.post('/message/queryDetail', tools.concatJson(queryReplyData.queryInfo, queryReplyData.page), (data: MessageDetailResult) => {
     if (data.success) {
-      detail.value = data.info
-      dlist.value = data.list
-      dpage.value = data.page
+      queryReplyData.detail = data.info
+      queryReplyData.list = data.list
+      queryReplyData.page = data.page
     }
   })
 }
 const changeDPage = (pageInfo: any) => {
   logger.debug('更新的page信息：', pageInfo)
-  dpage.value = pageInfo
-  queryDetail(detail.value.umid)
+  queryReplyData.page = pageInfo
+  queryDetail(queryReplyData.detail.umid)
 }
 </script>
 
@@ -97,21 +104,21 @@ const changeDPage = (pageInfo: any) => {
     <UserInfoComp></UserInfoComp>
   </div>
   <div v-else-if="route.params.comp == 'page'">
-    <span class="mr05" v-for="d in list" @click="queryDetail(d.umid)">{{ d.title }}</span>
-    <PageComp @page-change="changePage" :page="page" show-size-picker>
+    <span class="mr05" v-for="d in queryData.list" @click="queryDetail(d.umid)">{{ d.title }}</span>
+    <PageComp @page-change="changePage" :page="queryData.page" show-size-picker>
       <span>帖子分页：</span>
       <template v-slot:page-end>
-        <span>总页数：{{ page.pageCount }}</span>
+        <span>总页数：{{ queryData.page.pageCount }}</span>
       </template>
     </PageComp>
 
     <h1>详情部分</h1>
-    <div v-if="detail.title.length > 0">
-      <div v-html="detail.info"></div>
+    <div v-if="queryReplyData.detail.title.length > 0">
+      <div v-html="queryReplyData.detail.info"></div>
       <div>
-        <span class="mr05" v-for="d in dlist" :key="d.umrid">{{ d.info }}</span>
+        <span class="mr05" v-for="d in queryReplyData.list" :key="d.umrid">{{ d.info }}-{{ d.user.nickname }}</span>
       </div>
-      <PageComp @page-change="changeDPage" :page="dpage"></PageComp>
+      <PageComp @page-change="changeDPage" :page="queryReplyData.page"></PageComp>
     </div>
   </div>
   <div v-else> 无效的组件选择 </div>
