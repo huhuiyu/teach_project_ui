@@ -21,7 +21,6 @@ const routes: RouteRecordRaw[] = [
   .concat(messageRouter)
   .concat(manageRouter)
 
-
 // 创建router
 const router = createRouter({
   // 配置为Hash模式
