@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { orderBy } from 'lodash'
 import { FormInst, FormItemRule, FormRules, NButton, NDataTable, NDescriptionsItem, NForm, NFormItem, NInput, NModal, NPagination, NSelect, NSpace } from 'naive-ui'
-import { ref, h } from 'vue'
+import { ref, h, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { BaseListResult, BaseResult, PageInfo } from '../../entity/BaseResult'
 import { DeptInfo, Employee } from '../../entity/DeptResult'
@@ -12,10 +13,11 @@ import tools from '../../tools/tools'
 const router = useRouter()
 //	需要展示的列
 
-const columns = ref([
+const columns = [
   { title: '所属部门编号', key: 'deptId' },
   { title: '员工编号', key: 'employeeId' },
   { title: '员工名称', key: 'employeeName' },
+  { title: '员工手机', key: 'phone' },
   {
     title: '信息最后修改时间',
     key: 'lastupdate',
@@ -77,11 +79,8 @@ const columns = ref([
       ]
     },
   },
-])
-
-const loading = ref(false)
-const equery = ref({ deptId: '', employeeName: '', orderBy: '2', phone: '' })
-const orderBy = ref([
+]
+const orderBy = [
   {
     value: '1',
     label: '按照编号升序',
@@ -102,37 +101,44 @@ const orderBy = ref([
     value: '5',
     label: '分部门按照姓名排序',
   },
-])
-const elist = ref([] as Employee[])
-const epage = ref(new PageInfo())
-const dlist = ref([
-  {
-    value: '',
-    label: '请选择部门',
+]
+const employeeData = reactive({
+  loading: false,
+  query: {
+    deptId: '',
+    employeeName: '',
+    orderBy: '2',
+    phone: '',
   },
-])
-const modal = ref({
+  list: [] as Employee[],
+  page: new PageInfo(),
+})
+const deptData = reactive({
+  list: [{ label: '请选择部门', value: '' }],
+})
+const modal = reactive({
   add: false,
   modify: false,
 })
 function queryEmployee() {
-  loading.value = true
-  server.post('/manage/employee/queryAll', tools.concatJson(equery.value, epage.value), (data: BaseListResult<Employee>) => {
+  employeeData.loading = true
+  server.post('/manage/employee/queryAll', tools.concatJson(employeeData.query, employeeData.page), (data: BaseListResult<Employee>) => {
     if (data.success) {
-      elist.value = data.list
-      epage.value = data.page
+      employeeData.list = data.list
+      employeeData.page = data.page
     }
-    loading.value = false
+    employeeData.loading = false
   })
 }
 queryEmployee()
 function queryDept() {
-  server.post('/manage/dept/queryAll', {}, (data: any) => {
+  deptData.list = [{ label: '请选择部门', value: '' }]
+  server.post('/manage/dept/queryAll', {}, (data: BaseListResult<DeptInfo>) => {
     if (data.success) {
-      data.list.forEach((item: any) => {
-        dlist.value.push({
-          value: item.deptId + '',
+      data.list.forEach((item) => {
+        deptData.list.push({
           label: item.deptName,
+          value: item.deptId + '',
         })
       })
     }
@@ -140,22 +146,24 @@ function queryDept() {
 }
 queryDept()
 function changeNumber(PageNumber: number) {
-  epage.value.pageNumber = PageNumber
+  employeeData.page.pageNumber = PageNumber
   queryEmployee()
 }
 function updatePageSize(pageSize: number) {
-  epage.value.pageSize = pageSize
-  epage.value.pageNumber = 1
+  employeeData.page.pageSize = pageSize
+  employeeData.page.pageNumber = 1
   queryEmployee()
 }
 function reset() {
-  epage.value.pageNumber = 1
-  equery.value.employeeName = ''
+  employeeData.page.pageNumber = 1
+  employeeData.query.employeeName = ''
+  employeeData.query.phone = ''
+  employeeData.query.deptId = ''
   queryEmployee()
 }
 
 //添加员工信息
-const addEmployeeInfo = ref({
+const addEmployeeInfo = reactive({
   deptId: '',
   phone: '',
   EmployeeName: '',
@@ -193,7 +201,7 @@ function addEmployee() {
   addRef.value?.validate((error) => {
     logger.debug(error)
     if (!error) {
-      server.post('/manage/employee/add', addEmployeeInfo.value, (data: BaseResult) => {
+      server.post('/manage/employee/add', addEmployeeInfo, (data: BaseResult) => {
         if (data.success) {
           queryEmployee()
           dialog.notifyInfo({
@@ -213,10 +221,10 @@ function addEmployee() {
   })
 }
 function delEmployee(employeeId: number) {
-  loading.value = true
+  employeeData.loading = true
   server.post('/manage/employee/delete', { employeeId: employeeId }, (data: BaseResult) => {
     if (data.success) {
-      loading.value = false
+      employeeData.loading = false
       queryEmployee()
       dialog.notifyInfo({
         content: data.message,
@@ -232,7 +240,7 @@ function delEmployee(employeeId: number) {
     }
   })
 }
-const modifyInfo = ref({
+const modifyInfo = reactive({
   deptId: '',
   phone: '',
   EmployeeName: '',
@@ -266,18 +274,18 @@ const ModifyRules: FormRules = {
   ],
 }
 function showEmployee(item: Employee) {
-  modal.value.modify = true
-  modifyInfo.value.EmployeeName = item.employeeName
-  modifyInfo.value.phone = item.phone
-  modifyInfo.value.employeeId = item.employeeId
-  modifyInfo.value.deptId = item.deptId + ''
+  modal.modify = true
+  modifyInfo.EmployeeName = item.employeeName
+  modifyInfo.phone = item.phone
+  modifyInfo.employeeId = item.employeeId
+  modifyInfo.deptId = item.deptId + ''
 }
 function modifyEmployee() {
-  loading.value = true
+  employeeData.loading = true
   modifyRef.value?.validate((error) => {
     if (!error) {
-      server.post('/manage/employee/update', modifyInfo.value, (data: BaseResult) => {
-        loading.value = false
+      server.post('/manage/employee/update', modifyInfo, (data: BaseResult) => {
+        employeeData.loading = false
         if (data.success) {
           queryEmployee()
           dialog.notifyInfo({
@@ -303,18 +311,18 @@ function modifyEmployee() {
       <h1>员工管理</h1>
     </header>
     <main>
-      <n-form inline :label-width="130" :model="equery" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
+      <n-form inline :label-width="130" :model="employeeData.query" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
         <n-form-item label="部门排序">
-          <n-select v-model:value="equery.deptId" :options="dlist" @change="queryEmployee" />
+          <n-select v-model:value="employeeData.query.deptId" :options="deptData.list" @change="queryEmployee" placeholder="请选择部门" :consistent-menu-width="false" />
         </n-form-item>
         <n-form-item label="记录排序方式">
-          <n-select v-model:value="equery.orderBy" :options="orderBy" @change="queryEmployee" />
+          <n-select v-model:value="employeeData.query.orderBy" :options="orderBy" @change="queryEmployee" />
         </n-form-item>
         <n-form-item label="员工名称模糊查询">
-          <n-input v-model:value="equery.employeeName" placeholder="输入员工名称" />
+          <n-input v-model:value="employeeData.query.employeeName" placeholder="输入员工名称" />
         </n-form-item>
         <n-form-item label="员工电话模糊查询">
-          <n-input v-model:value="equery.phone" placeholder="输入员工电话" />
+          <n-input v-model:value="employeeData.query.phone" placeholder="输入员工电话" />
         </n-form-item>
         <n-form-item>
           <n-button attr-type="button" @click="queryEmployee"> 查询 </n-button>
@@ -329,9 +337,9 @@ function modifyEmployee() {
           <n-button attr-type="button" @click="router.back()"> 返回 </n-button>
         </n-form-item>
       </n-form>
-      <n-data-table :columns="columns" :data="elist" :loading="loading" />
+      <n-data-table :columns="columns" :data="employeeData.list" :loading="employeeData.loading" />
       <div class="flex-box-center mr05">
-        <n-pagination :item-count="epage.total" :page-size="epage.pageSize" v-model:page="epage.pageNumber" show-size-picker :page-sizes="[5, 10, 20]" @update-page="changeNumber" @update:page-size="updatePageSize" />
+        <n-pagination :item-count="employeeData.page.total" :page-size="employeeData.page.pageSize" v-model:page="employeeData.page.pageNumber" show-size-picker :page-sizes="[5, 10, 20]" @update-page="changeNumber" @update:page-size="updatePageSize" />
       </div>
     </main>
     <n-modal v-model:show="modal.add" preset="dialog">
@@ -340,7 +348,7 @@ function modifyEmployee() {
       </template>
       <n-form ref="addRef" :model="addEmployeeInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }" :rules="addRules">
         <n-form-item label="部门" path="deptId">
-          <n-select v-model:value="addEmployeeInfo.deptId" :options="dlist" />
+          <n-select v-model:value="addEmployeeInfo.deptId" :options="deptData.list" />
         </n-form-item>
         <n-form-item label="员工名称" path="EmployeeName">
           <n-input v-model:value="addEmployeeInfo.EmployeeName" placeholder="输入员工名称" />
@@ -362,7 +370,7 @@ function modifyEmployee() {
       </template>
       <n-form ref="modifyRef" :model="modifyInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }" :rules="ModifyRules">
         <n-form-item label="部门排序" path="deptId">
-          <n-select v-model:value="modifyInfo.deptId" :options="dlist" />
+          <n-select v-model:value="modifyInfo.deptId" :options="deptData.list" />
         </n-form-item>
         <n-form-item label="员工名称" path="deptName">
           <n-input v-model:value="modifyInfo.EmployeeName" placeholder="输入员工名称" />

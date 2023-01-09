@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FormInst, FormRules, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NPagination, NSpace, NSpin } from 'naive-ui'
-import { ref, h } from 'vue'
+import { ref, h, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { BaseDataResult, BaseListResult, BaseResult, PageInfo } from '../../entity/BaseResult'
 import { DeptInfo } from '../../entity/DeptResult'
@@ -11,7 +11,7 @@ import tools from '../../tools/tools'
 
 const router = useRouter()
 //	需要展示的列
-const columns = ref([
+const columns = reactive([
   { title: '部门编号', key: 'deptName' },
   { title: '部门信息', key: 'deptInfo' },
   { title: '部门名称', key: 'deptName' },
@@ -77,42 +77,46 @@ const columns = ref([
   },
 ])
 
-const loading = ref(false)
-const dquery = ref({ deptName: '' })
-const dlist = ref([] as DeptInfo[])
-const dpage = ref(new PageInfo())
-const modal = ref({
+const deptData = reactive({
+  query: {
+    deptName: '',
+  },
+  list: [] as DeptInfo[],
+  page: new PageInfo(),
+  loading: false,
+})
+const modal = reactive({
   add: false,
   modify: false,
 })
 function queryDept() {
-  loading.value = true
-  server.post('/manage/dept/queryAll', tools.concatJson(dquery.value, dpage.value), (data: BaseListResult<DeptInfo>) => {
+  deptData.loading = true
+  server.post('/manage/dept/queryAll', tools.concatJson(deptData.query, deptData.page), (data: BaseListResult<DeptInfo>) => {
     if (data.success) {
-      dlist.value = data.list
-      dpage.value = data.page
+      deptData.list = data.list
+      deptData.page = data.page
     }
-    loading.value = false
+    deptData.loading = false
   })
 }
 queryDept()
 function changeNumber(PageNumber: number) {
-  dpage.value.pageNumber = PageNumber
+  deptData.page.pageNumber = PageNumber
   queryDept()
 }
 function updatePageSize(pageSize: number) {
-  dpage.value.pageSize = pageSize
-  dpage.value.pageNumber = 1
+  deptData.page.pageSize = pageSize
+  deptData.page.pageNumber = 1
   queryDept()
 }
 function reset() {
-  dpage.value.pageNumber = 1
-  dquery.value.deptName = ''
+  deptData.page.pageNumber = 1
+  deptData.query.deptName = ''
   queryDept()
 }
 
 //添加部门信息
-const addDeptInfo = ref({
+const addDeptInfo = reactive({
   deptInfo: '',
   deptName: '',
 })
@@ -137,7 +141,7 @@ const addRules: FormRules = {
 function addDept() {
   addRef.value?.validate((error) => {
     if (!error) {
-      server.post('/manage/dept/add', addDeptInfo.value, (data: BaseResult) => {
+      server.post('/manage/dept/add', addDeptInfo, (data: BaseResult) => {
         if (data.success) {
           queryDept()
           dialog.notifyInfo({
@@ -157,10 +161,10 @@ function addDept() {
   })
 }
 function delDept(deptId: number) {
-  loading.value = true
+  deptData.loading = true
   server.post('/manage/dept/delete', { deptId: deptId }, (data: BaseResult) => {
     if (data.success) {
-      loading.value = false
+      deptData.loading = false
       queryDept()
       dialog.notifyInfo({
         content: data.message,
@@ -176,7 +180,7 @@ function delDept(deptId: number) {
     }
   })
 }
-const modifyInfo = ref({
+const modifyInfo = reactive({
   deptId: 0,
   deptInfo: '',
   deptName: '',
@@ -198,17 +202,17 @@ const ModifyRules: FormRules = {
   ],
 }
 function showDept(item: DeptInfo) {
-  modal.value.modify = true
-  modifyInfo.value.deptId = item.deptId
-  modifyInfo.value.deptInfo = item.deptInfo
-  modifyInfo.value.deptName = item.deptName
+  modal.modify = true
+  modifyInfo.deptId = item.deptId
+  modifyInfo.deptInfo = item.deptInfo
+  modifyInfo.deptName = item.deptName
 }
 function modifyDept() {
-  loading.value = true
+  deptData.loading = true
   modifyRef.value?.validate((error) => {
     if (!error) {
-      server.post('/manage/dept/update', modifyInfo.value, (data: BaseResult) => {
-        loading.value = false
+      server.post('/manage/dept/update', modifyInfo, (data: BaseResult) => {
+        deptData.loading =false
         if (data.success) {
           queryDept()
           dialog.notifyInfo({
@@ -234,9 +238,9 @@ function modifyDept() {
       <h1>部门管理</h1>
     </header>
     <main>
-      <n-form inline :label-width="80" :model="dquery" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
+      <n-form inline :label-width="80" :model="deptData.query" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
         <n-form-item label="部门名称">
-          <n-input v-model:value="dquery.deptName" placeholder="输入部门名称" />
+          <n-input v-model:value="deptData.query.deptName" placeholder="输入部门名称" />
         </n-form-item>
         <n-form-item>
           <n-button attr-type="button" @click="queryDept"> 查询 </n-button>
@@ -251,9 +255,9 @@ function modifyDept() {
           <n-button attr-type="button" @click="router.back()"> 返回 </n-button>
         </n-form-item>
       </n-form>
-      <n-data-table :columns="columns" :data="dlist" :loading="loading" />
+      <n-data-table :columns="columns" :data="deptData.list" :loading="deptData.loading" />
       <div class="flex-box-center mr05">
-        <n-pagination :item-count="dpage.total" :page-size="dpage.pageSize" v-model:page="dpage.pageNumber" show-size-picker :page-sizes="[5, 10, 20]" @update-page="changeNumber" @update:page-size="updatePageSize" />
+        <n-pagination :item-count="deptData.page.total" :page-size="deptData.page.pageSize" v-model:page="deptData.page.pageNumber" show-size-picker :page-sizes="[5, 10, 20]" @update-page="changeNumber" @update:page-size="updatePageSize" />
       </div>
     </main>
     <n-modal v-model:show="modal.add" preset="dialog">

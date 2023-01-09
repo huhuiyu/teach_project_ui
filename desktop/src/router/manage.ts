@@ -1,10 +1,10 @@
 const routes = [
   {
-    path: '/test/dept',
+    path: '/manage/dept',
     component: () => import('../view/manage/DeptView.vue'),
   },
   {
-    path: '/test/employee',
+    path: '/manage/employee',
     component: () => import('../view/manage/Employee.vue'),
   },
 ]
