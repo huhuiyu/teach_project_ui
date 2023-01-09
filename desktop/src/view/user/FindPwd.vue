@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FormInst, FormItemInst, NAvatar, NButton, NCard, NForm, NFormItem, NInput, NSpin } from 'naive-ui'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseResult from '../../entity/BaseResult'
 import dialog from '../../tools/dialog'
@@ -12,17 +12,17 @@ const store = useRouter()
 //找回密码的模式
 const phoneOrEmail = ref(false)
 //步骤
-const steps = ref({
+const steps = reactive({
   mode: 'phone',
   step: 1,
 })
 //下一步是否允许
-const stepNext = ref({
+const stepNext = reactive({
   first: true,
   second: true,
   third: true,
 })
-const loading = ref({
+const loading = reactive({
   imgCode: false,
   phoneCode: false,
   phonePwd: false,
@@ -30,11 +30,11 @@ const loading = ref({
   emailPwd: false,
 })
 //图片验证码参数
-const imgCode = ref({
+const imgCode = reactive({
   url: '',
 })
 //邮箱找回密码参数
-const emailInfo = ref({
+const emailInfo = reactive({
   code: '',
   username: '',
   password: '',
@@ -46,7 +46,7 @@ const emailRules = {
     {
       required: true,
       validator: () => {
-        if (!/^\d{6}$/.test(emailInfo.value.code)) return new Error('请输入邮箱的验证码')
+        if (!/^\d{6}$/.test(emailInfo.code)) return new Error('请输入邮箱的验证码')
         return true
       },
       message: '请输入邮箱的验证码',
@@ -58,7 +58,7 @@ const emailRules = {
       key: 'username',
       required: true,
       validator: () => {
-        if (emailInfo.value.username == '') return new Error('请输入用户名')
+        if (emailInfo.username == '') return new Error('请输入用户名')
         return true
       },
       message: '请输入用户名',
@@ -69,7 +69,7 @@ const emailRules = {
     {
       required: true,
       validator: () => {
-        if (!/(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,16}$/g.test(emailInfo.value.password)) return new Error('密码由6-16位数字、字母或符号组成 至少含2种以上字符')
+        if (!/(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,16}$/g.test(emailInfo.password)) return new Error('密码由6-16位数字、字母或符号组成 至少含2种以上字符')
         return true
       },
       message: '密码由8-16位数字、字母或符号组成 至少含2种以上字符',
@@ -80,7 +80,7 @@ const emailRules = {
     {
       required: true,
       validator: () => {
-        if (emailInfo.value.password != emailInfo.value.okPwd) return new Error('两次密码不相同')
+        if (emailInfo.password != emailInfo.okPwd) return new Error('两次密码不相同')
         return true
       },
       message: '两次密码不相同',
@@ -89,7 +89,7 @@ const emailRules = {
   ],
 }
 //手机号找回密码参数
-const phoneInfo = ref({
+const phoneInfo = reactive({
   username: '',
   password: '',
   imgCode: '',
@@ -103,7 +103,7 @@ const phoneRules = {
       key: 'username',
       required: true,
       validator: () => {
-        if (phoneInfo.value.username == '') return new Error('请输入用户名')
+        if (phoneInfo.username == '') return new Error('请输入用户名')
         return true
       },
       message: '请输入用户名',
@@ -115,7 +115,7 @@ const phoneRules = {
       key: 'imgCode',
       required: true,
       validator: () => {
-        if (!/^[0-9A-Za-z]{5}$/.test(phoneInfo.value.imgCode)) return new Error('图片验证码')
+        if (!/^[0-9A-Za-z]{5}$/.test(phoneInfo.imgCode)) return new Error('图片验证码')
         return true
       },
       message: '请输入图片验证码',
@@ -127,7 +127,7 @@ const phoneRules = {
       key: 'code',
       required: true,
       validator: () => {
-        if (!/^\d{6}$/.test(phoneInfo.value.code)) return new Error('六位数验证码')
+        if (!/^\d{6}$/.test(phoneInfo.code)) return new Error('六位数验证码')
         return true
       },
       message: '请输入手机的验证码',
@@ -138,7 +138,7 @@ const phoneRules = {
     {
       required: true,
       validator: () => {
-        if (!/(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,16}$/g.test(phoneInfo.value.password)) return new Error('密码由6-16位数字、字母或符号组成 至少含2种以上字符')
+        if (!/(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,16}$/g.test(phoneInfo.password)) return new Error('密码由6-16位数字、字母或符号组成 至少含2种以上字符')
         return true
       },
       message: '密码由8-16位数字、字母或符号组成 至少含2种以上字符',
@@ -149,7 +149,7 @@ const phoneRules = {
     {
       required: true,
       validator: () => {
-        if (phoneInfo.value.password != phoneInfo.value.okPwd) return new Error('两次密码不相同')
+        if (phoneInfo.password != phoneInfo.okPwd) return new Error('两次密码不相同')
         return true
       },
       message: '两次密码不相同',
@@ -177,10 +177,10 @@ function nextStep(mode: string, steps: number) {
       phoneRef.value
         ?.validate()
         .then(() => {
-          stepNext.value.first = false
+          stepNext.first = false
         })
         .catch(() => {
-          stepNext.value.first = true
+          stepNext.first = true
         })
       return
     }
@@ -188,15 +188,15 @@ function nextStep(mode: string, steps: number) {
       emailRef.value
         ?.validate()
         .then(() => {
-          stepNext.value.first = false
+          stepNext.first = false
         })
         .catch(() => {
-          stepNext.value.first = true
+          stepNext.first = true
         })
       return
     }
     if (mode == '') {
-      stepNext.value.first = true
+      stepNext.first = true
       return
     }
   } else if (steps == 2) {
@@ -204,19 +204,19 @@ function nextStep(mode: string, steps: number) {
       imgCodeRef.value
         ?.validate()
         .then(() => {
-          stepNext.value.second = false
+          stepNext.second = false
         })
         .catch(() => {
-          stepNext.value.second = true
+          stepNext.second = true
         })
     } else if ('email') {
       emailCodeRef.value
         ?.validate()
         .then(() => {
-          stepNext.value.second = false
+          stepNext.second = false
         })
         .catch(() => {
-          stepNext.value.second = true
+          stepNext.second = true
         })
     }
     return
@@ -225,19 +225,19 @@ function nextStep(mode: string, steps: number) {
       phoneUpdateRef.value
         ?.validate()
         .then(() => {
-          stepNext.value.third = false
+          stepNext.third = false
         })
         .catch(() => {
-          stepNext.value.third = true
+          stepNext.third = true
         })
     } else if ('email') {
       emailUpdateRef.value
         ?.validate()
         .then(() => {
-          stepNext.value.third = false
+          stepNext.third = false
         })
         .catch(() => {
-          stepNext.value.third = true
+          stepNext.third = true
         })
     }
     return
@@ -246,39 +246,39 @@ function nextStep(mode: string, steps: number) {
 //根据模式判断下一步
 function modeNext() {
   if (phoneOrEmail.value) {
-    steps.value.mode = 'email'
-    steps.value.step = 2
+    steps.mode = 'email'
+    steps.step = 2
   } else {
-    steps.value.mode = 'phone'
-    steps.value.step = 2
+    steps.mode = 'phone'
+    steps.step = 2
   }
 }
 //切换找回模式
 function changeMode() {
   phoneOrEmail.value = !phoneOrEmail.value
-  phoneInfo.value.username = ''
-  emailInfo.value.username = ''
+  phoneInfo.username = ''
+  emailInfo.username = ''
   nextStep('', 1)
 }
 //发送图片验证码
 function sendImgCode() {
-  loading.value.imgCode = true
+  loading.imgCode = true
   server.post('/tool/getImageCode', {}, (data: BaseResult) => {
-    loading.value.imgCode = false
-    imgCode.value.url = data.message
+    loading.imgCode = false
+    imgCode.url = data.message
   })
 }
 sendImgCode()
 //发送手机验证码
 function sendPhoneCode() {
-  loading.value.phoneCode = true
+  loading.phoneCode = true
   server.post(
     '/tool/sendUserValidateCode',
-    { imageCode: phoneInfo.value.imgCode, username: phoneInfo.value.username },
+    { imageCode: phoneInfo.imgCode, username: phoneInfo.username },
     (data: BaseResult) => {
-      loading.value.phoneCode = false
+      loading.phoneCode = false
       if (data.success) {
-        steps.value.step = 3
+        steps.step = 3
         dialog.notifyInfo({
           content: data.message,
           duration: 2000,
@@ -291,9 +291,9 @@ function sendPhoneCode() {
           keepAliveOnHover: true,
         })
         sendImgCode()
-        phoneInfo.value.imgCode = ''
+        phoneInfo.imgCode = ''
         if (data.message == '验证码长期有效，无需重复发送') {
-          steps.value.step = 3
+          steps.step = 3
           return
         }
       }
@@ -303,24 +303,24 @@ function sendPhoneCode() {
 }
 //手机找回修改密码
 function updatePwdByPhone() {
-  loading.value.phonePwd = true
+  loading.phonePwd = true
   server.post(
     '/user/auth/findPwdByPhone',
     {
-      code: phoneInfo.value.code,
-      username: phoneInfo.value.username,
-      password: tools.md5(phoneInfo.value.password),
+      code: phoneInfo.code,
+      username: phoneInfo.username,
+      password: tools.md5(phoneInfo.password),
     },
     (data: BaseResult) => {
-      loading.value.phonePwd = false
+      loading.phonePwd = false
       if (data.success) {
         dialog.notifyInfo({
           content: data.message,
           duration: 2000,
           keepAliveOnHover: true,
         })
-        phoneInfo.value.password = ''
-        phoneInfo.value.okPwd = ''
+        phoneInfo.password = ''
+        phoneInfo.okPwd = ''
       } else {
         dialog.notifyWarning({
           content: data.message,
@@ -328,22 +328,22 @@ function updatePwdByPhone() {
           keepAliveOnHover: true,
         })
       }
-      phoneInfo.value.password = ''
-      phoneInfo.value.okPwd = ''
+      phoneInfo.password = ''
+      phoneInfo.okPwd = ''
     },
     true
   )
 }
 //发送邮箱验证码
 function sendEmailCode() {
-  loading.value.emailCode = true
+  loading.emailCode = true
   server.post(
     '/tool/sendUserEmailCode',
     {
-      username: emailInfo.value.username,
+      username: emailInfo.username,
     },
     (data: BaseResult) => {
-      loading.value.emailCode = false
+      loading.emailCode = false
       if (data.success) {
         dialog.notifyInfo({
           content: data.message,
@@ -363,24 +363,24 @@ function sendEmailCode() {
 }
 //邮箱找回修改密码
 function updatePwdByEmail() {
-  loading.value.emailPwd = true
+  loading.emailPwd = true
   server.post(
     '/user/auth/findPwdByEmail',
     {
-      code: emailInfo.value.code,
-      username: emailInfo.value.username,
-      password: tools.md5(emailInfo.value.password),
+      code: emailInfo.code,
+      username: emailInfo.username,
+      password: tools.md5(emailInfo.password),
     },
     (data: BaseResult) => {
-      loading.value.emailPwd = false
+      loading.emailPwd = false
       if (data.success) {
         dialog.notifyInfo({
           content: data.message,
           duration: 2000,
           keepAliveOnHover: true,
         })
-        emailInfo.value.password = ''
-        emailInfo.value.okPwd = ''
+        emailInfo.password = ''
+        emailInfo.okPwd = ''
       } else {
         dialog.notifyWarning({
           content: data.message,
@@ -393,18 +393,18 @@ function updatePwdByEmail() {
   )
 }
 function reset() {
-  steps.value.mode = 'phone'
-  steps.value.step = 1
-  for (const key in phoneInfo.value) {
-    phoneInfo.value[key] = ''
+  steps.mode = 'phone'
+  steps.step = 1
+  for (const key in phoneInfo) {
+    phoneInfo[key] = ''
   }
-  for (const key in emailInfo.value) {
-    emailInfo.value[key] = ''
+  for (const key in emailInfo) {
+    emailInfo[key] = ''
   }
 }
 </script>
 <template>
-  <div>
+  <div class="container">
     <header>
       <div class="header_title">
         <n-avatar round size="small" src="https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg"></n-avatar>
@@ -418,7 +418,7 @@ function reset() {
     </header>
 
     <main>
-      <n-card title="| 找回密码" style="padding: 4rem" hoverable>
+      <n-card title="| 找回密码" style="padding: 4rem">
         <n-form v-if="steps.step == 1">
           <n-form-item label="通过手机号找回" v-if="!phoneOrEmail" :rule="phoneRules.username" ref="phoneRef">
             <n-input placeholder="请输入用户名" v-model:value="phoneInfo.username" @update:value="nextStep('phone', 1)" maxlength="16" />
@@ -492,18 +492,22 @@ function reset() {
   </div>
 </template>
 <style scoped>
+.container {
+  background-color: rgb(246, 246, 246);
+  height: 100vh;
+}
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: hsla(0, 0%, 100%, 0.6);
   box-shadow: 0 0 10px rgb(0 0 0 / 20%);
-  padding: 15px 50px;
+  background-color: #fff;
+  padding: 12px 50px;
 }
 
 .header_title {
   display: flex;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   align-items: center;
 }
 

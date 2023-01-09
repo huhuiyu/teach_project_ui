@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { NButton, NCard, NForm, NFormItem, NInput, NRadio, NTabPane, NTabs, NRadioGroup, NSpace, NImage, NSpin, FormRules, FormItemRule, FormInst } from 'naive-ui'
+import { NButton, NCard, NForm, NFormItem, NInput, NRadio, NTabPane, NTabs, NRadioGroup, NSpace, NImage, NSpin, FormRules, FormItemRule, FormInst, NAvatar } from 'naive-ui'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseResult, { BaseDataResult } from '../../entity/BaseResult'
 import FileInfo from '../../entity/FileInfo'
@@ -17,7 +17,7 @@ const { loginUser } = storeToRefs(storeInfo)
 //路由
 const router = useRouter()
 // 用户附加信息
-const userInfo = ref({
+const userInfo = reactive({
   img: loginUser.value.tbUserInfo.img,
   nickname: loginUser.value.tbUser.nickname,
   qq: loginUser.value.tbUserInfo.qq,
@@ -29,12 +29,12 @@ const userInfo = ref({
 const lazyImg = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
 
 //相关设置状态
-const accountSetting = ref({
+const accountSetting = reactive({
   email: false,
   phone: false,
   pwd: false,
 })
-const loading = ref({
+const loading = reactive({
   userInfo: false,
   pwd: false,
   phone: false,
@@ -42,27 +42,27 @@ const loading = ref({
 })
 // 退出登录
 const logout = () => {
-  loading.value.userInfo = true
+  loading.userInfo = true
   server.post('/user/auth/logout', {}, () => {
     storeInfo.updateLoginUser(() => {
-      loading.value.userInfo = false
+      loading.userInfo = false
     })
   })
 }
 //修改用户信息
 const updateUserInfo = () => {
-  loading.value.userInfo = true
-  server.post('/user/auth/updateUserInfo', userInfo.value, (data: BaseResult) => {
+  loading.userInfo = true
+  server.post('/user/auth/updateUserInfo', userInfo, (data: BaseResult) => {
     dialog.notifyInfo({
       content: data.message,
       duration: 2000,
     })
     if (data.success) {
       storeInfo.updateLoginUser((userinfo: any) => {
-        loading.value.userInfo = false
+        loading.userInfo = false
       })
     }
-    loading.value.userInfo = false
+    loading.userInfo = false
   })
 }
 //上传文件信息
@@ -92,7 +92,7 @@ const upload = () => {
   if (upfileinfo.value.file == null) {
     return
   }
-  let fid = server.isDownloadUrl(userInfo.value.img)
+  let fid = server.isDownloadUrl(userInfo.img)
   server.upload(
     '/user/file/upload',
     upfileinfo.value.file,
@@ -101,7 +101,7 @@ const upload = () => {
     },
     (data: BaseDataResult) => {
       if (data.success) {
-        userInfo.value.img = server.getDownloadUrl(data.data.fid)
+        userInfo.img = server.getDownloadUrl(data.data.fid)
         updateUserInfo()
         if (fid != -1) {
           server.post('/user/file/delete', { fid: fid }, () => {})
@@ -116,7 +116,7 @@ const settingPhoneRef = ref<FormInst | null>(null)
 const settingEmailRef = ref<FormInst | null>(null)
 //确认两次密码是否相同
 function validatePasswordSame(rule: FormItemRule, value: string): boolean {
-  return value === pwdInfo.value.pwd
+  return value === pwdInfo.pwd
 }
 //修改密码表单验证
 const pwdRules: FormRules = {
@@ -153,7 +153,7 @@ const pwdRules: FormRules = {
 }
 
 // 修改密码信息
-const pwdInfo = ref({
+const pwdInfo = reactive({
   oldpwd: '',
   pwd: '',
   okPwd: '',
@@ -162,19 +162,19 @@ const pwdInfo = ref({
 const updatePwd = () => {
   settingPwdRef.value?.validate((errors) => {
     if (!errors) {
-      loading.value.pwd = true
+      loading.pwd = true
       server.post(
         '/user/auth/updatePwd',
         {
-          oldpwd: tools.md5(pwdInfo.value.oldpwd),
-          password: tools.md5(pwdInfo.value.pwd),
+          oldpwd: tools.md5(pwdInfo.oldpwd),
+          password: tools.md5(pwdInfo.pwd),
         },
         (data: BaseDataResult) => {
           dialog.notifyWarning({
             content: data.message,
             duration: 2000,
           })
-          loading.value.pwd = false
+          loading.pwd = false
         },
         true
       )
@@ -222,7 +222,7 @@ const phoneRules: FormRules = {
   ],
 }
 //修改手机信息
-const phoneInfo = ref({
+const phoneInfo = reactive({
   imgCode: '',
   imgUrl: '',
   newPhone: '',
@@ -230,11 +230,11 @@ const phoneInfo = ref({
 })
 // 发送图片验证码
 const sendImgCode = () => {
-  loading.value.phone = true
+  loading.phone = true
   server.post('/tool/getImageCode', {}, (data: BaseDataResult) => {
-    phoneInfo.value.imgUrl = data.message
+    phoneInfo.imgUrl = data.message
   })
-  loading.value.phone = false
+  loading.phone = false
 }
 sendImgCode()
 //发送手机验证码
@@ -256,12 +256,12 @@ const sendPhoneCode = () => {
           }
         )
         .then(() => {
-          loading.value.phone = true
+          loading.phone = true
           server.post(
             '/tool/sendValidateCode',
             {
-              imageCode: phoneInfo.value.imgCode,
-              phone: phoneInfo.value.newPhone,
+              imageCode: phoneInfo.imgCode,
+              phone: phoneInfo.newPhone,
             },
             (data: BaseDataResult) => {
               dialog.notifyWarning({
@@ -269,7 +269,7 @@ const sendPhoneCode = () => {
                 duration: 2000,
                 keepAliveOnHover: true,
               })
-              loading.value.phone = false
+              loading.phone = false
             },
             true
           )
@@ -300,12 +300,12 @@ const updatePhone = () => {
           }
         )
         .then((value) => {
-          loading.value.phone = true
+          loading.phone = true
           server.post(
             '/user/auth/updateUserPhone',
             {
-              code: phoneInfo.value.phoneCode,
-              phone: phoneInfo.value.newPhone,
+              code: phoneInfo.phoneCode,
+              phone: phoneInfo.newPhone,
             },
             (data: BaseDataResult) => {
               dialog.notifyWarning({
@@ -313,7 +313,7 @@ const updatePhone = () => {
                 duration: 2000,
                 keepAliveOnHover: true,
               })
-              loading.value.phone = false
+              loading.phone = false
             },
             true
           )
@@ -355,7 +355,7 @@ const EmailRules: FormRules = {
   ],
 }
 //修改邮箱信息
-const emailInfo = ref({
+const emailInfo = reactive({
   email: '',
   emailCode: '',
 })
@@ -364,17 +364,17 @@ const sendEmailCode = () => {
   settingEmailRef.value?.validate(
     (errors) => {
       if (!errors) {
-        loading.value.email = true
+        loading.email = true
         server.post(
           '/tool/sendEmailCode',
-          { email: emailInfo.value.email },
+          { email: emailInfo.email },
           (data: BaseDataResult) => {
             dialog.notifyWarning({
               content: data.message,
               duration: 2000,
               keepAliveOnHover: true,
             })
-            loading.value.email = false
+            loading.email = false
           },
           true
         )
@@ -390,17 +390,17 @@ const sendEmailCode = () => {
 const updateEmail = () => {
   settingEmailRef.value?.validate((errors) => {
     if (!errors) {
-      loading.value.email = true
+      loading.email = true
       server.post(
         '/user/auth/updateUserEmail',
-        { email: emailInfo.value.email, code: emailInfo.value.emailCode },
+        { email: emailInfo.email, code: emailInfo.emailCode },
         (data: BaseDataResult) => {
           dialog.notifyWarning({
             content: data.message,
             duration: 2000,
             keepAliveOnHover: true,
           })
-          loading.value.email = false
+          loading.email = false
         },
         true
       )
@@ -408,12 +408,33 @@ const updateEmail = () => {
     return
   })
 }
+const closeRules = (parameter: string) => {
+  if (parameter == 'email') {
+    accountSetting.email = !accountSetting.email
+    for (const key in emailInfo) {
+      emailInfo[key] = ''
+    }
+    settingEmailRef.value?.restoreValidation()
+  } else if (parameter == 'phone') {
+    phoneInfo.imgCode = ''
+    phoneInfo.phoneCode = ''
+    phoneInfo.newPhone = ''
+    accountSetting.phone = !accountSetting.phone
+    settingPhoneRef.value?.restoreValidation()
+  } else if (parameter == 'pwd') {
+    for (const key in pwdInfo) {
+      pwdInfo[key] = ''
+    }
+    accountSetting.pwd = !accountSetting.pwd
+    settingPwdRef.value?.restoreValidation()
+  }
+}
 </script>
 <template>
-  <div>
+  <div class="container">
     <header>
       <div class="header_title">
-        <div>logo </div>
+        <div><n-avatar round size="small" src="https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg"></n-avatar> </div>
         <div> 用户信息管理</div>
       </div>
       <div class="header_menu">
@@ -424,7 +445,7 @@ const updateEmail = () => {
       </div>
     </header>
     <main>
-      <n-card hoverable>
+      <n-card>
         <n-tabs type="line" size="large" :tabs-padding="20" pane-style="padding: 20px;" animated>
           <n-tab-pane name="个人资料">
             <n-spin size="large" :show="loading.userInfo">
@@ -479,7 +500,7 @@ const updateEmail = () => {
                 <n-form label-placement="left" label-width="auto" require-mark-placement="right-hanging" ref="settingEmailRef" :model="emailInfo" :rules="EmailRules">
                   <n-form-item label="绑定邮箱" path="email">
                     <n-input :placeholder="loginUser.tbUserInfo.email ? loginUser.tbUserInfo.email : '未绑定邮箱'" v-model:value="emailInfo.email" :disabled="!accountSetting.email" clearable />
-                    <n-button dashed @click="accountSetting.email = !accountSetting.email">
+                    <n-button dashed @click="closeRules('email')">
                       {{ accountSetting.email ? '收起' : '编辑' }}
                     </n-button>
                   </n-form-item>
@@ -496,7 +517,7 @@ const updateEmail = () => {
                 <n-form label-placement="left" label-width="auto" require-mark-placement="right-hanging" ref="settingPhoneRef" :model="phoneInfo" :rules="phoneRules">
                   <n-form-item label="绑定手机" path="newPhone">
                     <n-input :placeholder="loginUser.tbUserInfo.phone ? loginUser.tbUserInfo.phone : '未绑定手机'" v-model:value="phoneInfo.newPhone" :disabled="!accountSetting.phone" clearable :maxlength="11" />
-                    <n-button dashed @click="accountSetting.phone = !accountSetting.phone">
+                    <n-button dashed @click="closeRules('phone')">
                       {{ accountSetting.phone ? '收起' : '编辑' }}
                     </n-button>
                   </n-form-item>
@@ -517,14 +538,14 @@ const updateEmail = () => {
                 <n-form label-placement="left" label-width="auto" require-mark-placement="right-hanging" :model="pwdInfo" ref="settingPwdRef" :rules="pwdRules">
                   <n-form-item label="修改密码" path="oldpwd">
                     <n-input placeholder="原密码" v-model:value="pwdInfo.oldpwd" :disabled="!accountSetting.pwd" type="password" show-password-on="mousedown" :maxlength="16" :minlength="4" />
-                    <n-button dashed @click="accountSetting.pwd = !accountSetting.pwd">
+                    <n-button dashed @click="closeRules('pwd')">
                       {{ accountSetting.pwd ? '收起' : '编辑' }}
                     </n-button>
                   </n-form-item>
                   <n-form-item label="  " v-show="accountSetting.pwd" path="pwd">
                     <n-input placeholder="新密码" type="password" show-password-on="mousedown" v-model:value="pwdInfo.pwd" :maxlength="16" :minlength="4" />
                   </n-form-item>
-                  <n-form-item label="  " v-show="accountSetting.pwd" ref="settingPwdRef" path="okPwd">
+                  <n-form-item label="  " v-show="accountSetting.pwd" path="okPwd">
                     <n-input placeholder="确认密码" type="password" :disabled="!pwdInfo.pwd" show-password-on="mousedown" v-model:value="pwdInfo.okPwd" :maxlength="16" :minlength="4" />
                   </n-form-item>
                   <n-form-item label="  " v-show="accountSetting.pwd">
@@ -541,6 +562,10 @@ const updateEmail = () => {
 </template>
 
 <style scoped>
+.container {
+  background-color: rgb(246, 246, 246);
+  height: 100vh;
+}
 p {
   margin: 0;
 }
@@ -549,14 +574,14 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: hsla(0, 0%, 100%, 0.6);
+  background-color: #fff;
   box-shadow: 0 0 10px rgb(0 0 0 / 20%);
-  padding: 15px 50px;
+  padding: 12px 50px;
 }
 
 .header_title {
   display: flex;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .header_menu {
