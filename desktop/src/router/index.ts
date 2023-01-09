@@ -15,6 +15,10 @@ const routes: RouteRecordRaw[] = [
     path: '/chatroom',
     component: () => import('../view/ChatRoom.vue'),
   },
+  {
+    path: '/login',
+    component: () => import('../view/Login.vue'),
+  },
 ]
   .concat(testRouter)
   .concat(userRouter)
