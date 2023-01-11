@@ -7,6 +7,14 @@ const routes = [
     path: '/manage/employee',
     component: () => import('../view/manage/Employee.vue'),
   },
+  {
+    path: '/manage/class',
+    component: () => import('../view/classManage/ClassView.vue'),
+  },
+  {
+    path: '/manage/student',
+    component: () => import('../view/classManage/StudentView.vue'),
+  },
 ]
 
 export default routes
