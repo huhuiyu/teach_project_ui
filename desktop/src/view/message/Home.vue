@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NAvatar, NBackTop, NButton, NCard, NCarousel, NGi, NGrid, NList, NListItem, NMenu, NNumberAnimation, NSkeleton, NSpace, NTime } from 'naive-ui'
-import { reactive} from 'vue'
+import { reactive } from 'vue'
 import MessageTopNavComp from '../../component/MessageTopNavComp.vue'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
@@ -11,6 +11,7 @@ import { MessageDetail } from '../../entity/MessageDetailResult'
 import tools from '../../tools/tools'
 import PageComp from '../../component/PageComp.vue'
 import dialogApi from '../../tools/dialog'
+
 //pinia
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
@@ -27,6 +28,7 @@ const messageData = reactive({
   loading: false,
 })
 
+const lazyUrl = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
 //排序方式选项
 const orderByMenuOptions = [
   {
@@ -84,6 +86,9 @@ const queryMessageByUsername = (username: string) => {
       username: username,
     },
     (data: BaseListResult<MessageDetail>) => {
+      userMessage.hits = 0
+      userMessage.supportAll = 0
+      userMessage.list = []
       userMessage.list = data.list
       data.list.forEach((item) => {
         userMessage.supportAll += item.praiseCount
@@ -108,6 +113,7 @@ const supportMessage = (umid: string = '') => {
   if (noLoginTips()) {
     server.post('/message/support', { umid: umid }, (data: BaseResult) => {
       if (data.success) {
+        queryMessageByUsername(loginUser.value.tbUser.username)
         queryMessage()
         return
       }
@@ -156,7 +162,19 @@ const supportMessage = (umid: string = '') => {
             <n-card v-for="item in messageData.list" :key="item.uid" :bordered="false" class="message-item" size="small" v-else>
               <template #header>
                 <n-space align="center">
-                  <n-avatar round lazy :src="item.userInfo.img ? item.userInfo.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
+                  <div id="image-scroll-container">
+                    <n-space vertical>
+                      <n-avatar
+                        round
+                        lazy
+                        :src="item.userInfo.img ? item.userInfo.img : lazyUrl"
+                        :intersection-observer-options="{
+                          root: '#image-scroll-container',
+                        }"
+                        object-fit="cover"
+                      ></n-avatar>
+                    </n-space>
+                  </div>
                   <n-space vertical style="gap: 0px">
                     <div>{{ item.user.nickname }}</div>
                     <div style="font-size: 12px">{{ tools.formatDate(item.lastupdate) }}</div>
@@ -212,7 +230,12 @@ const supportMessage = (umid: string = '') => {
               </n-button>
             </n-space>
             <template #footer>
-              <n-button style="width: 100%" @click="router.push('/message/edit')">开始创作</n-button>
+              <n-button style="width: 100%" @click="router.push('/message/edit')">
+                <template #icon>
+                  <i class="iconfont">&#xe61d; </i>
+                </template>
+                开始创作
+              </n-button>
             </template>
           </n-card>
           <n-card style="margin-bottom: 12px">

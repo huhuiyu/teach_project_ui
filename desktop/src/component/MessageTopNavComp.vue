@@ -25,22 +25,25 @@ const options = [
     type: 'divider',
   },
   {
-    label: () => {
-      return h('span', { style: 'text-align: center;width:100%;' }, '我的主页')
-    },
+    label: '我的主页',
     key: 'personalHome ',
+    icon: () => {
+      return h('i', { class: 'iconfont', innerHTML: '&#xe6da;' })
+    },
   },
   {
-    label: () => {
-      return h('span', { style: 'text-align: center;width:100%;' }, '用户设置')
-    },
+    label: '用户设置',
     key: 'setup',
+    icon: () => {
+      return h('i', { class: 'iconfont', innerHTML: '&#xe602;' })
+    },
   },
   {
-    label: () => {
-      return h('span', { style: 'text-align: center;width:100%;' }, '退出登录')
-    },
+    label: '退出登录',
     key: 'logOut',
+    icon: () => {
+      return h('i', { class: 'iconfont', innerHTML: '&#xe612;' })
+    },
   },
 ]
 
@@ -112,9 +115,9 @@ const logOut = () => {
           <n-button text> 消息 </n-button>
           <n-button text> 私信 </n-button>
           <n-button Ghost @click="router.push('/message/edit')">
-            发布
+            创作中心
             <template #icon>
-              <i class="iconfont">&#xe657;</i>
+              <i class="iconfont">&#xe61d; </i>
             </template>
           </n-button>
         </n-space>
