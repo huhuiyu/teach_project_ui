@@ -3,6 +3,7 @@ import tools from '../tools/tools'
 import { NButton, NAvatar } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import { reactive } from 'vue'
+import logger from '../tools/logger'
 const router = useRouter()
 const title = '教学演示项目'
 tools.changeTitle('首页')
@@ -21,17 +22,30 @@ const list = reactive([
   },
   {
     img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
-    title: '班级学生管理、部门管理',
-    info: '教学任务中的联系',
-    path: '/test',
+    title: '部门管理',
+    info: '教学任务中的练习',
+    path: '/manage/dept',
   },
   {
     img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
-    title: '班级学生管理、部门管理',
-    info: '教学任务中的联系',
-    path: '/test',
+    title: '员工管理',
+    info: '教学任务中的练习',
+    path: '/manage/employee',
+  },
+  {
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '班级管理',
+    info: '教学任务中的练习',
+    path: '/manage/class',
+  },
+  {
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '学生管理',
+    info: '教学任务中的练习',
+    path: '/manage/student',
   },
 ])
+logger.debug('+++++++++++++++=', document.body.scrollTop)
 </script>
 
 <template>
@@ -122,6 +136,7 @@ main > div {
 }
 .conter_menu > div:last-child {
   padding: 1rem;
+  margin-bottom: 15%;
 }
 .conter_title {
   font-size: 1.5em;

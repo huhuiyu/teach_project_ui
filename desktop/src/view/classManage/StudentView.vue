@@ -329,8 +329,8 @@ function modifyClass() {
   <header> <h1>学生管理</h1> </header>
   <main>
     <n-form inline :label-width="80" :model="query.querys" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
-      <n-form-item label="选择班级"> <n-select v-model:value="query.querys.cid" :options="classList.list" @change="queryStudent()" placeholder="请选择班级" :consistent-menu-width="false" /> </n-form-item>
-      <n-form-item label="记录排序方式"><n-select v-model:value="query.querys.orderBy" :options="orderBy" @change="queryStudent()" /></n-form-item>
+      <n-form-item label="选择班级"> <n-select v-model:value="query.querys.cid" :options="classList.list" @update:value="queryStudent()" placeholder="请选择班级" :consistent-menu-width="false" /> </n-form-item>
+      <n-form-item label="记录排序方式"><n-select v-model:value="query.querys.orderBy" :options="orderBy" @update:value="queryStudent()" /></n-form-item>
       <n-form-item label="学生姓名">
         <n-input v-model:value="query.querys.sname" placeholder="输入学生姓名"> </n-input>
       </n-form-item>
