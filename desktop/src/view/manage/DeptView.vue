@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { FormInst, FormRules, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NPagination, NSpace, NSpin } from 'naive-ui'
+import { FormInst, FormRules, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NPagination, NSpace } from 'naive-ui'
 import { ref, h, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { BaseDataResult, BaseListResult, BaseResult, PageInfo } from '../../entity/BaseResult'
+import { BaseListResult, BaseResult, PageInfo } from '../../entity/BaseResult'
 import { DeptInfo } from '../../entity/DeptResult'
 import dialog from '../../tools/dialog'
-import logger from '../../tools/logger'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
 
@@ -212,7 +211,7 @@ function modifyDept() {
   modifyRef.value?.validate((error) => {
     if (!error) {
       server.post('/manage/dept/update', modifyInfo, (data: BaseResult) => {
-        deptData.loading =false
+        deptData.loading = false
         if (data.success) {
           queryDept()
           dialog.notifyInfo({

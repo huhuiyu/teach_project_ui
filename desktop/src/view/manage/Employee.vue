@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { orderBy } from 'lodash'
-import { FormInst, FormItemRule, FormRules, NButton, NDataTable, NDescriptionsItem, NForm, NFormItem, NInput, NModal, NPagination, NSelect, NSpace } from 'naive-ui'
+import { FormInst, FormItemRule, FormRules, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NPagination, NSelect, NSpace } from 'naive-ui'
 import { ref, h, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { BaseListResult, BaseResult, PageInfo } from '../../entity/BaseResult'
@@ -313,10 +312,10 @@ function modifyEmployee() {
     <main>
       <n-form inline :label-width="130" :model="employeeData.query" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
         <n-form-item label="部门排序">
-          <n-select v-model:value="employeeData.query.deptId" :options="deptData.list" @change="queryEmployee" placeholder="请选择部门" :consistent-menu-width="false" />
+          <n-select v-model:value="employeeData.query.deptId" :options="deptData.list" @update:value="queryEmployee" placeholder="请选择部门" :consistent-menu-width="false" />
         </n-form-item>
         <n-form-item label="记录排序方式">
-          <n-select v-model:value="employeeData.query.orderBy" :options="orderBy" @change="queryEmployee" />
+          <n-select v-model:value="employeeData.query.orderBy" :options="orderBy" @update:value="queryEmployee" />
         </n-form-item>
         <n-form-item label="员工名称模糊查询">
           <n-input v-model:value="employeeData.query.employeeName" placeholder="输入员工名称" />
