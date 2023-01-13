@@ -15,6 +15,10 @@ const routes = [
     path: '/test/comp/:comp',
     component: () => import('../view/test/TestComp.vue'),
   },
+  {
+    path: '/test/edit',
+    component: () => import('../view/test/TestWangEditor.vue'),
+  },
 ]
 
 let exportRouter = routes
