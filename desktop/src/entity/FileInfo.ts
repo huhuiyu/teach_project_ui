@@ -8,4 +8,6 @@ class FileInfo {
   name: string = ''
 }
 
+export { FileInfo as FileInfo }
+
 export default FileInfo

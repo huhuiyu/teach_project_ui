@@ -49,19 +49,24 @@ let tools = {
     }
   },
   // 打开文件选中对话框并获取文件
-  openFile: (cb: any) => {
-    let result = new FileInfo()
+  openFile: (cb: Function, accept: string = '') => {
     let file = document.createElement('input')
     file.setAttribute('type', 'file')
-    result.el = file
+    file.setAttribute('accept', accept)
+    file.setAttribute('multiple', 'multiple')
     // 文件改变事件
     file.addEventListener('change', () => {
       logger.debug('文件选中变化', file.files)
-      if (file.files && file.files.length == 1) {
-        tools.getFileInfo(file.files[0], result)
-        logger.debug('获取文件信息：', tools.getFileInfo(file.files[0]))
-        cb(result)
+      let files = new Array<FileInfo>()
+      if (file.files) {
+        for (let index = 0; index < file.files.length; index++) {
+          const elefile = file.files[index]
+          let result = tools.getFileInfo(elefile)
+          result.el = file
+          files.push(tools.getFileInfo(elefile))
+        }
       }
+      cb(files)
     })
     file.click()
   },

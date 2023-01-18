@@ -1,0 +1,132 @@
+<script setup lang="ts">
+import { reactive, onMounted, onUnmounted } from 'vue'
+import { BaseDataResult, BaseListResult, PageInfo } from '../entity/BaseResult'
+import { FileInfo } from '../entity/FileInfo'
+import { TbBucket, OssSign } from '../entity/OssInfo'
+import server from '../tools/server'
+import { NButton } from 'naive-ui'
+
+// import plupload from 'plupload'
+import logger from '../tools/logger'
+import tools from '../tools/tools'
+
+import { OssUploader, UploadOssInfo, OssUploadConfig } from '../tools/OssUploader'
+
+const viewInfo = reactive({
+  page: new PageInfo(),
+  list: new Array<TbBucket>(),
+  bucket: new TbBucket(),
+  filinfos: new Array<FileInfo>(),
+  loading: false,
+  uploadInfo: new Array<string>(),
+  uploadCount: 0,
+})
+
+let ossSign = new OssSign()
+
+// 查询bucket信息
+const queryBucket = () => {
+  server.post('/oss/bucket/queryAll', viewInfo.page, (data: BaseListResult<TbBucket>) => {
+    if (data.success) {
+      viewInfo.list = data.list
+    }
+  })
+}
+
+// 浏览文件
+const browseFile = () => {
+  viewInfo.filinfos.length = 0
+  tools.openFile((files: Array<FileInfo>) => {
+    viewInfo.filinfos = files
+  }, 'image/*')
+}
+
+const uploadFile = () => {
+  viewInfo.loading = true
+  viewInfo.uploadInfo.length = 0
+  // 获取签名
+  server.post('/oss/bucket/sign', { obid: viewInfo.bucket.obid }, (data: BaseDataResult) => {
+    if (!data.success) {
+      viewInfo.loading = false
+      return
+    }
+    ossSign = data.data
+    logger.debug('签名信息：', ossSign, '===文件信息：')
+    viewInfo.uploadCount = viewInfo.filinfos.length
+    // 组织上传信息
+    for (let index = 0; index < viewInfo.filinfos.length; index++) {
+      const fileinfo = viewInfo.filinfos[index]
+      let indexInfo = index == 0 ? '' : '-' + index
+      const objectName = ossSign.objectName + indexInfo + fileinfo.suffix
+      let ossuplader = new OssUploader(new OssUploadConfig(), new UploadOssInfo(ossSign.host, objectName, ossSign.policyBase64, ossSign.accessid, ossSign.signature), fileinfo)
+
+      ossuplader.uploader.bind('Init', () => {
+        logger.debug('upload初始化')
+      })
+
+      ossuplader.uploader.bind('FilesAdded', (uploader: plupload.Uploader, file: File) => {
+        logger.debug('upload添加文件', file)
+      })
+
+      ossuplader.uploader.bind('PostInit', () => {
+        logger.debug('upload初始化完成')
+      })
+
+      ossuplader.uploader.bind('Error', (uploader: plupload.Uploader, err: any) => {
+        logger.error('upload发生错误：', err)
+      })
+
+      ossuplader.uploader.bind('BeforeUpload', (uploader: plupload.Uploader, file: File) => {
+        logger.debug('开始上传:', file)
+        viewInfo.uploadInfo.push('开始上传：' + file.name)
+      })
+
+      // ossuplader.uploader.bind('UploadProgress', (uploader: any, file: File) => {
+      //   logger.debug('上传:', file)
+      // })
+
+      ossuplader.uploader.bind('FileUploaded', (uploader: plupload.Uploader, file: File) => {
+        logger.debug('上传完成：', file)
+        viewInfo.uploadInfo.push(file.name + '上传完毕')
+        viewInfo.uploadCount--
+      })
+      ossuplader.uploader.bind('UploadComplete', () => {
+        if (viewInfo.uploadCount <= 0) {
+          viewInfo.loading = false
+          clearFiles()
+          viewInfo.uploadInfo.push('所有文件上传完毕')
+        }
+      })
+      ossuplader.start()
+    }
+  })
+}
+
+const clearFiles = () => {
+  logger.debug('清除文件')
+  // viewInfo.filinfos.length = 0
+}
+
+queryBucket()
+</script>
+
+<template>
+  <div> oss上传 </div>
+  <div>
+    <div v-if="viewInfo.filinfos.length > 0">
+      <span v-for="d in viewInfo.filinfos" :key="d.name">{{ d.name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    </div>
+    <div v-else> 请选择上传的文件 </div>
+    <div>
+      <select class="mr05" v-model="viewInfo.bucket.obid">
+        <option :value="-1">请选择bucket</option>
+        <option v-for="d in viewInfo.list" :key="d.obid" :value="d.obid" :title="d.info">{{ d.bucketName }}</option>
+      </select>
+      <n-button class="mr05" id="ossupload_selectfiles" type="primary" size="medium" :disabled="viewInfo.loading" @click="browseFile">浏览文件...</n-button>
+      <n-button class="mr05" :disabled="viewInfo.filinfos.length == 0 || viewInfo.bucket.obid == -1 || viewInfo.loading" type="primary" size="medium" @click="uploadFile">上传</n-button>
+    </div>
+    <div>
+      <div v-for="d in viewInfo.uploadInfo">{{ d }}</div>
+    </div>
+  </div>
+</template>
