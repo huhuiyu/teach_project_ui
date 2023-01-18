@@ -3,10 +3,10 @@ import AjaxConfig from '../entity/AjaxConfig'
 import qs from 'qs'
 
 let serverInfo = {
-  url: 'http://127.0.0.1:30000',
-  websocket: 'ws://127.0.0.1:30000/ws/',
-  // url: 'https://service.huhuiyu.top/teach_project_service',
-  // websocket: 'wss://service.huhuiyu.top/teach_project_service/ws/',
+  // url: 'http://127.0.0.1:30000',
+  // websocket: 'ws://127.0.0.1:30000/ws/',
+  url: 'https://service.huhuiyu.top/teach_project_service',
+  websocket: 'wss://service.huhuiyu.top/teach_project_service/ws/',
   tokenKey: 'teach_project_service_token',
   saveToken: (data: any) => {
     if (data && data.token) {
