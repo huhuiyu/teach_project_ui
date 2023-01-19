@@ -48,11 +48,21 @@ class MessageReply {
 }
 
 /**
+ * 帖子关注列表
+ */
+class MessageFollow {
+  newMessage: number = 0
+  user: TbUser = new TbUser()
+  userInfo: TbUserInfo = new TbUserInfo()
+  userOtherInfo: UserOtherInfo = new UserOtherInfo()
+}
+
+/**
  * 留言板详情应答结果
  */
 class MessageDetailResult extends BaseListResult<MessageReply> {
   info: MessageDetail = new MessageDetail()
 }
 
-export { MessageDetail as MessageDetail, MessageDetailResult as MessageDetailResult, MessageReply as MessageReply }
+export { MessageDetail as MessageDetail, MessageDetailResult as MessageDetailResult, MessageReply as MessageReply, MessageFollow as MessageFollow }
 export default MessageDetailResult
