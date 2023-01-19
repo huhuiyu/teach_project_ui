@@ -150,7 +150,7 @@ const supportMessage = (umid: string = '') => {
         <n-gi span="4">
           <n-card>
             <n-menu v-model:value="messageData.queryInfo.orderBy" mode="horizontal" :options="orderByMenuOptions" @update:value="queryMessage" />
-            <n-card :bordered="false" style="dis" v-if="messageData.loading">
+            <n-card :bordered="false" v-if="messageData.loading">
               <n-space style="flex-wrap: nowrap">
                 <n-skeleton height="40px" circle />
                 <n-skeleton text :repeat="2" width="180px" />
@@ -161,7 +161,7 @@ const supportMessage = (umid: string = '') => {
             </n-card>
             <n-card v-for="item in messageData.list" :key="item.uid" :bordered="false" class="message-item" size="small" v-else>
               <template #header>
-                <n-space align="center">
+                <n-space align="center" @click="router.push(`/message/personal/${item.user.username}`)" style="cursor: pointer">
                   <div id="image-scroll-container">
                     <n-space vertical>
                       <n-avatar
