@@ -20,4 +20,13 @@ class OssSign {
   accessid: string = ''
 }
 
-export { TbBucket as TbBucket, OssSign as OssSign }
+class TbOssInfo {
+  obid: number = -1
+  objectName: string = ''
+  filename: string = ''
+  contentType: string = ''
+  filesize: number = 0
+  fileinfo: string = ''
+}
+
+export { TbBucket as TbBucket, OssSign as OssSign, TbOssInfo as TbOssInfo }

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { reactive, onMounted, onUnmounted } from 'vue'
-import { BaseDataResult, BaseListResult, PageInfo } from '../entity/BaseResult'
+import { reactive } from 'vue'
+import BaseResult, { BaseDataResult, BaseListResult, PageInfo } from '../entity/BaseResult'
 import { FileInfo } from '../entity/FileInfo'
-import { TbBucket, OssSign } from '../entity/OssInfo'
+import { TbBucket, OssSign, TbOssInfo } from '../entity/OssInfo'
 import server from '../tools/server'
 import { NButton } from 'naive-ui'
 
@@ -20,6 +20,7 @@ const viewInfo = reactive({
   loading: false,
   uploadInfo: new Array<string>(),
   uploadCount: 0,
+  fileinfo: '',
 })
 
 let ossSign = new OssSign()
@@ -87,24 +88,39 @@ const uploadFile = () => {
 
       ossuplader.uploader.bind('FileUploaded', (uploader: plupload.Uploader, file: File) => {
         logger.debug('上传完成：', file)
-        viewInfo.uploadInfo.push(file.name + '上传完毕')
-        viewInfo.uploadCount--
+        viewInfo.uploadInfo.push(file.name + '上传完毕，正在保存上传文件信息')
       })
       ossuplader.uploader.bind('UploadComplete', () => {
-        if (viewInfo.uploadCount <= 0) {
-          viewInfo.loading = false
-          clearFiles()
-          viewInfo.uploadInfo.push('所有文件上传完毕')
-        }
+        // 保存到数据库
+        let info = new TbOssInfo()
+        info.obid = viewInfo.bucket.obid
+        info.objectName = ossuplader.ossinfo.key
+        info.filename = ossuplader.fileinfo.name
+        info.filesize = ossuplader.fileinfo.size
+        info.fileinfo = viewInfo.fileinfo
+        info.contentType = ossuplader.fileinfo.fulltype
+        saveOssInfo(info)
       })
       ossuplader.start()
     }
   })
 }
 
+const saveOssInfo = (info: TbOssInfo) => {
+  server.post('/oss/ossinfo/add', info, (data: BaseResult) => {
+    viewInfo.uploadInfo.push('保存上传文件信息' + info.filename + '完毕')
+    viewInfo.uploadCount--
+    if (viewInfo.uploadCount <= 0) {
+      viewInfo.loading = false
+      clearFiles()
+      viewInfo.uploadInfo.push('所有文件上传完毕')
+    }
+  })
+}
+
 const clearFiles = () => {
   logger.debug('清除文件')
-  // viewInfo.filinfos.length = 0
+  viewInfo.filinfos.length = 0
 }
 
 queryBucket()
@@ -118,6 +134,9 @@ queryBucket()
     </div>
     <div v-else> 请选择上传的文件 </div>
     <div>
+      <div>
+        <input type="text" v-model="viewInfo.fileinfo" placeholder="文件描述信息" />
+      </div>
       <select class="mr05" v-model="viewInfo.bucket.obid">
         <option :value="-1">请选择bucket</option>
         <option v-for="d in viewInfo.list" :key="d.obid" :value="d.obid" :title="d.info">{{ d.bucketName }}</option>
