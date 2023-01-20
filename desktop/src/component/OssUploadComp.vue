@@ -36,7 +36,7 @@ const queryBucket = () => {
 
 // 浏览文件
 const browseFile = () => {
-  viewInfo.filinfos.length = 0
+  clearFiles()
   viewInfo.uploadInfo.length = 0
   tools.openFile((files: Array<FileInfo>) => {
     viewInfo.filinfos = files
@@ -47,7 +47,8 @@ const browseFile = () => {
       uploadInfo.percent = 0
       viewInfo.uploadInfo.push(uploadInfo)
     }
-  }, 'image/*')
+  })
+  // , 'image/*'
 }
 
 const uploadFile = () => {
@@ -56,6 +57,8 @@ const uploadFile = () => {
   server.post('/oss/bucket/sign', { obid: viewInfo.bucket.obid }, (data: BaseDataResult) => {
     if (!data.success) {
       viewInfo.loading = false
+      clearFiles()
+      viewInfo.uploadInfo.length = 0
       return
     }
     ossSign = data.data
@@ -149,7 +152,6 @@ const saveOssInfo = (info: TbOssInfo, index: number) => {
 const clearFiles = () => {
   logger.debug('清除文件')
   viewInfo.filinfos.length = 0
-  // viewInfo.uploadInfo.length = 0
 }
 
 queryBucket()
