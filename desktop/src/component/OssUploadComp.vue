@@ -36,7 +36,7 @@ const queryBucket = () => {
 
 // 浏览文件
 const browseFile = () => {
-  viewInfo.filinfos.length = 0
+  clearFiles()
   viewInfo.uploadInfo.length = 0
   tools.openFile((files: Array<FileInfo>) => {
     viewInfo.filinfos = files
@@ -47,7 +47,8 @@ const browseFile = () => {
       uploadInfo.percent = 0
       viewInfo.uploadInfo.push(uploadInfo)
     }
-  }, 'image/*')
+  })
+  // , 'image/*'
 }
 
 const uploadFile = () => {
@@ -56,6 +57,8 @@ const uploadFile = () => {
   server.post('/oss/bucket/sign', { obid: viewInfo.bucket.obid }, (data: BaseDataResult) => {
     if (!data.success) {
       viewInfo.loading = false
+      clearFiles()
+      viewInfo.uploadInfo.length = 0
       return
     }
     ossSign = data.data
@@ -82,6 +85,11 @@ const uploadFile = () => {
 
       ossuplader.uploader.bind('Error', (uploader: plupload.Uploader, err: any) => {
         logger.error('upload发生错误：', err)
+        viewInfo.uploadCount--
+        let uploadInfo = viewInfo.uploadInfo[index]
+        uploadInfo.info = '上传' + fileinfo.name + '发生错误'
+        uploadInfo.success = false
+        uploadInfo.errorInfo = err
       })
 
       ossuplader.uploader.bind('BeforeUpload', (uploader: plupload.Uploader, file: File) => {
@@ -104,15 +112,22 @@ const uploadFile = () => {
         uploadInfo.info = file.name + '上传完毕'
       })
       ossuplader.uploader.bind('UploadComplete', () => {
-        // 保存到数据库
-        let info = new TbOssInfo()
-        info.obid = viewInfo.bucket.obid
-        info.objectName = ossuplader.ossinfo.key
-        info.filename = ossuplader.fileinfo.name
-        info.filesize = ossuplader.fileinfo.size
-        info.fileinfo = viewInfo.fileinfo
-        info.contentType = ossuplader.fileinfo.fulltype
-        saveOssInfo(info, index)
+        let uploadInfo = viewInfo.uploadInfo[index]
+        if (uploadInfo.success) {
+          // 保存到数据库
+          let info = new TbOssInfo()
+          info.obid = viewInfo.bucket.obid
+          info.objectName = ossuplader.ossinfo.key
+          info.filename = ossuplader.fileinfo.name
+          info.filesize = ossuplader.fileinfo.size
+          info.fileinfo = viewInfo.fileinfo
+          info.contentType = ossuplader.fileinfo.fulltype
+          saveOssInfo(info, index)
+        }
+        if (viewInfo.uploadCount <= 0) {
+          viewInfo.loading = false
+          clearFiles()
+        }
       })
       ossuplader.start()
     }
@@ -137,7 +152,6 @@ const saveOssInfo = (info: TbOssInfo, index: number) => {
 const clearFiles = () => {
   logger.debug('清除文件')
   viewInfo.filinfos.length = 0
-  // viewInfo.uploadInfo.length = 0
 }
 
 queryBucket()
@@ -165,9 +179,10 @@ queryBucket()
       <!-- {{ viewInfo.uploadInfo }} -->
       <div class="pd10" v-for="d in viewInfo.uploadInfo">
         <div>{{ d.info }}</div>
-        <div>
+        <div v-if="d.success">
           <n-progress type="line" status="default" :indicator-placement="'inside'" :percentage="d.percent" />
         </div>
+        <div v-else> 上传发生错误: {{ d.errorInfo.message }} </div>
       </div>
     </div>
   </div>

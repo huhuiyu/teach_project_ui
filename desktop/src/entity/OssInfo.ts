@@ -32,6 +32,8 @@ class TbOssInfo {
 class UploadInfo {
   info: string = ''
   percent: number = 0
+  success: boolean = true
+  errorInfo: any = null
 }
 
 export { TbBucket as TbBucket, OssSign as OssSign, TbOssInfo as TbOssInfo, UploadInfo as UploadInfo }
