@@ -1,3 +1,7 @@
+import TbUser from './TbUser'
+import TbUserInfo from './TbUserInfo'
+import UserOtherInfo from './UserOtherInfo'
+
 /**
  * 后端基本应答类型
  */
@@ -12,6 +16,11 @@ class BaseResult {
  */
 class BaseDataResult extends BaseResult {
   data: any
+}
+class BaseUserInfoResult extends BaseResult {
+  tbUser: TbUser = new TbUser()
+  tbUserInfo: TbUserInfo = new TbUserInfo()
+  userOtherInfo: UserOtherInfo = new UserOtherInfo()
 }
 
 /**
@@ -32,6 +41,6 @@ class PageInfo {
   pageSize: number = 10
 }
 
-export { BaseResult as BaseResult, BaseDataResult as BaseDataResult, BaseListResult as BaseListResult, PageInfo as PageInfo }
+export { BaseResult as BaseResult, BaseDataResult as BaseDataResult, BaseListResult as BaseListResult, PageInfo as PageInfo, BaseUserInfoResult as BaseUserInfoResult }
 
 export default BaseResult

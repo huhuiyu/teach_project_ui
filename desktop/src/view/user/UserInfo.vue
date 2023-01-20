@@ -39,6 +39,7 @@ const loading = reactive({
   pwd: false,
   phone: false,
   email: false,
+  uploadfile: false,
 })
 // 退出登录
 const logout = () => {
@@ -71,25 +72,34 @@ const upfileinfo = ref(new FileInfo())
 const browserFile = () => {
   upfileinfo.value = new FileInfo()
   tools.openFile((file: FileInfo) => {
-    upfileinfo.value = file
-    if (file.file == null) {
+    upfileinfo.value = file[0]
+    if (file[0].file == null) {
       return
     }
-    tools.readImg(file.file, (result: string) => {
-      if (result == '')
+    tools.readImg(file[0].file, (result: string) => {
+      if (result == '') {
         dialog.notifyWarning({
           content: '头像只能选择图片',
           duration: 2000,
           keepAliveOnHover: true,
         })
-      return
+        return
+      }
+      upload()
     })
-    upload()
   })
 }
 //上传文件，修改头像，删除之前头像
 const upload = () => {
   if (upfileinfo.value.file == null) {
+    return
+  }
+  if (upfileinfo.value.size >= 2097152) {
+    dialog.notifyWarning({
+      content: '图片大小不能超过2MB',
+      duration: 2000,
+      keepAliveOnHover: true,
+    })
     return
   }
   let fid = server.isDownloadUrl(userInfo.img)
@@ -104,7 +114,9 @@ const upload = () => {
         userInfo.img = server.getDownloadUrl(data.data.fid)
         updateUserInfo()
         if (fid != -1) {
-          server.post('/user/file/delete', { fid: fid }, () => {})
+          server.post('/user/file/delete', { fid }, (data: any) => {
+            logger.debug(data)
+          })
         }
       }
     }
