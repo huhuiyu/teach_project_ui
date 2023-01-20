@@ -44,7 +44,7 @@ const login = () => {
   server.post(
     '/user/auth/login',
     {
-      username: 'user',
+      username: 'LongYa_Shadow',
       password: tools.md5(password.value),
     },
     (data: any) => {
@@ -67,7 +67,7 @@ const errorLogin = () => {
   server.post(
     '/user/auth/login',
     {
-      username: 'user',
+      username: 'LongYa_Shadow',
       password: '',
     },
     (data: any) => {

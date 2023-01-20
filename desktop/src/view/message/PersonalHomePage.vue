@@ -5,8 +5,9 @@ import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MessageTopNavComp from '../../component/MessageTopNavComp.vue'
 import PageComp from '../../component/PageComp.vue'
-import BaseResult, { BaseDataResult, BaseListResult, PageInfo, BaseUserInfoResult } from '../../entity/BaseResult'
+import BaseResult, { BaseDataResult, BaseListResult, PageInfo, BaseUserInfoResult, BaseCityInfoResult } from '../../entity/BaseResult'
 import FileInfo from '../../entity/FileInfo'
+import { CityInfo } from '../../entity/CityInfo'
 import { MessageDetail, MessageReply, MessageFollow } from '../../entity/MessageDetailResult'
 import store from '../../store'
 import dialogApi from '../../tools/dialog'
@@ -359,6 +360,17 @@ const followUser = (username: string) => {
     queryUserInfoByUsername()
   })
 }
+const cityInfo = reactive({
+  ip: '',
+  data: new CityInfo(),
+})
+// 获取ip
+const getIPCityInfo = () => {
+  server.post('/api/queryIpCtiyInfo', {}, (data: BaseCityInfoResult) => {
+    cityInfo.data = data.data
+  })
+}
+getIPCityInfo()
 </script>
 <template>
   <div class="container">
@@ -370,9 +382,11 @@ const followUser = (username: string) => {
           <div class="headerSpace">
             <div class="avatarParent" v-if="loginUser.tbUser.username == toolsData.username">
               <n-avatar class="avatarUser" bordered object-fit="cover" color="#fff" :size="140" :fallback-src="lazyImg" :src="userInfo.img ? userInfo.img : lazyImg" @click="browserFile"> </n-avatar>
+              <div class="ip"><i class="iconfont"> &#xe619; </i> {{ cityInfo.data.city }}</div>
             </div>
             <div class="avatarParent" v-else>
               <n-avatar class="avatar" bordered object-fit="cover" color="#fff" :size="140" :fallback-src="lazyImg" :src="userInfo.img ? userInfo.img : lazyImg"> </n-avatar>
+              <div class="ip"><i class="iconfont"> &#xe619; </i> {{ cityInfo.data.city }}</div>
             </div>
             <n-space style="margin-left: 150px" justify="space-between" align="center" v-if="!obj.editUserinfo">
               <div>
@@ -405,7 +419,9 @@ const followUser = (username: string) => {
                 <template #header>
                   <!-- <div class="tr mr10"> </div> -->
                   <n-space align="center" justify="space-between">
-                    <div style="font-size: 24px"><strong>{{ loginUser.tbUser.username }}</strong></div>
+                    <div style="font-size: 24px"
+                      ><strong>{{ loginUser.tbUser.username }}</strong></div
+                    >
                     <n-button text @click="obj.editUserinfo = !obj.editUserinfo"> 返回我的主页 <i class="iconfont" style="font-size: 16px">&#xe79c;</i></n-button>
                   </n-space>
                 </template>
@@ -700,6 +716,15 @@ header .n-card .avatarParent {
   top: -80px;
   z-index: 10;
   cursor: pointer;
+}
+.avatarParent .ip {
+  position: absolute;
+  top: -5rem;
+  color: #fff;
+  background-color: rgba(246, 246, 246, 0.3);
+  line-height: 1.5;
+  border-radius: 5px;
+  right: 0;
 }
 .avatarUser::before {
   content: '\e8bc';
