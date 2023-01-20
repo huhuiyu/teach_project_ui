@@ -29,4 +29,9 @@ class TbOssInfo {
   fileinfo: string = ''
 }
 
-export { TbBucket as TbBucket, OssSign as OssSign, TbOssInfo as TbOssInfo }
+class UploadInfo {
+  info: string = ''
+  percent: number = 0
+}
+
+export { TbBucket as TbBucket, OssSign as OssSign, TbOssInfo as TbOssInfo, UploadInfo as UploadInfo }

@@ -2,9 +2,9 @@
 import { reactive } from 'vue'
 import BaseResult, { BaseDataResult, BaseListResult, PageInfo } from '../entity/BaseResult'
 import { FileInfo } from '../entity/FileInfo'
-import { TbBucket, OssSign, TbOssInfo } from '../entity/OssInfo'
+import { TbBucket, OssSign, TbOssInfo, UploadInfo } from '../entity/OssInfo'
 import server from '../tools/server'
-import { NButton } from 'naive-ui'
+import { NButton, NProgress } from 'naive-ui'
 
 // import plupload from 'plupload'
 import logger from '../tools/logger'
@@ -18,7 +18,7 @@ const viewInfo = reactive({
   bucket: new TbBucket(),
   filinfos: new Array<FileInfo>(),
   loading: false,
-  uploadInfo: new Array<string>(),
+  uploadInfo: new Array<UploadInfo>(),
   uploadCount: 0,
   fileinfo: '',
 })
@@ -37,14 +37,21 @@ const queryBucket = () => {
 // 浏览文件
 const browseFile = () => {
   viewInfo.filinfos.length = 0
+  viewInfo.uploadInfo.length = 0
   tools.openFile((files: Array<FileInfo>) => {
     viewInfo.filinfos = files
+    for (let index = 0; index < viewInfo.filinfos.length; index++) {
+      const fileinfo = viewInfo.filinfos[index]
+      let uploadInfo = new UploadInfo()
+      uploadInfo.info = '文件名：' + fileinfo.name
+      uploadInfo.percent = 0
+      viewInfo.uploadInfo.push(uploadInfo)
+    }
   }, 'image/*')
 }
 
 const uploadFile = () => {
   viewInfo.loading = true
-  viewInfo.uploadInfo.length = 0
   // 获取签名
   server.post('/oss/bucket/sign', { obid: viewInfo.bucket.obid }, (data: BaseDataResult) => {
     if (!data.success) {
@@ -79,16 +86,22 @@ const uploadFile = () => {
 
       ossuplader.uploader.bind('BeforeUpload', (uploader: plupload.Uploader, file: File) => {
         logger.debug('开始上传:', file)
-        viewInfo.uploadInfo.push('开始上传：' + file.name)
+        let uploadInfo = viewInfo.uploadInfo[index]
+        uploadInfo.info = '开始上传：' + file.name
+        uploadInfo.percent = 0
       })
 
-      // ossuplader.uploader.bind('UploadProgress', (uploader: any, file: File) => {
-      //   logger.debug('上传:', file)
-      // })
+      ossuplader.uploader.bind('UploadProgress', (uploader: any, file: any) => {
+        let uploadInfo = viewInfo.uploadInfo[index]
+        uploadInfo.percent = file.percent
+        logger.debug('上传:', file)
+      })
 
       ossuplader.uploader.bind('FileUploaded', (uploader: plupload.Uploader, file: File) => {
         logger.debug('上传完成：', file)
-        viewInfo.uploadInfo.push(file.name + '上传完毕，正在保存上传文件信息')
+        let uploadInfo = viewInfo.uploadInfo[index]
+        uploadInfo.percent = 100
+        uploadInfo.info = file.name + '上传完毕'
       })
       ossuplader.uploader.bind('UploadComplete', () => {
         // 保存到数据库
@@ -99,21 +112,24 @@ const uploadFile = () => {
         info.filesize = ossuplader.fileinfo.size
         info.fileinfo = viewInfo.fileinfo
         info.contentType = ossuplader.fileinfo.fulltype
-        saveOssInfo(info)
+        saveOssInfo(info, index)
       })
       ossuplader.start()
     }
   })
 }
 
-const saveOssInfo = (info: TbOssInfo) => {
+const saveOssInfo = (info: TbOssInfo, index: number) => {
   server.post('/oss/ossinfo/add', info, (data: BaseResult) => {
-    viewInfo.uploadInfo.push('保存上传文件信息' + info.filename + '完毕')
+    let uploadInfo = viewInfo.uploadInfo[index]
+    uploadInfo.percent = 100
+    uploadInfo.info = '保存上传文件信息' + info.filename + '完毕'
+
     viewInfo.uploadCount--
     if (viewInfo.uploadCount <= 0) {
       viewInfo.loading = false
       clearFiles()
-      viewInfo.uploadInfo.push('所有文件上传完毕')
+      // viewInfo.uploadInfo.push('所有文件上传完毕')
     }
   })
 }
@@ -121,6 +137,7 @@ const saveOssInfo = (info: TbOssInfo) => {
 const clearFiles = () => {
   logger.debug('清除文件')
   viewInfo.filinfos.length = 0
+  // viewInfo.uploadInfo.length = 0
 }
 
 queryBucket()
@@ -129,10 +146,10 @@ queryBucket()
 <template>
   <div> oss上传 </div>
   <div>
-    <div v-if="viewInfo.filinfos.length > 0">
+    <!-- <div v-if="viewInfo.filinfos.length > 0">
       <span v-for="d in viewInfo.filinfos" :key="d.name">{{ d.name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    </div>
-    <div v-else> 请选择上传的文件 </div>
+    </div> -->
+    <!-- <div v-else> 请选择上传的文件 </div> -->
     <div>
       <div>
         <input type="text" v-model="viewInfo.fileinfo" placeholder="文件描述信息" />
@@ -145,7 +162,13 @@ queryBucket()
       <n-button class="mr05" :disabled="viewInfo.filinfos.length == 0 || viewInfo.bucket.obid == -1 || viewInfo.loading" type="primary" size="medium" @click="uploadFile">上传</n-button>
     </div>
     <div>
-      <div v-for="d in viewInfo.uploadInfo">{{ d }}</div>
+      <!-- {{ viewInfo.uploadInfo }} -->
+      <div class="pd10" v-for="d in viewInfo.uploadInfo">
+        <div>{{ d.info }}</div>
+        <div>
+          <n-progress type="line" status="default" :indicator-placement="'inside'" :percentage="d.percent" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
