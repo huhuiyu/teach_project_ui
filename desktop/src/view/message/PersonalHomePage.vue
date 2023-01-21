@@ -371,6 +371,34 @@ const getIPCityInfo = () => {
   })
 }
 getIPCityInfo()
+//删除动态
+const delUserMessage = (umid: string) => {
+  toolsData.loading.mainLeft = true
+  server.post('/message/manage/deletUserMessage', { umid }, (data: BaseResult) => {
+    toolsData.loading.mainLeft = false
+    if (data.success) {
+      dialogApi.notifyInfo({
+        content: data.message,
+        duration: 2000,
+        keepAliveOnHover: true,
+      })
+    }
+  })
+}
+//删除评论
+const delUserComment = (umrid: string) => {
+  toolsData.loading.mainLeft = true
+  server.post('/message/manage/deletUserMessageReply', { umrid }, (data: BaseResult) => {
+    toolsData.loading.mainLeft = false
+    if (data.success) {
+      dialogApi.notifyInfo({
+        content: data.message,
+        duration: 2000,
+        keepAliveOnHover: true,
+      })
+    }
+  })
+}
 </script>
 <template>
   <div class="container">
@@ -531,6 +559,12 @@ getIPCityInfo()
                         <i class="iconfont">&#xe630;</i>
                       </template>
                     </n-button>
+                    <n-button text v-if="loginUser.tbUser.username == toolsData.username" @click="delUserMessage(item.umid + '')">
+                      删除
+                      <template #icon>
+                        <i class="iconfont">&#xe61c;</i>
+                      </template>
+                    </n-button>
                   </n-space>
                 </template>
               </n-card>
@@ -571,6 +605,12 @@ getIPCityInfo()
                       {{ item.praiseCount }}点赞
                       <template #icon>
                         <i class="iconfont">&#xec7f;</i>
+                      </template>
+                    </n-button>
+                    <n-button text v-if="loginUser.tbUser.username == toolsData.username" @click="delUserComment(item.umrid + '')">
+                      删除
+                      <template #icon>
+                        <i class="iconfont">&#xe61c;</i>
                       </template>
                     </n-button>
                   </n-space>
