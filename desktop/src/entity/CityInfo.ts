@@ -9,5 +9,6 @@ class CityInfo {
   nation: string = ''
   province: string = ''
   status: string = ''
+  constructor() {}
 }
 export { CityInfo as CityInfo }

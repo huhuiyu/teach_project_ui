@@ -1,3 +1,4 @@
+import { CityInfo } from './CityInfo'
 import TbUser from './TbUser'
 import TbUserInfo from './TbUserInfo'
 import UserOtherInfo from './UserOtherInfo'
@@ -22,6 +23,9 @@ class BaseUserInfoResult extends BaseResult {
   tbUserInfo: TbUserInfo = new TbUserInfo()
   userOtherInfo: UserOtherInfo = new UserOtherInfo()
 }
+class BaseCityInfoResult extends BaseResult {
+  data: CityInfo = new CityInfo()
+}
 
 /**
  * 带分页查询的应答类型
@@ -41,6 +45,6 @@ class PageInfo {
   pageSize: number = 10
 }
 
-export { BaseResult as BaseResult, BaseDataResult as BaseDataResult, BaseListResult as BaseListResult, PageInfo as PageInfo, BaseUserInfoResult as BaseUserInfoResult }
+export { BaseResult as BaseResult, BaseDataResult as BaseDataResult, BaseListResult as BaseListResult, PageInfo as PageInfo, BaseUserInfoResult as BaseUserInfoResult, BaseCityInfoResult as BaseCityInfoResult }
 
 export default BaseResult
