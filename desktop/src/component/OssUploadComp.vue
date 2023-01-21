@@ -54,7 +54,7 @@ const browseFile = () => {
 const uploadFile = () => {
   viewInfo.loading = true
   // 获取签名
-  server.post('/oss/bucket/sign', { obid: viewInfo.bucket.obid }, (data: BaseDataResult) => {
+  server.post('/oss/bucket/sign', { obid: viewInfo.bucket.obid }, (data: BaseDataResult<OssSign>) => {
     if (!data.success) {
       viewInfo.loading = false
       clearFiles()
