@@ -15,16 +15,14 @@ class BaseResult {
 /**
  * 带数据的应答类型
  */
-class BaseDataResult extends BaseResult {
-  data: any
+class BaseDataResult<T> extends BaseResult {
+  data!: T
 }
+
 class BaseUserInfoResult extends BaseResult {
   tbUser: TbUser = new TbUser()
   tbUserInfo: TbUserInfo = new TbUserInfo()
   userOtherInfo: UserOtherInfo = new UserOtherInfo()
-}
-class BaseCityInfoResult extends BaseResult {
-  data: CityInfo = new CityInfo()
 }
 
 /**
@@ -33,6 +31,15 @@ class BaseCityInfoResult extends BaseResult {
 class BaseListResult<T> extends BaseResult {
   page: PageInfo = new PageInfo()
   list: Array<T> = []
+}
+
+/**
+ * 带分页查询的和应答数据的类型
+ */
+class BaseDataListResult<T, K> extends BaseResult {
+  page: PageInfo = new PageInfo()
+  list: Array<T> = []
+  data!: K
 }
 
 /**
@@ -45,6 +52,6 @@ class PageInfo {
   pageSize: number = 10
 }
 
-export { BaseResult as BaseResult, BaseDataResult as BaseDataResult, BaseListResult as BaseListResult, PageInfo as PageInfo, BaseUserInfoResult as BaseUserInfoResult, BaseCityInfoResult as BaseCityInfoResult }
+export { BaseResult as BaseResult, BaseDataResult as BaseDataResult, BaseListResult as BaseListResult, PageInfo as PageInfo, BaseUserInfoResult as BaseUserInfoResult }
 
 export default BaseResult

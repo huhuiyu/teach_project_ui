@@ -5,7 +5,7 @@ import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MessageTopNavComp from '../../component/MessageTopNavComp.vue'
 import PageComp from '../../component/PageComp.vue'
-import BaseResult, { BaseDataResult, BaseListResult, PageInfo, BaseUserInfoResult, BaseCityInfoResult } from '../../entity/BaseResult'
+import BaseResult, { BaseDataResult, BaseListResult, PageInfo, BaseUserInfoResult } from '../../entity/BaseResult'
 import FileInfo from '../../entity/FileInfo'
 import { CityInfo } from '../../entity/CityInfo'
 import { MessageDetail, MessageReply, MessageFollow } from '../../entity/MessageDetailResult'
@@ -231,7 +231,7 @@ const upload = () => {
     {
       fileinfo: loginUser.value.tbUser.nickname + '的头像',
     },
-    (data: BaseDataResult) => {
+    (data: BaseDataResult<any>) => {
       if (data.success) {
         userInfo.img = server.getDownloadUrl(data.data.fid)
         updateUserInfo()
@@ -366,7 +366,7 @@ const cityInfo = reactive({
 })
 // 获取ip
 const getIPCityInfo = () => {
-  server.post('/api/queryIpCtiyInfo', {}, (data: BaseCityInfoResult) => {
+  server.post('/api/queryIpCtiyInfo', {}, (data: BaseDataResult<CityInfo>) => {
     cityInfo.data = data.data
   })
 }
