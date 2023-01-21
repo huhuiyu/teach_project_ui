@@ -15,6 +15,10 @@ const routes = [
     path: '/manage/student',
     component: () => import('../view/classManage/StudentView.vue'),
   },
+  {
+    path: '/manage/file',
+    component: () => import('../view/manage/FileManagement.vue'),
+  },
 ]
 
 export default routes

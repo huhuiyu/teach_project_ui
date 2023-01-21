@@ -171,6 +171,23 @@ let tools = {
     }
     return json
   },
+  //复制文本到剪切板
+  copyText(text: string | number) {
+    let result: boolean = false
+    //创建文本框并设置内容
+    let input = document.createElement('input')
+    input.value = text + ''
+    input.readOnly = true
+    document.body.append(input)
+    //添加到页面并全选
+    input.focus()
+    input.select()
+    input.setSelectionRange(0, input.value.length) //兼容苹果
+    //调用浏览器的复制功能并移除文本框
+    result = document.execCommand('copy')
+    document.body.removeChild(input)
+    return result
+  },
 }
 
 export default tools
