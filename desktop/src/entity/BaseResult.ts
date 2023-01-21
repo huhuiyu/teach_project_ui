@@ -34,12 +34,12 @@ class BaseListResult<T> extends BaseResult {
 }
 
 /**
- * 带分页查询的和应答数据的类型
+ * 带分页查询的和info数据的类型
  */
 class BaseDataListResult<T, K> extends BaseResult {
   page: PageInfo = new PageInfo()
   list: Array<T> = []
-  data!: K
+  info!: K
 }
 
 /**
