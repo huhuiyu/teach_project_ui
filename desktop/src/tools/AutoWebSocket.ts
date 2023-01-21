@@ -3,7 +3,7 @@ import logger from './logger'
 /**
  * 时间戳回应信息
  */
-const TIMESTAMP_RESPONSE = 'teach_manage_service_timestamp'
+const TIMESTAMP_RESPONSE = 'teach_project_service_timestamp'
 /**
  * 自动重连的websocket对象
  */
