@@ -5,6 +5,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseResult, { BaseDataResult } from '../../entity/BaseResult'
 import FileInfo from '../../entity/FileInfo'
+import { FileInfoResult } from '../../entity/FileResult'
 import store from '../../store'
 import dialog from '../../tools/dialog'
 import logger from '../../tools/logger'
@@ -109,7 +110,7 @@ const upload = () => {
     {
       fileinfo: loginUser.value.tbUser.nickname + '的头像',
     },
-    (data: BaseDataResult) => {
+    (data: BaseDataResult<FileInfoResult>) => {
       if (data.success) {
         userInfo.img = server.getDownloadUrl(data.data.fid)
         updateUserInfo()
@@ -181,7 +182,7 @@ const updatePwd = () => {
           oldpwd: tools.md5(pwdInfo.oldpwd),
           password: tools.md5(pwdInfo.pwd),
         },
-        (data: BaseDataResult) => {
+        (data: BaseResult) => {
           dialog.notifyWarning({
             content: data.message,
             duration: 2000,
@@ -243,7 +244,7 @@ const phoneInfo = reactive({
 // 发送图片验证码
 const sendImgCode = () => {
   loading.phone = true
-  server.post('/tool/getImageCode', {}, (data: BaseDataResult) => {
+  server.post('/tool/getImageCode', {}, (data: BaseResult) => {
     phoneInfo.imgUrl = data.message
   })
   loading.phone = false
@@ -275,7 +276,7 @@ const sendPhoneCode = () => {
               imageCode: phoneInfo.imgCode,
               phone: phoneInfo.newPhone,
             },
-            (data: BaseDataResult) => {
+            (data: BaseResult) => {
               dialog.notifyWarning({
                 content: data.message,
                 duration: 2000,
@@ -319,7 +320,7 @@ const updatePhone = () => {
               code: phoneInfo.phoneCode,
               phone: phoneInfo.newPhone,
             },
-            (data: BaseDataResult) => {
+            (data: BaseResult) => {
               dialog.notifyWarning({
                 content: data.message,
                 duration: 2000,
@@ -380,7 +381,7 @@ const sendEmailCode = () => {
         server.post(
           '/tool/sendEmailCode',
           { email: emailInfo.email },
-          (data: BaseDataResult) => {
+          (data: BaseResult) => {
             dialog.notifyWarning({
               content: data.message,
               duration: 2000,
@@ -406,7 +407,7 @@ const updateEmail = () => {
       server.post(
         '/user/auth/updateUserEmail',
         { email: emailInfo.email, code: emailInfo.emailCode },
-        (data: BaseDataResult) => {
+        (data: BaseResult) => {
           dialog.notifyWarning({
             content: data.message,
             duration: 2000,

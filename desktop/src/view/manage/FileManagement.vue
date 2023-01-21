@@ -199,7 +199,7 @@ const upload = () => {
     })
     return
   }
-  server.upload('/user/file/upload', addFileInfo.file.file, { fileinfo: addFileInfo.fileinfo }, (data: BaseDataResult) => {
+  server.upload('/user/file/upload', addFileInfo.file.file, { fileinfo: addFileInfo.fileinfo }, (data: BaseDataResult<FileInfoResult>) => {
     if (data.success) {
       dialog.messageInfo(data.message)
     }
