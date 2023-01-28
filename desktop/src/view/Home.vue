@@ -12,7 +12,7 @@ const list = reactive([
     img: '',
     title: '简易留言板',
     info: '简介、多平台的留言板项目',
-    path: '/test',
+    path: '/message/home',
   },
   {
     img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
