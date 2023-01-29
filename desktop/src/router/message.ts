@@ -15,6 +15,10 @@ const routes = [
     path: '/message/personal/:username',
     component: () => import('../view/message/PersonalHomePage.vue'),
   },
+  {
+    path: '/message/manage',
+    component: () => import('../view/message/MessageManage.vue'),
+  },
 ]
 
 export default routes
