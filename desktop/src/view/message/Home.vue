@@ -120,6 +120,10 @@ const supportMessage = (umid: string = '') => {
     })
   }
 }
+// 点击跳留言详情页面
+const messageList = (umid: number) => {
+  router.push({ path: '/message/edits', query: { umid: umid } })
+}
 
 //未登录提示
 </script>
@@ -181,7 +185,7 @@ const supportMessage = (umid: string = '') => {
                   </n-space>
                 </n-space>
               </template>
-              <n-button text size="large" style="margin-left: 2.7rem">
+              <n-button @click="messageList(item.umid)" text size="large" style="margin-left: 2.7rem">
                 {{ item.title }}
               </n-button>
               <template #footer>
@@ -310,6 +314,7 @@ main {
 .n-carousel {
   width: 60%;
   margin: 1rem auto;
+  cursor: pointer;
   margin-bottom: 0;
 }
 .carousel-img {
