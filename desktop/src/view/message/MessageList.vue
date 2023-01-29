@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { NAvatar, NButton, NCard, NTime, NGi, NInput, NTabs, NTabPane, NGrid, NSkeleton, NSpace } from 'naive-ui'
-import { useRoute } from 'vue-router'
+import { NBackTop, NEmpty, NAvatar, NButton, NCard, NTime, NGi, NInput, NTabs, NTabPane, NGrid, NSkeleton, NSpace } from 'naive-ui'
+import { useRoute, useRouter } from 'vue-router'
 import MessageTopNavComp from '../../component/MessageTopNavComp.vue'
 import BaseResult, { PageInfo } from '../../entity/BaseResult'
 import { MessageDetail, MessageDetailResult, MessageReply } from '../../entity/MessageDetailResult'
@@ -10,9 +10,11 @@ import server from '../../tools/server'
 import tools from '../../tools/tools'
 import store from '../../store'
 import { storeToRefs } from 'pinia'
+import PageComp from '../../component/PageComp.vue'
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
 const Route = useRoute()
+const router = useRouter()
 const queryUmid = reactive({
   umid: Route.query.umid,
 })
@@ -54,7 +56,6 @@ const searchMessageList = () => {
   MessageDataList.list = []
   MessageDataList.info = new MessageDetail()
   MessageDataList.page = new PageInfo()
-  MessageDataList.page.pageSize = 10
   loadings.loading = true
   server.post('/message/queryDetail', tools.concatJson(queryMessageList, MessageDataList.page), (data: MessageDetailResult) => {
     if (data.success) {
@@ -147,11 +148,12 @@ const delMessageData = (umrid: number) => {
 <template>
   <div class="container">
     <header>
-      <MessageTopNavComp :homemessage="'Message'" :if-message="queryUmid"></MessageTopNavComp>
+      <MessageTopNavComp></MessageTopNavComp>
     </header>
     <main>
       <n-grid cols="1">
         <n-gi span="1">
+          <!-- 帖子信息骨架框 -->
           <n-card class="messageListTitle" v-if="loadings.loading">
             <n-space vertical size="large" style="flex-wrap: nowrap">
               <n-space>
@@ -167,6 +169,7 @@ const delMessageData = (umrid: number) => {
               </n-space>
             </n-space>
           </n-card>
+          <!-- 帖子信息详情 -->
           <n-card v-else>
             <n-space vertical size="large" style="flex-wrap: nowrap">
               <n-space justify="space-between">
@@ -192,7 +195,7 @@ const delMessageData = (umrid: number) => {
                 </n-space>
               </n-space>
               <n-space text size="large">
-                <div v-html="MessageDataList.info.info"></div>
+                <div style="text-indent: 3em" v-html="MessageDataList.info.info"></div>
               </n-space>
               <n-space justify="end">
                 <n-button @click="supportMessage(MessageDataList.info.umid + '')" text :type="MessageDataList.info.praise ? 'primary' : 'default'">
@@ -216,80 +219,103 @@ const delMessageData = (umrid: number) => {
               </n-space>
             </n-space>
           </n-card>
+          <!-- 评论排序 -->
           <n-card>
             <n-tabs type="line" v-model:value="queryMessageList.orderBy" @update:value="updatequerymessageLise">
               <n-tab-pane animated name="2" tab="最新"></n-tab-pane>
               <n-tab-pane name="3" tab="最热"></n-tab-pane>
             </n-tabs>
           </n-card>
+          <!-- 发布评论 -->
           <n-card class="paddingtopstyle">
             <div class="inpuTextareaStype" justify="space-between">
               <n-input v-model:value="comments.info" type="textarea" placeholder="发一条友善的评论把"></n-input>
               <n-button @click="pushComments()">发送</n-button>
             </div>
           </n-card>
-          <n-card :bordered="false" v-if="loadings.loading">
-            <n-space style="flex-wrap: nowrap">
-              <n-skeleton height="40px" circle />
-              <n-space vertical>
-                <n-skeleton text width="180px" />
-                <n-skeleton text width="180px" />
-              </n-space>
-            </n-space>
-            <n-skeleton text :repeat="2" />
-            <n-space justify="end"> <n-skeleton text :repeat="1" width="150px" /></n-space>
-          </n-card>
-          <n-card v-for="item in MessageDataList.list" :key="item.umrid" size="small" :bordered="false" v-else>
-            <template #header>
-              <n-space align="center">
-                <div id="image-scroll-container">
-                  <n-space>
-                    <n-avatar
-                      round
-                      lazy
-                      :src="item.userInfo.img ? item.userInfo.img : lazyUrl"
-                      :intersection-observer-options="{
-                        root: '#image-scroll-container',
-                      }"
-                      object-fit="cover"
-                    ></n-avatar>
-                  </n-space>
-                </div>
-                <n-space vertical style="gap: 0px">
-                  <div>{{ item.user.nickname }}</div>
-                  <div style="font-size: 12px">{{ tools.formatDate(item.lastupdate) }}</div>
+          <!-- 判断是否有评论 -->
+          <n-card v-if="MessageDataList.page.total != 0">
+            <!--评论骨架框  -->
+            <n-card :bordered="false" v-if="loadings.loading">
+              <n-space style="flex-wrap: nowrap">
+                <n-skeleton height="40px" circle />
+                <n-space vertical>
+                  <n-skeleton text width="180px" />
+                  <n-skeleton text width="180px" />
                 </n-space>
               </n-space>
-            </template>
-            <n-space text size="large" style="margin-left: 2.7rem">
-              {{ item.info }}
-            </n-space>
-            <template #footer>
-              <n-space justify="end" align="center">
-                <n-button @click="supportMessage(item.umrid + '')" text :type="item.praise ? 'primary' : 'default'">
-                  {{ item.praiseCount }}点赞
-                  <template #icon>
-                    <i class="iconfont">&#xec7f;</i>
-                  </template>
-                </n-button>
-                <n-button @click="delMessageData(item.umrid)" text v-if="item.mine">
-                  删除
-                  <template #icon>
-                    <i class="iconfont">&#xe68e;</i>
-                  </template>
-                </n-button>
-                <n-button text>
-                  举报
-                  <template #icon>
-                    <i class="iconfont">&#xe630;</i>
-                  </template>
-                </n-button>
+              <n-skeleton text :repeat="2" />
+              <n-space justify="end"> <n-skeleton text :repeat="1" width="150px" /></n-space>
+            </n-card>
+            <!-- 评论详细信息 -->
+            <n-card v-for="item in MessageDataList.list" :key="item.umrid" size="small" :bordered="false" v-else>
+              <template #header>
+                <n-space align="center">
+                  <div id="image-scroll-container">
+                    <n-space>
+                      <n-avatar
+                        round
+                        lazy
+                        :src="item.userInfo.img ? item.userInfo.img : lazyUrl"
+                        :intersection-observer-options="{
+                          root: '#image-scroll-container',
+                        }"
+                        object-fit="cover"
+                      ></n-avatar>
+                    </n-space>
+                  </div>
+                  <n-space vertical style="gap: 0px">
+                    <div>{{ item.user.nickname }}</div>
+                    <div style="font-size: 12px">{{ tools.formatDate(item.lastupdate) }}</div>
+                  </n-space>
+                </n-space>
+              </template>
+              <n-space text size="large" style="margin-left: 2.7rem">
+                {{ item.info }}
               </n-space>
-            </template>
+              <template #footer>
+                <n-space justify="end" align="center">
+                  <n-button @click="supportMessage(item.umrid + '')" text :type="item.praise ? 'primary' : 'default'">
+                    {{ item.praiseCount }}点赞
+                    <template #icon>
+                      <i class="iconfont">&#xec7f;</i>
+                    </template>
+                  </n-button>
+                  <n-button @click="delMessageData(item.umrid)" text v-if="item.mine">
+                    删除
+                    <template #icon>
+                      <i class="iconfont">&#xe68e;</i>
+                    </template>
+                  </n-button>
+                  <n-button text>
+                    举报
+                    <template #icon>
+                      <i class="iconfont">&#xe630;</i>
+                    </template>
+                  </n-button>
+                </n-space>
+              </template>
+            </n-card>
           </n-card>
+          <n-card v-else>
+            <n-empty description="什么也有没">
+              <template #extra>
+                <n-button size="small" @click="router.push('/message/home')"> 看看别的 </n-button>
+              </template>
+            </n-empty>
+          </n-card>
+          <PageComp :page="MessageDataList.page" :show-size-picker="true" @number-change="searchMessageList()" @page-change="searchMessageList()"></PageComp>
         </n-gi>
       </n-grid>
     </main>
+    <footer :class="{ footermartop: MessageDataList.page.total <= 5 }">
+      <n-space align="center" vertical>
+        <n-space style="margin-top: 12px">©2020 - 2022 By huhuiyu</n-space>
+        <n-space>Vue3 | Pinia | TypeScript</n-space>
+        <n-space>Hi, welcome to simple message</n-space>
+      </n-space>
+    </footer>
+    <n-back-top :right="100" />
   </div>
 </template>
 
@@ -413,5 +439,13 @@ main {
 }
 .messageListTitle {
   height: 240px;
+}
+footer {
+  background-color: #495a80;
+  height: 14vh;
+  color: #fff;
+}
+.footermartop {
+  margin-top: 10%;
 }
 </style>
