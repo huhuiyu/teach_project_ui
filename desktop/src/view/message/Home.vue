@@ -63,10 +63,16 @@ const queryMessage = () => {
     messageData.loading = false
     messageData.list = data.list
     messageData.page = data.page
+  })
+}
+// 查询网站资讯
+const queryMessageWebSiteInformation = () => {
+  server.post('/message/queryAll', {}, (data: BaseListResult<any>) => {
     webSiteInformation.total = data.page.total
     webSiteInformation.lastupdate = data.list[0].lastupdate
   })
 }
+queryMessageWebSiteInformation()
 //搜索部分留言信息
 const searchMessage = (info: string) => {
   messageData.queryInfo.info = info
@@ -381,7 +387,7 @@ main {
 
 footer {
   background-color: #495a80;
-  height: 12vh;
+  height: 14vh;
   color: #fff;
 }
 </style>
