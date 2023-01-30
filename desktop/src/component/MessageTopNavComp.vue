@@ -126,7 +126,7 @@ const logOut = () => {
         </n-space>
         <n-space style="column-gap: 25px; margin-left: 0.5rem" align="center">
           <n-button text> 消息 </n-button>
-          <n-button text> 私信 </n-button>
+          <n-button text @click="router.push('/message/privateMessage')"> 私信 </n-button>
           <n-button Ghost @click="router.push('/message/edit')">
             创作中心
             <template #icon>

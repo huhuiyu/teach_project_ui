@@ -16,6 +16,10 @@ const routes = [
     component: () => import('../view/message/PersonalHomePage.vue'),
   },
   {
+    path: '/message/privateMessage',
+    component: () => import('../view/message/PrivateMessage.vue'),
+  },
+  {
     path: '/message/manage',
     component: () => import('../view/message/MessageManage.vue'),
   },
