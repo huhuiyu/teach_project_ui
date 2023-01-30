@@ -50,7 +50,12 @@ const options = [
 const emits = defineEmits(['queryInfo-change'])
 const changeQueryInfo = () => {
   emits('queryInfo-change', messageQueryInfo.info)
-  router.push('/message/home')
+  router.push({
+    path: '/message/home',
+    query: {
+      info: messageQueryInfo.info,
+    },
+  })
   logger.debug(messageQueryInfo.info)
 }
 const messageQueryInfo = reactive({

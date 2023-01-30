@@ -214,7 +214,7 @@ const phoneRules: FormRules = {
       key: 'imgCode',
       required: true,
       validator: (rule: FormItemRule, value: string) => {
-        if (!/^[0-9A-Za-z]{5}$/.test(value)) return new Error('图片验证码')
+        if (!/^[0-9A-Za-z]{4}$/.test(value)) return new Error('图片验证码')
         return true
       },
       message: '图片验证码',
@@ -535,7 +535,7 @@ const closeRules = (parameter: string) => {
                     </n-button>
                   </n-form-item>
                   <n-form-item label="  " v-show="accountSetting.phone" path="imgCode">
-                    <n-input placeholder="图片验证码" clearable v-model:value="phoneInfo.imgCode" :maxlength="5" />
+                    <n-input placeholder="图片验证码" clearable v-model:value="phoneInfo.imgCode" :maxlength="4" />
                     <img :src="phoneInfo.imgUrl" @click="sendImgCode" />
                   </n-form-item>
                   <n-form-item label="  " v-show="accountSetting.phone" path="phoneCode">

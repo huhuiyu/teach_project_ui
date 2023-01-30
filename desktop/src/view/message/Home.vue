@@ -3,7 +3,7 @@ import { NAvatar, NBackTop, NButton, NCard, NCarousel, NGi, NGrid, NList, NListI
 import { reactive } from 'vue'
 import MessageTopNavComp from '../../component/MessageTopNavComp.vue'
 import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import store from '../../store'
 import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
 import server from '../../tools/server'
@@ -17,9 +17,10 @@ const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
 //路由
 const router = useRouter()
+const route = useRoute()
 const messageData = reactive({
   queryInfo: {
-    info: '',
+    info: route.query.info,
     orderBy: '1',
     username: '',
   },
