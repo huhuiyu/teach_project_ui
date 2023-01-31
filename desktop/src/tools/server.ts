@@ -1,14 +1,11 @@
 import Ajax from './Ajax'
 import AjaxConfig from '../entity/AjaxConfig'
 import qs from 'qs'
+import logger from './logger'
 
 let serverInfo = {
-  // url: 'https://local.huhuiyu.top',
-  websocket: 'ws://local.huhuiyu.top/ws/',
-  // url: 'http://127.0.0.1:30000',
-  // websocket: 'ws://127.0.0.1:30000/ws/',
   url: 'https://service.huhuiyu.top/teach_project_service',
-  // websocket: 'wss://service.huhuiyu.top/teach_project_service/ws/',
+  websocket: 'wss://service.huhuiyu.top/teach_project_service/ws/',
   tokenKey: 'teach_project_service_token',
   saveToken: (data: any) => {
     if (data && data.token) {
@@ -20,6 +17,17 @@ let serverInfo = {
     return token ? token : ''
   },
 }
+
+// 通过环境变量切换服务地址
+if ('/local_teach_project_ui/' == import.meta.env.BASE_URL) {
+  serverInfo.url = 'http://127.0.0.1:30000'
+  serverInfo.websocket = 'ws://127.0.0.1:30000/ws/'
+} else if ('/frp_teach_project_ui/' == import.meta.env.BASE_URL) {
+  serverInfo.url = 'https://local.huhuiyu.top'
+  serverInfo.websocket = 'ws://local.huhuiyu.top/ws/'
+}
+
+logger.debug('服务器地址信息：', serverInfo.url, serverInfo.websocket)
 
 // 创建ajax实例
 const ajax = new Ajax()
