@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { NButton, NCard, NFormItem, NInput, NSpace } from 'naive-ui'
 import { reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import MessageTopNavComp from '../../component/MessageTopNavComp.vue'
 import WangEditorComp from '../../component/WangEditorComp.vue'
 import BaseResult from '../../entity/BaseResult'
 import dialog from '../../tools/dialog'
 import logger from '../../tools/logger'
 import server from '../../tools/server'
+const router = useRouter()
 const addMessageData = reactive({
   disabled: false,
   wordCount: 0,
@@ -50,6 +52,14 @@ const btnDisabled = () => {
     <MessageTopNavComp></MessageTopNavComp>
     <main>
       <n-card title="写文章">
+        <template #header-extra>
+          <n-button @click="router.back()">
+            返回上一页
+            <template #icon>
+              <i class="iconfont">&#xe615; </i>
+            </template>
+          </n-button>
+        </template>
         <n-form-item>
           <n-input placeholder="请输入标题" size="large" style="font-size: large" clearable v-model:value="addMessageData.addInfo.title" show-count maxlength="40" @update:value="btnDisabled"></n-input>
         </n-form-item>
