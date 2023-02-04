@@ -2,7 +2,7 @@
 import { NAvatar, NButton, NDropdown, NInput, NInputGroup, NSpace, NText } from 'naive-ui'
 import { storeToRefs } from 'pinia'
 import { h, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import BaseResult from '../entity/BaseResult'
 import store from '../store'
 import dialogApi from '../tools/dialog'
@@ -13,6 +13,7 @@ const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
 //路由
 const router = useRouter()
+const route = useRoute()
 //用户信息下拉选项
 const options = [
   {
@@ -58,11 +59,15 @@ const changeQueryInfo = () => {
   })
   logger.debug(messageQueryInfo.info)
 }
+logger.debug(router, route)
+
+let info: any = route.query.info
 const messageQueryInfo = reactive({
-  info: '',
+  info: info,
   orderBy: '1',
   username: '',
 })
+
 function renderCustomHeader() {
   return h(
     'div',
