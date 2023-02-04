@@ -58,11 +58,31 @@ class MessageFollow {
 }
 
 /**
+ * 当前登录用户和指定用户的私信信息
+ */
+
+class PrivateMessage {
+  from: string = ''
+  info: string = ''
+  lastupdate: string = ''
+  read: boolean = false
+  to: string = ''
+}
+/**
+ * 查询留言举报原因
+ */
+class ExamineInfo {
+  img: string = ''
+  info: string = ''
+  nickname: string = ''
+  username: string = ''
+}
+/**
  * 留言板详情应答结果
  */
 class MessageDetailResult extends BaseListResult<MessageReply> {
   info: MessageDetail = new MessageDetail()
 }
 
-export { MessageDetail as MessageDetail, MessageDetailResult as MessageDetailResult, MessageReply as MessageReply, MessageFollow as MessageFollow }
+export { MessageDetail as MessageDetail, MessageDetailResult as MessageDetailResult, MessageReply as MessageReply, MessageFollow as MessageFollow, PrivateMessage as PrivateMessage, ExamineInfo as ExamineInfo }
 export default MessageDetailResult
