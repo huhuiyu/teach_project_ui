@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import tools from '../tools/tools'
-import { NButton, NAvatar } from 'naive-ui'
+import { NButton, NAvatar, NSpace } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import { reactive } from 'vue'
 import logger from '../tools/logger'
 const router = useRouter()
 const title = '教学演示项目'
 tools.changeTitle('首页')
+const lazyUrl = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
 const list = reactive([
   {
     img: '',
@@ -65,7 +66,16 @@ logger.debug('+++++++++++++++=', document.body.scrollTop)
       <div>
         <a class="conter_menu" v-for="d in list" :key="d.path" href="javascript:void(0)" @click="router.push(`${d.path}`)">
           <div>
-            <img class="conter_img" :src="d.img" :alt="d.title" />
+            <n-avatar
+              class="conter_img"
+              size="small"
+              :src="d.img ? d.img : lazyUrl"
+              lazy
+              :intersection-observer-options="{
+                root: '#image-scroll-container',
+              }"
+            />
+            <!-- <img class="conter_img" :src="d.img" :alt="d.title" /> -->
           </div>
           <div>
             <div class="conter_title">
