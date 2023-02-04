@@ -13,6 +13,10 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../view/Home.vue'),
   },
   {
+    path: '/manage',
+    component: () => import('../view/MansgeHome.vue'),
+  },
+  {
     path: '/chatroom',
     component: () => import('../view/ChatRoom.vue'),
   },

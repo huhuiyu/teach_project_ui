@@ -6,26 +6,42 @@ import { reactive } from 'vue'
 import logger from '../tools/logger'
 import MainTopNavComp from '../component/MainTopNavComp.vue'
 const router = useRouter()
-const title = '教学演示项目'
+const title = '教学管理项目'
 tools.changeTitle('首页')
 const lazyUrl = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
 const list = reactive([
   {
     img: '',
-    title: '简易留言板',
-    info: '简介、多平台的留言板项目',
-    path: '/message/home',
+    title: '管理留言板',
+    info: '管理简介、多平台的留言板项目',
+    path: '/message/manage',
   },
   {
     img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
-    title: '管理系统',
-    info: '管理员登录',
-    path: '/manage',
+    title: '部门管理',
+    info: '教学任务中的练习',
+    path: '/manage/dept',
+  },
+  {
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '员工管理',
+    info: '教学任务中的练习',
+    path: '/manage/employee',
+  },
+  {
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '班级管理',
+    info: '教学任务中的练习',
+    path: '/manage/class',
+  },
+  {
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '学生管理',
+    info: '教学任务中的练习',
+    path: '/manage/student',
   },
 ])
-logger.debug('+++++++++++++++=', document.body.scrollTop)
 </script>
-
 <template>
   <div>
     <MainTopNavComp :title="title" :logo="lazyUrl"></MainTopNavComp>
