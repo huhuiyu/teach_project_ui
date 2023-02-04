@@ -241,7 +241,7 @@ const messageList = (umid: number) => {
               </n-button>
             </n-space>
             <template #footer>
-              <n-button style="width: 100%" @click="router.push('/message/edit')">
+              <n-button style="width: 100%" @click="tools.jumpRoute_Blank('/message/edit')">
                 <template #icon>
                   <i class="iconfont">&#xe61d; </i>
                 </template>

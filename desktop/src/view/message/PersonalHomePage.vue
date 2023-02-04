@@ -399,6 +399,10 @@ const delUserComment = (umrid: string) => {
     }
   })
 }
+// 点击跳留言详情页面
+const messageList = (umid: number) => {
+  router.push({ path: '/message/edits', query: { umid: umid } })
+}
 </script>
 <template>
   <div class="container">
@@ -438,7 +442,7 @@ const delUserComment = (umrid: string) => {
               <div v-else>
                 <n-space>
                   <n-button :type="userInfo.mineFollow ? 'primary' : 'default'" @click="followUser(toolsData.username)">{{ userInfo.mineFollow ? '已关注' : '关注' }}</n-button>
-                  <n-button>私信</n-button>
+                  <n-button @click="router.push({ path: '/message/privateMessage', query: { img: userInfo.img, username: toolsData.username, nickname: userInfo.nickname } })">私信</n-button>
                 </n-space>
               </div>
             </n-space>
@@ -536,7 +540,7 @@ const delUserComment = (umrid: string) => {
                     </n-space>
                   </n-space>
                 </template>
-                <n-button text size="large" style="margin-left: 2.7rem">
+                <n-button text size="large" style="margin-left: 2.7rem" @click="messageList(item.umid)">
                   {{ item.title }}
                 </n-button>
                 <template #footer>
@@ -596,7 +600,7 @@ const delUserComment = (umrid: string) => {
                     </n-space>
                   </n-space>
                 </template>
-                <n-button text size="large" style="margin-left: 2.7rem">
+                <n-button text size="large" style="margin-left: 2.7rem" @click="messageList(item.umid)">
                   {{ item.info }}
                 </n-button>
                 <template #footer>
@@ -687,7 +691,7 @@ const delUserComment = (umrid: string) => {
               </n-button>
             </n-space>
             <template #footer>
-              <n-button style="width: 100%" @click="router.push('/message/edit')">
+              <n-button style="width: 100%" @click="tools.jumpRoute_Blank('/message/edit')">
                 <template #icon>
                   <i class="iconfont">&#xe61d; </i>
                 </template>

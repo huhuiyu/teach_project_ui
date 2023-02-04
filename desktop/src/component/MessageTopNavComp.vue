@@ -8,6 +8,7 @@ import store from '../store'
 import dialogApi from '../tools/dialog'
 import logger from '../tools/logger'
 import server from '../tools/server'
+import tools from '../tools/tools'
 //pinia
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
@@ -130,9 +131,9 @@ const logOut = () => {
           <n-button circle secondary size="medium" v-if="!loginUser.isLogin" @click="router.push('/login')">登录</n-button>
         </n-space>
         <n-space style="column-gap: 25px; margin-left: 0.5rem" align="center">
-          <n-button text> 消息 </n-button>
-          <n-button text @click="router.push('/message/privateMessage')"> 私信 </n-button>
-          <n-button Ghost @click="router.push('/message/edit')">
+          <n-button text> 占位 </n-button>
+          <n-button text @click="tools.jumpRoute_Blank('/message/privateMessage')"> 消息 </n-button>
+          <n-button Ghost @click="tools.jumpRoute_Blank('/message/edit')">
             创作中心
             <template #icon>
               <i class="iconfont">&#xe61d; </i>

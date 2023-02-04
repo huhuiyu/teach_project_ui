@@ -1,6 +1,7 @@
 import sparkMd5 from 'spark-md5'
 import FileInfo from '../entity/FileInfo'
 import logger from './logger'
+import { router } from '../router/index'
 
 let tools = {
   md5: (info: string) => {
@@ -187,6 +188,12 @@ let tools = {
     result = document.execCommand('copy')
     document.body.removeChild(input)
     return result
+  },
+  jumpRoute_Blank(path: string) {
+    const { href } = router.resolve({
+      path: path,
+    })
+    window.open(href, '_blank')
   },
 }
 
