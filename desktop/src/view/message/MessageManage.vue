@@ -1,26 +1,38 @@
 <script setup lang="ts">
-import { commonDark, NButton, NDataTable, NForm, NFormItem, NInput, NPopover, NSpace, NTag } from 'naive-ui'
+import { NButton, NDataTable, NForm, NFormItem, NInput, NSpace, NTag, NModal, NList, NListItem, NAvatar, NThing, NGradientText, commonDark } from 'naive-ui'
 import type { DataTableColumns } from 'naive-ui'
 import { reactive, h } from 'vue'
 import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
-import { MessageDetail, MessageReply } from '../../entity/MessageDetailResult'
+import { MessageDetail, MessageReply, ExamineInfo } from '../../entity/MessageDetailResult'
 import PageComp from '../../component/PageComp.vue'
 import dialog from '../../tools/dialog'
-import logger from '../../tools/logger'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
+import { useRoute, useRouter } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
 const toolsData = reactive({
-  MessageMode: true,
+  modelVisible: {
+    examineInfo: false,
+    del: false,
+  },
 })
-const commentColumns: DataTableColumns<MessageReply> = [
-  /*  {
-    type: 'expand',
-    expandable: (rowData: MessageReply) => rowData.examine != 'n',
-    renderExpand: (rowData: MessageReply) => {
-      return `${rowData.user.username} is a good guy.`
+const MessageMode = () => {
+  return route.query.mode + ''
+}
+const changeRouteInfo = (info: string) => {
+  if (info == route.query.mode) {
+    return
+  }
+  router.push({
+    path: '/message/manage',
+    query: {
+      mode: info,
     },
-    // key: 'uid',
-  }, */
+  })
+}
+
+const commentColumns: DataTableColumns<MessageReply> = [
   {
     title: '用户名',
     key: 'username',
@@ -33,6 +45,22 @@ const commentColumns: DataTableColumns<MessageReply> = [
             justify: 'center',
           },
           { default: () => row.user.username }
+        ),
+      ]
+    },
+  },
+  {
+    title: '昵称',
+    key: 'nickname',
+    titleColSpan: 1,
+    render(row: MessageReply) {
+      return [
+        h(
+          NSpace,
+          {
+            justify: 'center',
+          },
+          { default: () => row.user.nickname }
         ),
       ]
     },
@@ -54,7 +82,7 @@ const commentColumns: DataTableColumns<MessageReply> = [
             bordered: false,
           },
           {
-            default: () => (row.disable == 'y' ? `被屏蔽-屏蔽原因:${row.disableReason}` : '正常'),
+            default: () => (row.disable == 'y' ? '被屏蔽' : '正常'),
           }
         ),
       ]
@@ -115,48 +143,33 @@ const commentColumns: DataTableColumns<MessageReply> = [
             size: 'small',
             type: 'warning',
             onClick: () => {
-              let result = prompt(`你确定删除${row.user.username}的${row.info}条评论`, '删除的评论的原因')
-              if (result != null) {
-                delComment(result, row.umrid)
-              }
+              toolsData.modelVisible.del = true
+              delData.commentInfo = row
             },
           },
           { default: () => '删除' }
         ),
         h(
-          NPopover,
+          NButton,
           {
-            trigger: 'click',
+            strong: true,
+            tertiary: true,
+            size: 'small',
+            type: 'success',
+            style: `display:${row.examine == 'y' ? 'inline-block' : 'none'}`,
+            onClick: () => {
+              toolsData.modelVisible.examineInfo = true
+              queryExamineInfoData.commentInfo = row
+              queryCommentExamineInfo()
+            },
           },
-          {
-            default: () => (row.disableReason == '' ? '空' : row.disableReason),
-            trigger: () =>
-              h(
-                NButton,
-                {
-                  strong: true,
-                  tertiary: true,
-                  size: 'small',
-                  type: 'success',
-                  style: `display:${row.examine == 'y' ? 'inline-block' : 'none'}`,
-                },
-                { default: () => '查看举报原因' }
-              ),
-          }
+          { default: () => '查看举报原因' }
         ),
       ]
     },
   },
 ]
 const messageColumns: DataTableColumns<MessageDetail> = [
-  {
-    type: 'expand',
-    expandable: (rowData: MessageDetail) => rowData.examine != 'n',
-    renderExpand: (rowData: MessageDetail) => {
-      return `${rowData.user.username} 被举报的原因：${rowData.disableReason}`
-    },
-    // key: 'uid',
-  },
   {
     title: '用户名',
     key: 'username',
@@ -169,6 +182,22 @@ const messageColumns: DataTableColumns<MessageDetail> = [
             justify: 'center',
           },
           { default: () => row.user.username }
+        ),
+      ]
+    },
+  },
+  {
+    title: '昵称',
+    key: 'nickname',
+    titleColSpan: 1,
+    render(row: MessageDetail) {
+      return [
+        h(
+          NSpace,
+          {
+            justify: 'center',
+          },
+          { default: () => row.user.nickname }
         ),
       ]
     },
@@ -190,7 +219,7 @@ const messageColumns: DataTableColumns<MessageDetail> = [
             bordered: false,
           },
           {
-            default: () => (row.disable == 'y' ? `被屏蔽-屏蔽原因:${row.disableReason}` : '正常'),
+            default: () => (row.disable == 'y' ? '被屏蔽' : '正常'),
           }
         ),
       ]
@@ -251,39 +280,56 @@ const messageColumns: DataTableColumns<MessageDetail> = [
             size: 'small',
             type: 'warning',
             onClick: () => {
-              let result = prompt(`你确定删除${row.user.username}的${row.title}条留言`, '删除的评论的原因')
-              if (result != null) {
-                delMessage(result, row.umid)
-              }
+              toolsData.modelVisible.del = true
+              delData.messageInfo = row
             },
           },
           { default: () => '删除' }
         ),
         h(
-          NPopover,
+          NButton,
           {
-            trigger: 'click',
+            strong: true,
+            tertiary: true,
+            size: 'small',
+            type: 'success',
+            style: `display:${row.examine == 'y' ? 'inline-block' : 'none'}`,
+            onClick: () => {
+              queryExamineInfoData.messageInfo = row
+              toolsData.modelVisible.examineInfo = true
+              queryMessageExamineInfo()
+            },
           },
-          {
-            default: () => (row.disableReason == '' ? '空' : row.disableReason),
-            trigger: () =>
-              h(
-                NButton,
-                {
-                  strong: true,
-                  tertiary: true,
-                  size: 'small',
-                  type: 'success',
-                  style: `display:${row.examine == 'y' ? 'inline-block' : 'none'}`,
-                },
-                { default: () => '查看举报原因' }
-              ),
-          }
+
+          { default: () => '查看举报原因' }
         ),
       ]
     },
   },
 ]
+const queryExamineInfoData = reactive({
+  messageInfo: new MessageDetail(),
+  commentInfo: new MessageReply(),
+  list: [] as ExamineInfo[],
+  page: new PageInfo(),
+})
+const queryMessageExamineInfo = () => {
+  server.post('/message/manage/queryExamineInfo', { umid: queryExamineInfoData.messageInfo.umid }, (data: BaseListResult<ExamineInfo>) => {
+    if (data.success) {
+      queryExamineInfoData.list = data.list
+      queryExamineInfoData.page = data.page
+    }
+  })
+}
+const queryCommentExamineInfo = () => {
+  server.post('/message/manage/queryExamineInfoReply', { umrid: queryExamineInfoData.commentInfo.umrid }, (data: BaseListResult<ExamineInfo>) => {
+    if (data.success) {
+      queryExamineInfoData.list = data.list
+      queryExamineInfoData.page = data.page
+    }
+  })
+}
+
 const messageData = reactive({
   queryInfo: {
     info: '',
@@ -301,34 +347,32 @@ const queryMessageAll = () => {
   })
 }
 queryMessageAll()
-const delMessage = (disableReason: string, umid: string | number) => {
+const delData = reactive({
+  messageInfo: new MessageDetail(),
+  commentInfo: new MessageReply(),
+  disableReason: '',
+})
+const delMessage = () => {
+  if (delData.disableReason == '') {
+    dialog.messageWarning('删除必须填写原因')
+    return
+  }
   messageData.loading = true
-  server.post('/message/manage/deletMessage', { disableReason, umid }, (data: BaseResult) => {
+  server.post('/message/manage/deletMessage', { disableReason: delData.disableReason, umid: delData.messageInfo.umid }, (data: BaseResult) => {
     messageData.loading = false
     if (data.success) {
+      queryMessageAll()
       dialog.messageInfo(data.message)
+      toolsData.modelVisible.del = false
+      delData.disableReason = ''
     }
   })
 }
-const onLoad = (row: Record<string, unknown>) => {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => {
-      alert(row)
-      row.children = [{ key: row.title + '-1', example: row.title + '-1' }]
-      resolve()
-    }, 1000)
-  })
-}
-
 const reset = () => {
   messageData.queryInfo.info = ''
   messageData.page.pageNumber = 1
   queryMessageAll()
 }
-const test = (rowData: MessageDetail) => {
-  return rowData.uid
-}
-
 const commentData = reactive({
   page: new PageInfo(),
   list: [] as MessageReply[],
@@ -343,18 +387,25 @@ const queryCommentAll = () => {
   })
 }
 queryCommentAll()
-const delComment = (disableReason: string, umrid: string | number) => {
+const delComment = () => {
+  if (delData.disableReason == '') {
+    dialog.messageWarning('删除必须填写原因')
+    return
+  }
   commentData.loading = true
-  server.post('/message/manage/deletMessageReply', { disableReason, umrid }, (data: BaseResult) => {
+  server.post('/message/manage/deletMessageReply', { disableReason: delData.disableReason, umrid: delData.commentInfo.umrid }, (data: BaseResult) => {
     commentData.loading = false
     if (data.success) {
+      queryCommentAll()
       dialog.messageInfo(data.message)
+      toolsData.modelVisible.del = false
+      delData.disableReason = ''
     }
   })
 }
 </script>
 <template>
-  <div v-if="toolsData.MessageMode">
+  <div v-if="MessageMode() == 'message'">
     <header class="tc">
       <h1>管理查询留言板信息</h1>
     </header>
@@ -370,7 +421,7 @@ const delComment = (disableReason: string, umrid: string | number) => {
           <n-button attr-type="button" @click="reset"> 重置 </n-button>
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="toolsData.MessageMode = !toolsData.MessageMode"> 切换评论管理 </n-button>
+          <n-button attr-type="button" @click="changeRouteInfo('comment')"> 切换评论管理 </n-button>
         </n-form-item>
       </n-form>
       <n-data-table default-expand-all :columns="messageColumns" :data="messageData.list" :loading="commentData.loading" />
@@ -386,7 +437,7 @@ const delComment = (disableReason: string, umrid: string | number) => {
     <main>
       <n-form inline :label-width="80" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
         <n-form-item>
-          <n-button attr-type="button" @click="toolsData.MessageMode = !toolsData.MessageMode"> 切换留言管理 </n-button>
+          <n-button attr-type="button" @click="changeRouteInfo('message')"> 切换留言管理 </n-button>
         </n-form-item>
       </n-form>
       <n-data-table default-expand-all :columns="commentColumns" :data="commentData.list" :loading="messageData.loading" />
@@ -395,6 +446,50 @@ const delComment = (disableReason: string, umrid: string | number) => {
       </div>
     </main>
   </div>
+  <n-modal v-model:show="toolsData.modelVisible.examineInfo" preset="dialog">
+    <template #header>
+      <div v-if="MessageMode() == 'message'">查看{{ queryExamineInfoData.messageInfo.user.nickname }}举报原因</div>
+      <div v-else>查看{{ queryExamineInfoData.commentInfo.user.nickname }}举报原因</div>
+    </template>
+    <n-list>
+      <n-list-item v-for="e in queryExamineInfoData.list" :key="e.username">
+        <n-space align="center" justify="space-between">
+          <n-space align="center">
+            <n-avatar round size="large" :src="e.img" fallback-src="https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg"></n-avatar>
+            <n-thing :title="`用户名：${e.username}`" :description="`昵称：${e.nickname}`"> </n-thing>
+          </n-space>
+          <div>举报原因：{{ e.info }}</div>
+        </n-space>
+      </n-list-item>
+      <div v-if="queryExamineInfoData.page.pageCount > 1 && MessageMode() == 'message'">
+        <PageComp :page="queryExamineInfoData.page" :show-size-picker="true" @number-change="queryMessageExamineInfo" @size-change="queryMessageExamineInfo" @page-change="queryMessageExamineInfo"></PageComp>
+      </div>
+      <div v-if="queryExamineInfoData.page.pageCount > 1 && MessageMode() == 'comment'">
+        <PageComp :page="queryExamineInfoData.page" :show-size-picker="true" @number-change="queryMessageExamineInfo" @size-change="queryMessageExamineInfo" @page-change="queryMessageExamineInfo"></PageComp>
+      </div>
+    </n-list>
+    <template #action>
+      <div>
+        <n-button type="error" size="small" @click="toolsData.modelVisible.examineInfo = false">关闭</n-button>
+      </div>
+    </template>
+  </n-modal>
+  <n-modal v-model:show="toolsData.modelVisible.del" preset="dialog">
+    <template #header>
+      <div v-if="MessageMode() == 'message'">删除标题为'{{ delData.messageInfo.title }}'留言</div>
+      <div v-if="MessageMode() == 'comment'">删除评论信息为'{{ delData.commentInfo.info }}'评论</div>
+    </template>
+    <n-form-item>
+      <n-input v-model:value="delData.disableReason" placeholder="请输入删除原因" />
+    </n-form-item>
+    <n-space justify="end" align="center">
+      <n-gradient-text type="error" size="12"> 删除之后不可撤回，谨慎操作 </n-gradient-text>
+      <n-button type="error" size="small" v-if="MessageMode() == 'message'" @click="delMessage()" v-loading="messageData.loading">删除</n-button>
+      <n-button type="error" size="small" v-if="MessageMode() == 'comment'" @click="delComment()" v-loading="commentData.loading">删除</n-button>
+      <n-button type="info" size="small" @click="toolsData.modelVisible.del = false">关闭</n-button>
+      <br />
+    </n-space>
+  </n-modal>
 </template>
 
 <style scoped>
