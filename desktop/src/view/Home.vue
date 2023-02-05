@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import tools from '../tools/tools'
 import { NAvatar } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import { reactive } from 'vue'
-import logger from '../tools/logger'
 import MainTopNavComp from '../component/MainTopNavComp.vue'
 const router = useRouter()
 const title = '教学演示项目'
-tools.changeTitle('首页')
 const lazyUrl = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
 const list = reactive([
   {
@@ -23,12 +20,11 @@ const list = reactive([
     path: '/manage',
   },
 ])
-logger.debug('+++++++++++++++=', document.body.scrollTop)
 </script>
 
 <template>
   <div>
-    <MainTopNavComp :title="title" :logo="lazyUrl"></MainTopNavComp>
+    <MainTopNavComp :title="title"></MainTopNavComp>
     <main>
       <div>
         <a class="conter_menu" v-for="d in list" :key="d.path" href="javascript:void(0)" @click="router.push(`${d.path}`)">

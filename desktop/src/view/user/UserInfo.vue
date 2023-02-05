@@ -3,6 +3,7 @@ import { NButton, NCard, NForm, NFormItem, NInput, NRadio, NTabPane, NTabs, NRad
 import { storeToRefs } from 'pinia'
 import { ref, reactive, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import MainTopNavComp from '../../component/MainTopNavComp.vue'
 import BaseResult, { BaseDataResult } from '../../entity/BaseResult'
 import FileInfo from '../../entity/FileInfo'
 import { FileInfoResult } from '../../entity/FileResult'
@@ -461,18 +462,7 @@ const closeRules = (parameter: string) => {
 </script>
 <template>
   <div class="container">
-    <header>
-      <div class="header_title">
-        <div><n-avatar round size="small" src="https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg"></n-avatar> </div>
-        <div> 用户信息管理</div>
-      </div>
-      <div class="header_menu">
-        <p v-if="loginUser.isLogin">欢迎，{{ loginUser.tbUser.nickname }}</p>
-        <n-button v-if="loginUser.isLogin" @click="logout">退出登录</n-button>
-        <n-button v-if="!loginUser.isLogin" @click="router.push('/login')">登录</n-button>
-        <n-button @click="router.push('/')">主站</n-button>
-      </div>
-    </header>
+    <MainTopNavComp title="用户信息管理"></MainTopNavComp>
     <main>
       <n-card>
         <n-tabs type="line" size="large" :tabs-padding="20" pane-style="padding: 20px;" animated>
@@ -597,29 +587,6 @@ const closeRules = (parameter: string) => {
 }
 p {
   margin: 0;
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgb(0 0 0 / 20%);
-  padding: 12px 50px;
-}
-
-.header_title {
-  display: flex;
-  font-size: 1.1rem;
-}
-
-.header_menu {
-  display: flex;
-  align-items: center;
-}
-
-.header_menu button {
-  margin: 0 1rem;
 }
 
 main {

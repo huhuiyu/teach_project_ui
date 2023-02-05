@@ -44,7 +44,7 @@ const list = reactive([
 </script>
 <template>
   <div>
-    <MainTopNavComp :title="title" :logo="lazyUrl"></MainTopNavComp>
+    <MainTopNavComp :title="title"></MainTopNavComp>
     <main>
       <div>
         <a class="conter_menu" v-for="d in list" :key="d.path" href="javascript:void(0)" @click="router.push(`${d.path}`)">
