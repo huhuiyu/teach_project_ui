@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NButton, NCard, NForm, NFormItem, NInput, NRadio, NTabPane, NTabs, NRadioGroup, NSpace, NImage, NSpin, FormRules, FormItemRule, FormInst, NAvatar } from 'naive-ui'
 import { storeToRefs } from 'pinia'
-import { ref, reactive } from 'vue'
+import { ref, reactive, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseResult, { BaseDataResult } from '../../entity/BaseResult'
 import FileInfo from '../../entity/FileInfo'
@@ -11,12 +11,26 @@ import dialog from '../../tools/dialog'
 import logger from '../../tools/logger'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
-
+//路由
+const router = useRouter()
 //pinia
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
-//路由
-const router = useRouter()
+let timer: any = null
+if (!loginUser.value.isLogin) {
+  dialog.notifyWarning({
+    content: '请登录后访问，2秒返回',
+    duration: 2000,
+  })
+  timer = setTimeout(() => {
+    router.back()
+  }, 1800)
+}
+
+onUnmounted(() => {
+  clearTimeout(timer)
+})
+
 // 用户附加信息
 const userInfo = reactive({
   img: loginUser.value.tbUserInfo.img,
@@ -48,6 +62,8 @@ const logout = () => {
   server.post('/user/auth/logout', {}, () => {
     storeInfo.updateLoginUser(() => {
       loading.userInfo = false
+      //退出登录返回主站
+      router.push('/')
     })
   })
 }
