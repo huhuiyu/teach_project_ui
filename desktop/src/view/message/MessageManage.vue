@@ -405,7 +405,7 @@ const delComment = () => {
 }
 </script>
 <template>
-  <div v-if="MessageMode() == 'message'">
+  <div v-if="MessageMode() != 'comment'">
     <header class="tc">
       <h1>管理查询留言板信息</h1>
     </header>
@@ -423,6 +423,9 @@ const delComment = () => {
         <n-form-item>
           <n-button attr-type="button" @click="changeRouteInfo('comment')"> 切换评论管理 </n-button>
         </n-form-item>
+        <n-form-item>
+          <n-button attr-type="button" @click="router.push('/manage')"> 返回主站 </n-button>
+        </n-form-item>
       </n-form>
       <n-data-table default-expand-all :columns="messageColumns" :data="messageData.list" :loading="commentData.loading" />
       <div>
@@ -438,6 +441,9 @@ const delComment = () => {
       <n-form inline :label-width="80" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
         <n-form-item>
           <n-button attr-type="button" @click="changeRouteInfo('message')"> 切换留言管理 </n-button>
+        </n-form-item>
+        <n-form-item>
+          <n-button attr-type="button" @click="router.push('/manage')"> 返回主站 </n-button>
         </n-form-item>
       </n-form>
       <n-data-table default-expand-all :columns="commentColumns" :data="commentData.list" :loading="messageData.loading" />
