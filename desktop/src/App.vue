@@ -11,4 +11,7 @@
 </template>
 <script setup lang="ts">
 import { NDialogProvider, NLoadingBarProvider, NNotificationProvider, NMessageProvider } from 'naive-ui'
+import store from './store'
+const storeInfo = store()
+storeInfo.queryCityInfo()
 </script>

@@ -7,7 +7,6 @@ import MessageTopNavComp from '../../component/MessageTopNavComp.vue'
 import PageComp from '../../component/PageComp.vue'
 import BaseResult, { BaseDataResult, BaseListResult, PageInfo, BaseUserInfoResult } from '../../entity/BaseResult'
 import FileInfo from '../../entity/FileInfo'
-import { CityInfo } from '../../entity/CityInfo'
 import { MessageDetail, MessageReply, MessageFollow } from '../../entity/MessageDetailResult'
 import store from '../../store'
 import dialogApi from '../../tools/dialog'
@@ -16,7 +15,7 @@ import server from '../../tools/server'
 import tools from '../../tools/tools'
 //pinia
 const storeInfo = store()
-const { loginUser } = storeToRefs(storeInfo)
+const { loginUser, cityInfo } = storeToRefs(storeInfo)
 //路由
 const router = useRouter()
 const route = useRoute()
@@ -360,17 +359,7 @@ const followUser = (username: string) => {
     queryUserInfoByUsername()
   })
 }
-const cityInfo = reactive({
-  ip: '',
-  data: new CityInfo(),
-})
-// 获取ip
-const getIPCityInfo = () => {
-  server.post('/api/queryIpCtiyInfo', {}, (data: BaseDataResult<CityInfo>) => {
-    cityInfo.data = data.data
-  })
-}
-getIPCityInfo()
+
 //删除动态
 const delUserMessage = (umid: string) => {
   toolsData.loading.mainLeft = true
@@ -414,11 +403,11 @@ const messageList = (umid: number) => {
           <div class="headerSpace">
             <div class="avatarParent" v-if="loginUser.tbUser.username == toolsData.username">
               <n-avatar class="avatarUser" bordered object-fit="cover" color="#fff" :size="140" :fallback-src="lazyImg" :src="userInfo.img ? userInfo.img : lazyImg" @click="browserFile"> </n-avatar>
-              <div class="ip"><i class="iconfont"> &#xe619; </i> {{ cityInfo.data.city }}</div>
+              <div class="ip"><i class="iconfont"> &#xe619; </i> {{ cityInfo.city }}</div>
             </div>
             <div class="avatarParent" v-else>
               <n-avatar class="avatar" bordered object-fit="cover" color="#fff" :size="140" :fallback-src="lazyImg" :src="userInfo.img ? userInfo.img : lazyImg"> </n-avatar>
-              <div class="ip"><i class="iconfont"> &#xe619; </i> {{ cityInfo.data.city }}</div>
+              <div class="ip"><i class="iconfont"> &#xe619; </i> {{ cityInfo.city }}</div>
             </div>
             <n-space style="margin-left: 150px" justify="space-between" align="center" v-if="!obj.editUserinfo">
               <div>

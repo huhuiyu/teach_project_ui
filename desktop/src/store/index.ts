@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
+import CityInfoDAO from '../dao/CityInfoDAO'
 import UserInfoDAO from '../dao/UserInfoDAO'
+import { BaseDataResult } from '../entity/BaseResult'
+import { CityInfo } from '../entity/CityInfo'
 import LoginUser from '../entity/LoginUser'
 import server from '../tools/server'
 
@@ -7,6 +10,7 @@ const store = defineStore('main', {
   state: () => {
     return {
       loginUser: UserInfoDAO.getInstance().load(),
+      cityInfo: CityInfoDAO.getInstance().load(),
     }
   },
   actions: {
@@ -31,6 +35,16 @@ const store = defineStore('main', {
         },
         true
       )
+    },
+    queryCityInfo() {
+      server.post('/api/queryIpCtiyInfo', {}, (data: BaseDataResult<CityInfo>) => {
+        if (data.success) {
+          CityInfoDAO.getInstance().save(data.data)
+        } else {
+          CityInfoDAO.getInstance().save(null)
+        }
+        this.cityInfo = CityInfoDAO.getInstance().load()
+      })
     },
   },
 })
