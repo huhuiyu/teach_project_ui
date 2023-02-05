@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router'
+import { computed } from 'vue'
+import logger from '../../tools/logger'
 // 路由相关
 const router = useRouter()
 const route = useRoute()
 
 const title = '教学演示项目'
 const changeRouteInfo = (info: string) => {
+  if (info == route.query.abc) {
+    return
+  }
   router.push({
     path: '/test/router',
     query: {
@@ -13,6 +18,15 @@ const changeRouteInfo = (info: string) => {
     },
   })
 }
+
+const logRouteInfo = () => {
+  logger.debug('路由参数信息：', route.query.abc)
+}
+
+const abc = computed(() => {
+  logRouteInfo()
+  return route.query.abc
+})
 </script>
 
 <template>
@@ -27,6 +41,6 @@ const changeRouteInfo = (info: string) => {
     <a href="javascript:void(0)" @click="changeRouteInfo('' + new Date().getTime())">测试三</a>
   </div>
   <div>
-    {{ route.query.abc }}
+    {{ abc }}
   </div>
 </template>
