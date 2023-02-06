@@ -36,4 +36,14 @@ class UploadInfo {
   errorInfo: any = null
 }
 
-export { TbBucket as TbBucket, OssSign as OssSign, TbOssInfo as TbOssInfo, UploadInfo as UploadInfo }
+class OssConfig {
+  accessKeyId: string = ''
+  accessKeySecret: string = ''
+  description: string = ''
+  enable: string = 'y'
+  lastupdate: string = ''
+  ocid: number = 0
+  uid: number = 0
+}
+
+export { TbBucket as TbBucket, OssSign as OssSign, TbOssInfo as TbOssInfo, UploadInfo as UploadInfo, OssConfig as OssConfig }
