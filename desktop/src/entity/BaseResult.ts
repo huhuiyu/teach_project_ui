@@ -10,6 +10,7 @@ class BaseResult {
   success: boolean = false
   message: string = ''
   code: number = 500
+  length: number = 0
 }
 
 /**
@@ -17,6 +18,12 @@ class BaseResult {
  */
 class BaseDataResult<T> extends BaseResult {
   data!: T
+}
+/**
+ * 带数据数组的应答类型
+ */
+class BaseDataAyyayResult<T> extends BaseResult {
+  data: Array<T> = []
 }
 
 class BaseUserInfoResult extends BaseResult {
@@ -52,6 +59,6 @@ class PageInfo {
   pageSize: number = 10
 }
 
-export { BaseResult as BaseResult, BaseDataResult as BaseDataResult, BaseListResult as BaseListResult, PageInfo as PageInfo, BaseUserInfoResult as BaseUserInfoResult, BaseDataListResult as BaseDataListResult }
+export { BaseResult as BaseResult, BaseDataResult as BaseDataResult, BaseListResult as BaseListResult, PageInfo as PageInfo, BaseUserInfoResult as BaseUserInfoResult, BaseDataListResult as BaseDataListResult, BaseDataAyyayResult as BaseDataAyyayResult }
 
 export default BaseResult
