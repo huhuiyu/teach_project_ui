@@ -53,9 +53,7 @@ const successFalse = (message: any) => {
 }
 // 获取评论详细信息
 const searchMessageList = () => {
-  MessageDataList.list = []
-  MessageDataList.info = new MessageDetail()
-  MessageDataList.page = new PageInfo()
+  MessageDataList.page.pageSize = 200
   loadings.loading = true
   server.post('/message/queryDetail', tools.concatJson(queryMessageList, MessageDataList.page), (data: MessageDetailResult) => {
     if (data.success) {

@@ -7,6 +7,7 @@ class TbBucket {
   ocid: number = -1
   lastupdate: number = 0
   domains: string = ''
+  enable: String = 'y'
 }
 
 class OssSign {
@@ -45,5 +46,11 @@ class OssConfig {
   ocid: number = 0
   uid: number = 0
 }
-
-export { TbBucket as TbBucket, OssSign as OssSign, TbOssInfo as TbOssInfo, UploadInfo as UploadInfo, OssConfig as OssConfig }
+class OssEndPoints {
+  region: string = ''
+  regionId: string = ''
+  endpoint: string = ''
+  internalEndpoint: string = ''
+  length: any = null
+}
+export { TbBucket as TbBucket, OssSign as OssSign, TbOssInfo as TbOssInfo, UploadInfo as UploadInfo, OssConfig as OssConfig, OssEndPoints as OssEndPoints }
