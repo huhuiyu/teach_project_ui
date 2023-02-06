@@ -392,6 +392,12 @@ const delUserComment = (umrid: string) => {
 const messageList = (umid: number) => {
   router.push({ path: '/message/edits', query: { umid: umid } })
 }
+//添加好友
+const addFriend = () => {
+  server.post('/user/auth/friend', { username: toolsData.username }, (data: BaseResult) => {
+    if (data.success) dialogApi.notifyInfo({ content: data.message, duration: 2000, keepAliveOnHover: true })
+  })
+}
 </script>
 <template>
   <div class="container">
@@ -431,7 +437,8 @@ const messageList = (umid: number) => {
               <div v-else>
                 <n-space>
                   <n-button :type="userInfo.mineFollow ? 'primary' : 'default'" @click="followUser(toolsData.username)">{{ userInfo.mineFollow ? '已关注' : '关注' }}</n-button>
-                  <n-button @click="router.push({ path: '/message/privateMessage', query: { img: userInfo.img, username: toolsData.username, nickname: userInfo.nickname } })">私信</n-button>
+                  <n-button @click="router.push({ path: '/message/privateMessage', query: { img: userInfo.img, username: toolsData.username, nickname: userInfo.nickname, mode: 'myMessage' } })">私信</n-button>
+                  <n-button @click="addFriend">添加好友</n-button>
                 </n-space>
               </div>
             </n-space>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { NButton, NDataTable, NForm, NFormItem, NInput, NSpace, NTag, NModal, NList, NListItem, NAvatar, NThing, NGradientText, commonDark } from 'naive-ui'
+import { NButton, NDataTable, NForm, NFormItem, NInput, NSpace, NTag, NModal, NList, NListItem, NAvatar, NThing, NGradientText } from 'naive-ui'
 import type { DataTableColumns } from 'naive-ui'
-import { reactive, h } from 'vue'
+import { reactive, h, computed } from 'vue'
 import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
 import { MessageDetail, MessageReply, ExamineInfo } from '../../entity/MessageDetailResult'
 import PageComp from '../../component/PageComp.vue'
@@ -17,9 +17,9 @@ const toolsData = reactive({
     del: false,
   },
 })
-const MessageMode = () => {
+const MessageMode = computed(() => {
   return route.query.mode + ''
-}
+})
 const changeRouteInfo = (info: string) => {
   if (info == route.query.mode) {
     return
@@ -405,7 +405,7 @@ const delComment = () => {
 }
 </script>
 <template>
-  <div v-if="MessageMode() != 'comment'">
+  <div v-if="MessageMode != 'comment'">
     <header class="tc">
       <h1>管理查询留言板信息</h1>
     </header>
@@ -454,7 +454,7 @@ const delComment = () => {
   </div>
   <n-modal v-model:show="toolsData.modelVisible.examineInfo" preset="dialog">
     <template #header>
-      <div v-if="MessageMode() == 'message'">查看{{ queryExamineInfoData.messageInfo.user.nickname }}举报原因</div>
+      <div v-if="MessageMode == 'message'">查看{{ queryExamineInfoData.messageInfo.user.nickname }}举报原因</div>
       <div v-else>查看{{ queryExamineInfoData.commentInfo.user.nickname }}举报原因</div>
     </template>
     <n-list>
@@ -467,10 +467,10 @@ const delComment = () => {
           <div>举报原因：{{ e.info }}</div>
         </n-space>
       </n-list-item>
-      <div v-if="queryExamineInfoData.page.pageCount > 1 && MessageMode() == 'message'">
+      <div v-if="queryExamineInfoData.page.pageCount > 1 && MessageMode == 'message'">
         <PageComp :page="queryExamineInfoData.page" :show-size-picker="true" @number-change="queryMessageExamineInfo" @size-change="queryMessageExamineInfo" @page-change="queryMessageExamineInfo"></PageComp>
       </div>
-      <div v-if="queryExamineInfoData.page.pageCount > 1 && MessageMode() == 'comment'">
+      <div v-if="queryExamineInfoData.page.pageCount > 1 && MessageMode == 'comment'">
         <PageComp :page="queryExamineInfoData.page" :show-size-picker="true" @number-change="queryMessageExamineInfo" @size-change="queryMessageExamineInfo" @page-change="queryMessageExamineInfo"></PageComp>
       </div>
     </n-list>
@@ -482,16 +482,16 @@ const delComment = () => {
   </n-modal>
   <n-modal v-model:show="toolsData.modelVisible.del" preset="dialog">
     <template #header>
-      <div v-if="MessageMode() == 'message'">删除标题为'{{ delData.messageInfo.title }}'留言</div>
-      <div v-if="MessageMode() == 'comment'">删除评论信息为'{{ delData.commentInfo.info }}'评论</div>
+      <div v-if="MessageMode == 'message'">删除标题为'{{ delData.messageInfo.title }}'留言</div>
+      <div v-if="MessageMode == 'comment'">删除评论信息为'{{ delData.commentInfo.info }}'评论</div>
     </template>
     <n-form-item>
       <n-input v-model:value="delData.disableReason" placeholder="请输入删除原因" />
     </n-form-item>
     <n-space justify="end" align="center">
       <n-gradient-text type="error" size="12"> 删除之后不可撤回，谨慎操作 </n-gradient-text>
-      <n-button type="error" size="small" v-if="MessageMode() == 'message'" @click="delMessage()" v-loading="messageData.loading">删除</n-button>
-      <n-button type="error" size="small" v-if="MessageMode() == 'comment'" @click="delComment()" v-loading="commentData.loading">删除</n-button>
+      <n-button type="error" size="small" v-if="MessageMode == 'message'" @click="delMessage()" v-loading="messageData.loading">删除</n-button>
+      <n-button type="error" size="small" v-if="MessageMode == 'comment'" @click="delComment()" v-loading="commentData.loading">删除</n-button>
       <n-button type="info" size="small" @click="toolsData.modelVisible.del = false">关闭</n-button>
       <br />
     </n-space>

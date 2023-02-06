@@ -1,28 +1,48 @@
 <script setup lang="ts" name="privateMessage">
-import { MenuOption, NButton, NCard, NGi, NGrid, NMenu, NSpace, NInput, NAvatar, NText, NList, NListItem, NEmpty, NDivider, NBadge, NSkeleton, NScrollbar } from 'naive-ui'
-import { reactive, h } from 'vue'
+import { MenuOption, NButton, NCard, NGi, NGrid, NMenu, NSpace, NInput, NAvatar, NText, NList, NListItem, NEmpty, NDivider, NBadge, NSkeleton, NScrollbar, NPopconfirm } from 'naive-ui'
+import { reactive, h, computed } from 'vue'
 import MessageTopNavComp from '../../component/MessageTopNavComp.vue'
 import { storeToRefs } from 'pinia'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import store from '../../store'
 import BaseResult, { BaseListResult } from '../../entity/BaseResult'
 import server from '../../tools/server'
 import { MessageFollow, PrivateMessage } from '../../entity/MessageDetailResult'
-import logger from '../../tools/logger'
 //pinia
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
 const route = useRoute()
+const router = useRouter()
 
 const toolsData = reactive({
   loading: {
     sendMessage: false,
     twoMenu: false,
+    queryFriend: false,
   },
-  oneMenu: {
-    value: 'myMessage',
+  twoMenuValue: route.query.mode + '',
+})
+const changeRouteInfo = (info: string) => {
+  if (info == route.query.mode) {
+    return
+  }
+  router.push({
+    path: '/message/privateMessage',
+    query: {
+      mode: info,
+    },
+  })
+}
+const viewMode = computed({
+  get: () => toolsData.twoMenuValue,
+  set: (value) => {
+    toolsData.twoMenuValue = value
   },
 })
+if (viewMode.value == '' && viewMode.value) {
+  viewMode.value = 'myMessage'
+}
+
 //消息中心菜单项
 const menuOptions: MenuOption[] = [
   {
@@ -30,8 +50,12 @@ const menuOptions: MenuOption[] = [
     key: 'myMessage',
   },
   {
+    label: '我的好友',
+    key: 'myFriend',
+  },
+  {
     label: '好友申请',
-    key: 'friend',
+    key: 'applyFriend',
   },
 ]
 //我的消息菜单项
@@ -47,7 +71,6 @@ const privateMessageByUserData = reactive({
 //从其他页面进入私信，添加到消息队列中
 const orderUser = reactive(new MessageFollow())
 if (route.query.username) {
-  logger.debug(route.query, 'kkkkkkkkkkk')
   let query = JSON.parse(JSON.stringify(route.query))
   orderUser.user.username = query.username
   orderUser.userInfo.img = query.img
@@ -123,6 +146,51 @@ const sendMessage = () => {
   })
   toolsData.loading.sendMessage = false
 }
+//好友信息查询
+const friendData = reactive({
+  list: [] as MessageFollow[],
+  applyList: [] as MessageFollow[],
+  elseList: [] as MessageFollow[],
+})
+const queryFriend = (info: string) => {
+  toolsData.loading.queryFriend = true
+  server.post('/user/auth/friendQuery', { info: info }, (data: BaseListResult<MessageFollow>) => {
+    toolsData.loading.queryFriend = false
+    if (info == 'friend') {
+      friendData.list = data.list
+    } else if (info == 'apply') {
+      friendData.applyList = data.list
+    } else {
+      friendData.elseList = data.list
+    }
+  })
+}
+queryFriend('friend')
+queryFriend('apply')
+queryFriend('else')
+
+//好友申请处理
+const friendAgree = (info: string | number, username: string) => {
+  toolsData.loading.queryFriend = true
+  server.post('/user/auth/friendAgree', { info: info, username: username }, (data: BaseResult) => {
+    toolsData.loading.queryFriend = false
+    if (data.success) {
+      queryFriend('apply')
+      queryFriend('friend')
+      queryFriend('else')
+    }
+  })
+}
+//删除好友
+const delFriend = (username: string) => {
+  toolsData.loading.queryFriend = true
+  server.post('/user/auth/friendDelete', { username: username }, (data: BaseResult) => {
+    toolsData.loading.queryFriend = false
+    if (data.success) {
+      queryFriend('friend')
+    }
+  })
+}
 </script>
 <template>
   <div class="container">
@@ -132,11 +200,15 @@ const sendMessage = () => {
     <main>
       <n-grid cols="6" x-gap="12px">
         <n-gi span="1">
-          <n-card title="消息中心"> <n-menu :options="menuOptions" v-model:value="toolsData.oneMenu.value" /></n-card>
+          <n-card title="消息中心"> <n-menu :options="menuOptions" v-model:value="viewMode" @update:value="changeRouteInfo" /></n-card>
         </n-gi>
         <n-gi span="5">
-          <n-card size="small"> 我的消息 </n-card>
-          <n-card content-style="display:flex; padding:0; height: 100%;" v-show="toolsData.oneMenu.value == 'myMessage'">
+          <n-card size="small">
+            <span v-if="viewMode == 'myMessage'">我的消息列表</span>
+            <span v-if="viewMode == 'myFriend'">我的好友列表</span>
+            <span v-if="viewMode == 'applyFriend'">我的好友申请·</span>
+          </n-card>
+          <n-card content-style="display:flex; padding:0; height: 100%;" v-if="viewMode == 'myMessage'">
             <n-scrollbar style="min-width: 25%; max-width: 30%; height: 80vh">
               <div style="background-color: #fff; margin-left: 1rem; line-height: 2">最新消息</div>
               <n-divider style="margin: 0" />
@@ -147,8 +219,7 @@ const sendMessage = () => {
                     <n-skeleton text :repeat="1" height="30px" width="80px" />
                   </n-space>
                 </n-list-item>
-
-                <n-list-item v-for="u in privateMessageUserData.list" :key="u.user.username" @click="queryPrivateMessageByUser(u.user.username, u.userInfo.img)" :class="{ menuActive: u.user.username == privateMessageByUserData.username }">
+                <n-list-item v-else v-for="u in privateMessageUserData.list" :key="u.user.username" @click="queryPrivateMessageByUser(u.user.username, u.userInfo.img)" :class="{ menuActive: u.user.username == privateMessageByUserData.username }">
                   <n-badge :value="u.newMessage">
                     <n-space align="center">
                       <n-avatar round :src="u.userInfo.img ? u.userInfo.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
@@ -199,6 +270,98 @@ const sendMessage = () => {
                 </template>
               </n-card>
             </div>
+          </n-card>
+          <n-card v-if="viewMode == 'myFriend'">
+            <n-scrollbar style="height: 80vh">
+              <n-list show-divider>
+                <n-list-item v-if="toolsData.loading.queryFriend">
+                  <n-space align="center" justify="space-between">
+                    <n-space align="center">
+                      <n-skeleton height="40px" circle />
+                      <n-skeleton text :repeat="1" height="30px" width="80px" />
+                    </n-space>
+                    <div> <n-skeleton text :repeat="1" height="30px" width="90px" /> <n-skeleton text :repeat="1" height="30px" width="90px" /></div>
+                  </n-space>
+                </n-list-item>
+                <n-list-item v-for="u in friendData.list" :key="u.user.uid" v-else>
+                  <n-space align="center" justify="space-between">
+                    <n-space align="center" @click="router.push(`/message/personal/${u.user.username}`)">
+                      <n-avatar round :src="u.userInfo.img ? u.userInfo.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
+                      <n-text>{{ u.user.nickname }}</n-text>
+                    </n-space>
+                    <n-space>
+                      <n-button @click="router.push({ path: '/message/privateMessage', query: { img: u.userInfo.img, username: u.user.username, nickname: u.user.nickname, mode: 'myMessage' } })">私信好友</n-button>
+                      <n-popconfirm @positive-click="delFriend(u.user.username)" negative-text="取消" positive-text="确定">
+                        <template #trigger>
+                          <n-button>删除好友</n-button>
+                        </template>
+                        删除操作无法撤回，请谨慎操作
+                      </n-popconfirm>
+                    </n-space>
+                  </n-space>
+                </n-list-item>
+              </n-list>
+              <n-space align="center" justify="center" style="height: 100%" v-if="friendData.list.length < 1 && !toolsData.loading.queryFriend">
+                <n-empty description="你暂时还没有好友哦" size="huge"></n-empty>
+              </n-space>
+            </n-scrollbar>
+          </n-card>
+          <n-card v-if="viewMode == 'applyFriend'">
+            <n-scrollbar style="height: 80vh">
+              <n-list show-divider>
+                <template #header> 您发出的申请 </template>
+                <n-list-item v-if="toolsData.loading.queryFriend">
+                  <n-space align="center" justify="space-between">
+                    <n-space align="center">
+                      <n-skeleton height="40px" circle />
+                      <n-skeleton text :repeat="1" height="30px" width="80px" />
+                    </n-space>
+                    <div> <n-skeleton text :repeat="1" height="30px" width="90px" /> <n-skeleton text :repeat="1" height="30px" width="90px" /></div>
+                  </n-space>
+                </n-list-item>
+                <n-list-item v-for="u in friendData.applyList" :key="u.user.uid" v-else>
+                  <n-space align="center" justify="space-between">
+                    <n-space align="center">
+                      <n-avatar round :src="u.userInfo.img ? u.userInfo.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
+                      <n-text>{{ u.user.nickname }}</n-text>
+                    </n-space>
+                    <div>您申请成为{{ u.user.nickname }}的好友</div>
+                    <div>暂未同意（用户拒绝后记录会在此列表消失） </div>
+                  </n-space>
+                </n-list-item>
+                <n-space align="center" justify="center" style="height: 100%" v-if="friendData.applyList.length < 1 && !toolsData.loading.queryFriend">
+                  <n-empty description="你还没有发出过好友申请哦" size="huge"></n-empty>
+                </n-space>
+              </n-list>
+              <n-list show-divider>
+                <template #header> 您收到的申请 </template>
+                <n-list-item v-if="toolsData.loading.queryFriend">
+                  <n-space align="center" justify="space-between">
+                    <n-space align="center">
+                      <n-skeleton height="40px" circle />
+                      <n-skeleton text :repeat="1" height="30px" width="80px" />
+                    </n-space>
+                    <div> <n-skeleton text :repeat="1" height="30px" width="90px" /> <n-skeleton text :repeat="1" height="30px" width="90px" /></div>
+                  </n-space>
+                </n-list-item>
+                <n-list-item v-for="u in friendData.elseList" :key="u.user.uid" v-else>
+                  <n-space align="center" justify="space-between">
+                    <n-space align="center">
+                      <n-avatar round :src="u.userInfo.img ? u.userInfo.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
+                      <n-text>{{ u.user.nickname }}</n-text>
+                    </n-space>
+                    <div>{{ u.user.nickname }}申请成为您的好友</div>
+                    <n-space>
+                      <n-button @click="friendAgree('agree', u.user.username)">同意</n-button>
+                      <n-button @click="friendAgree('deny', u.user.username)">拒绝</n-button>
+                    </n-space>
+                  </n-space>
+                </n-list-item>
+                <n-space align="center" justify="center" style="height: 100%" v-if="friendData.elseList.length < 1 && !toolsData.loading.queryFriend">
+                  <n-empty description="还没有好友向您发出申请哦" size="huge"></n-empty>
+                </n-space>
+              </n-list>
+            </n-scrollbar>
           </n-card>
         </n-gi>
       </n-grid>
