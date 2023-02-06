@@ -6,7 +6,6 @@ import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
 import { useRouter } from 'vue-router'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
-import logger from '../../tools/logger'
 import dialogApi from '../../tools/dialog'
 import PageComp from '../../component/PageComp.vue'
 const router = useRouter()
@@ -105,13 +104,7 @@ const columns = reactive([
           NSpace,
           { justify: 'center' },
           {
-            default: () => {
-              for (let i = 0; i < TdClass.list.length; i++) {
-                if (TdClass.list[i].cid == parseInt(row.cid)) {
-                  return TdClass.list[i].cname
-                }
-              }
-            },
+            default: () => TdClass.list.filter((item) => item.cid == row.cid)[0].cname,
           }
         ),
       ]
@@ -171,7 +164,7 @@ const columns = reactive([
   },
 ])
 // 删除班级
-function delDept(cid: number) {
+const delDept = (cid: number) => {
   loading.del = true
   server.post('/manage/student/delete', { cid: cid }, (data: BaseResult) => {
     if (data.success) {
@@ -203,7 +196,7 @@ const modifyInfo = reactive({
   sname: '',
   wechat: '',
 })
-function showStudent(item: StudentInfo) {
+const showStudent = (item: StudentInfo) => {
   loading.modify = true
   modifyInfo.sid = item.sid
   modifyInfo.cid = item.cid + ''
@@ -214,14 +207,13 @@ function showStudent(item: StudentInfo) {
   modifyInfo.wechat = item.wechat
 }
 // 查询学生
-function queryStudent() {
+const queryStudent = () => {
   loading.loading = true
   StudengData.page.pageSize = 10
   StudengData.list = [] as StudentInfo[]
   server.post('/manage/student/queryAll', tools.concatJson(query.querys, StudengData.page), (data: BaseListResult<StudentInfo>) => {
     if (data.success) {
       StudengData.list = data.list
-      logger.debug('>>>>>>>>>>>>>>>>>>>>>>>>>>>', StudengData.list)
       StudengData.page = data.page
     } else {
       dialogApi.notifyWarning({
@@ -233,14 +225,13 @@ function queryStudent() {
     loading.loading = false
   })
 }
-queryClassSelect()
+
 queryStudent()
-function queryClassSelect() {
+const queryClassSelect = () => {
   classList.list = [{ label: '请选择班级', value: '' }]
   StudengData.page.pageSize = 100
   server.post('/manage/class/queryAll', {}, (data: BaseListResult<ClassInfo>) => {
     if (data.success == true) {
-      logger.debug('-------------------------------false')
       TdClass.list = data.list
       data.list.forEach((item) => {
         classList.list.push({
@@ -255,11 +246,11 @@ function queryClassSelect() {
         keepAliveOnHover: true,
       })
     }
-    logger.debug('++++++++++=', classList.list)
   })
 }
+queryClassSelect()
 // 重置
-function reset() {
+const reset = () => {
   query.querys.cid = ''
   query.querys.phone = ''
   query.querys.qq = ''
@@ -269,38 +260,38 @@ function reset() {
 }
 
 // 添加班级
-function showAdd() {
+const showAdd = () => {
   loading.add = true
   addStudentInfo.cid = ''
 }
-function addStudent() {
+const addStudent = () => {
   addForm.value?.validate((error) => {
+    loading.add = true
+    server.post('/manage/student/add', addStudentInfo, (data: BaseResult) => {
+      if (data.success) {
+        queryStudent()
+        dialogApi.notifyInfo({
+          title: '成功',
+          content: data.message,
+          duration: 2000,
+          keepAliveOnHover: true,
+        })
+      } else {
+        dialogApi.notifyWarning({
+          title: '失败',
+          content: data.message,
+          duration: 2000,
+          keepAliveOnHover: true,
+        })
+      }
+    })
     if (!error) {
-      loading.add = true
-      server.post('/manage/student/add', addStudentInfo, (data: BaseResult) => {
-        if (data.success) {
-          queryStudent()
-          dialogApi.notifyInfo({
-            title: '成功',
-            content: data.message,
-            duration: 2000,
-            keepAliveOnHover: true,
-          })
-        } else {
-          dialogApi.notifyWarning({
-            title: '失败',
-            content: data.message,
-            duration: 2000,
-            keepAliveOnHover: true,
-          })
-        }
-      })
     }
   })
 }
 const modifyForm = ref<FormInst | null>(null)
 // 修改班级
-function modifyClass() {
+const modifyClass = () => {
   modifyForm.value?.validate((error) => {
     if (!error) {
       server.post('/manage/student/update', modifyInfo, (data: BaseResult) => {
@@ -351,7 +342,9 @@ function modifyClass() {
       <n-button attr-type="button" class="mr05" @click="router.back()">返回</n-button>
     </div>
     <n-data-table :columns="columns" :data="StudengData.list" :loading="loading.loading" striped />
-    <PageComp @page-change="queryStudent()" :page="StudengData.page"></PageComp>
+    <div v-if="StudengData.page.pageCount > 1">
+      <PageComp @page-change="queryStudent" @number-change="queryStudent" @size-change="queryStudent" :page="StudengData.page"></PageComp>
+    </div>
     <n-modal v-model:show="loading.add" preset="dialog" style="width: 50%">
       <template #header> 添加班级 </template>
       <n-form ref="addForm" :rules="addRules" :model="addStudentInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging" :style="{ maxWidth: '700px' }">

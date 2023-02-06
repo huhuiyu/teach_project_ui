@@ -6,7 +6,6 @@ import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
 import { useRouter } from 'vue-router'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
-import logger from '../../tools/logger'
 import dialogApi from '../../tools/dialog'
 import PageComp from '../../component/PageComp.vue'
 const router = useRouter()
@@ -136,7 +135,6 @@ function showClass(item: ClassInfo) {
   modifyInfo.cid = item.cid
   modifyInfo.cinfo = item.cinfo
   modifyInfo.cname = item.cname
-  logger.debug('=+++++++++++++++', modifyInfo)
 }
 // 查询班级
 function queryClass() {
@@ -231,7 +229,9 @@ function modifyClass() {
       </n-form-item>
     </n-form>
     <n-data-table :columns="columns" :data="ClassData.list" :loading="loading.loading" striped />
-    <PageComp @page-change="queryClass()" :page="ClassData.page"></PageComp>
+    <div v-if="ClassData.page.pageCount > 1">
+      <PageComp @page-change="queryClass" @number-change="queryClass" @size-change="queryClass" :page="ClassData.page"></PageComp>
+    </div>
     <n-modal v-model:show="loading.add" preset="dialog">
       <template #header> 添加班级 </template>
       <n-form ref="addForm" :rules="addRules" :model="addClassInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }">
