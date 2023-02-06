@@ -17,6 +17,10 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../view/MansgeHome.vue'),
   },
   {
+    path: '/osshome',
+    component: () => import('../view/OssHome.vue'),
+  },
+  {
     path: '/chatroom',
     component: () => import('../view/ChatRoom.vue'),
   },
