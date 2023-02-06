@@ -12,6 +12,12 @@ const list = reactive([
     info: 'OSS基本配置',
     path: '/oss/config',
   },
+  {
+    img: '', 
+    title: 'bucket信息配置',
+    info: 'bucket信息配置',
+    path: '/oss/bucket',
+  },
 ])
 </script>
 <template>

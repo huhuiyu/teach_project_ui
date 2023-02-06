@@ -115,7 +115,18 @@ const columns = reactive([
             size: 'medium',
             type: 'error',
             onClick: () => {
-              delOssBucket(row.obid)
+              dialogApi.showError({
+                title: `警告是否删除bucket配置编号obid为${row.obid}`,
+                content: '（严重警告，配置下所有的bucket以及文件也会全部删除！！！），是否删除？',
+                positiveText: '确定',
+                negativeText: '不确定',
+                onPositiveClick: () => {
+                  delOssBucket(row.obid)
+                },
+                onNegativeClick: () => {
+                  return
+                },
+              })
             },
           },
           {
