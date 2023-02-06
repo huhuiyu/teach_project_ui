@@ -131,8 +131,8 @@ const logOut = () => {
           <n-button circle secondary size="medium" v-if="!loginUser.isLogin" @click="router.push('/login')">登录</n-button>
         </n-space>
         <n-space style="column-gap: 25px; margin-left: 0.5rem" align="center">
-          <n-button text> 占位 </n-button>
-          <n-button text @click="tools.jumpRoute_Blank('/message/privateMessage')"> 消息 </n-button>
+          <n-button text @click="tools.jumpRoute_Blank('/message/privateMessage', { mode: 'myFriend' })"> 好友 </n-button>
+          <n-button text @click="tools.jumpRoute_Blank('/message/privateMessage', { mode: 'myMessage' })"> 消息 </n-button>
           <n-button Ghost @click="tools.jumpRoute_Blank('/message/edit')">
             创作中心
             <template #icon>

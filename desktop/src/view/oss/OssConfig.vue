@@ -1,11 +1,10 @@
 <script setup lang="ts" name="OssConfig">
-import { NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSelect, NSpace, NSwitch } from 'naive-ui'
+import { NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSpace, NSwitch } from 'naive-ui'
 import { reactive, h } from 'vue'
 import { useRouter } from 'vue-router'
 import PageComp from '../../component/PageComp.vue'
-import BaseResult, { BaseDataResult, BaseListResult, PageInfo } from '../../entity/BaseResult'
+import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
 import dialog from '../../tools/dialog'
-import logger from '../../tools/logger'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
 import { OssConfig } from '../../entity/OssInfo'

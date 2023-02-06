@@ -2,6 +2,7 @@ import sparkMd5 from 'spark-md5'
 import FileInfo from '../entity/FileInfo'
 import logger from './logger'
 import { router } from '../router/index'
+import { LocationQueryRaw } from 'vue-router'
 
 let tools = {
   md5: (info: string) => {
@@ -189,9 +190,10 @@ let tools = {
     document.body.removeChild(input)
     return result
   },
-  jumpRoute_Blank(path: string) {
+  jumpRoute_Blank(path: string, query: LocationQueryRaw = {}) {
     const { href } = router.resolve({
       path: path,
+      query: query,
     })
     window.open(href, '_blank')
   },
