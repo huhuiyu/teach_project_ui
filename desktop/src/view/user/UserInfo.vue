@@ -3,7 +3,7 @@ import { NButton, NCard, NForm, NFormItem, NInput, NRadio, NTabPane, NTabs, NRad
 import { storeToRefs } from 'pinia'
 import { ref, reactive, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import MainTopNavComp from '../../component/MainTopNavComp.vue'
+import MainTopNavComp from '../../component/Home/MainTopNavComp.vue'
 import BaseResult, { BaseDataResult } from '../../entity/BaseResult'
 import FileInfo from '../../entity/FileInfo'
 import { FileInfoResult } from '../../entity/FileResult'
