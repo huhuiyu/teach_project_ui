@@ -11,6 +11,10 @@ const routes = [
     path: '/oss/bucket',
     component: () => import('../view/oss/Bucket.vue'),
   },
+  {
+    path: '/oss/file',
+    component: () => import('../view/oss/OssFile.vue'),
+  },
 ]
 
 export default routes

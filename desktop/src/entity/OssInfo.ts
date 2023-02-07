@@ -1,5 +1,6 @@
 class TbBucket {
   bucketName: string = ''
+  cachetime: string = ''
   endpoint: string = ''
   expiration: string = ''
   info: string = ''
@@ -8,6 +9,7 @@ class TbBucket {
   lastupdate: number = 0
   domains: string = ''
   enable: String = 'y'
+  constructor() {}
 }
 
 class OssSign {
@@ -22,12 +24,26 @@ class OssSign {
 }
 
 class TbOssInfo {
+  // bucket: TbBucket = new TbBucket()
   obid: number = -1
   objectName: string = ''
+  // oiid: number = -1
   filename: string = ''
   contentType: string = ''
   filesize: number = 0
   fileinfo: string = ''
+  lastupdate: number = -1
+}
+class queryTbOssInfoclss {
+  bucket: TbBucket = new TbBucket()
+  obid: number = -1
+  objectName: string = ''
+  oiid: number = -1
+  filename: string = ''
+  contentType: string = ''
+  filesize: number = 0
+  fileinfo: string = ''
+  lastupdate: number = -1
 }
 
 class UploadInfo {
@@ -53,4 +69,4 @@ class OssEndPoints {
   internalEndpoint: string = ''
   length: any = null
 }
-export { TbBucket as TbBucket, OssSign as OssSign, TbOssInfo as TbOssInfo, UploadInfo as UploadInfo, OssConfig as OssConfig, OssEndPoints as OssEndPoints }
+export { TbBucket as TbBucket, OssSign as OssSign, TbOssInfo as TbOssInfo, UploadInfo as UploadInfo, OssConfig as OssConfig, OssEndPoints as OssEndPoints, queryTbOssInfoclss as queryTbOssInfoclss }
