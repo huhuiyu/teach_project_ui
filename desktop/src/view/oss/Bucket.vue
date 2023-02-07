@@ -9,6 +9,7 @@ import dialogApi from '../../tools/dialog'
 import tools from '../../tools/tools'
 import PageComp from '../../component/PageComp.vue'
 import logger from '../../tools/logger'
+import loading from 'naive-ui/es/_internal/loading'
 const router = useRouter()
 // 页面loading
 const Loading = reactive({
@@ -29,7 +30,11 @@ const columns = reactive([
           NSpace,
           { justify: 'center' },
           {
-            default: () => allOssConfigData.list.filter((item) => item.ocid == row.ocid)[0].description,
+            default: () => {
+              for (let i = 0; i < allOssConfigData.list.length; i++) {
+                if (allOssConfigData.list[i].ocid == row.ocid) return allOssConfigData.list[i].description
+              }
+            },
           }
         ),
       ]
@@ -44,7 +49,11 @@ const columns = reactive([
           NSpace,
           { justify: 'center' },
           {
-            default: () => OssEndPointslist.list.filter((item) => item.endpoint == row.endpoint)[0].region,
+            default: () => {
+              for (let i = 0; i < OssEndPointslist.list.length; i++) {
+                if (OssEndPointslist.list[i].endpoint == row.endpoint) return OssEndPointslist.list[i].region
+              }
+            },
           }
         ),
       ]
@@ -98,9 +107,9 @@ const columns = reactive([
               modifyOssBucket.obid = row.obid + ''
               modifyOssBucket.ocid = row.ocid + ''
               modifyOssBucket.domains = row.domains
-              modifyOssBucket.expiration = row.expiration
+              modifyOssBucket.expiration = row.expiration + ''
               modifyOssBucket.info = row.info
-              Loading.loading = true
+              Loading.modifyBucket = true
             },
           },
           {
@@ -154,9 +163,9 @@ const bucket = reactive({
 })
 // 删除bucket
 const delOssBucket = (obid: number) => {
-  Loading.delBucket = true
+  Loading.loading = true
   server.post('/oss/bucket/delete', { obid: obid }, (data: BaseResult) => {
-    Loading.delBucket = false
+    Loading.loading = false
     if (data.success) {
       dialogApi.messageInfo(data.message)
       queryAllOssBucket()
@@ -178,7 +187,7 @@ const queryAllOssBucket = () => {
     }
   })
 }
-// queryAllOssBucket()
+queryAllOssBucket()
 // 添加bucket信息
 const addOssbucket = reactive({
   bucketName: '',
@@ -191,7 +200,10 @@ const addOssbucket = reactive({
 const addBucket = () => {
   addmodifyRef.value?.validate((error) => {
     if (!error) {
+      Loading.loading = true
       server.post('/oss/bucket/add', addOssbucket, (data: BaseResult) => {
+        Loading.loading = false
+        Loading.addBucket = false
         if (data.success) {
           queryAllOssBucket()
         } else {
@@ -298,7 +310,6 @@ const queryossEndPoints = () => {
   server.post('/oss/bucket/ossEndPoints', {}, (data: BaseDataAyyayResult<OssEndPoints>) => {
     if (data.success) {
       OssEndPointslist.list = data.data
-      logger.debug('-=-=-=-=-=-', selectEndPoints.list)
       data.data.forEach((item) => {
         selectEndPoints.list.push({
           label: item.region,
@@ -347,8 +358,9 @@ const modifyOssBucket = reactive({
 const querymodifyBucket = () => {
   addmodifyRef.value?.validate((error) => {
     if (!error) {
-      Loading.modifyBucket = true
+      Loading.loading = true
       server.post('/oss/bucket/update', modifyOssBucket, (data: BaseResult) => {
+        Loading.loading = false
         Loading.modifyBucket = false
         if (data.success) {
           queryAllOssBucket()
@@ -397,10 +409,10 @@ const querymodifyBucket = () => {
         <NFormItem label="bucket描述信息" path="info">
           <NInput v-model:value="addOssbucket.info"></NInput>
         </NFormItem>
-        <NFormItem label="oss节点信息">
+        <NFormItem label="oss节点信息" path="endpoint">
           <NSelect v-model:value="addOssbucket.endpoint" :options="selectEndPoints.list"></NSelect>
         </NFormItem>
-        <NFormItem label="oss配置编号">
+        <NFormItem label="oss配置编号" path="ocid">
           <NSelect v-model:value="addOssbucket.ocid" :options="selectConfig.list"></NSelect>
         </NFormItem>
         <NFormItem label="链接过期时间（秒）" path="expiration">
@@ -445,3 +457,12 @@ const querymodifyBucket = () => {
     </NModal>
   </div>
 </template>
+
+<style scoped>
+:deep() .n-data-table-th {
+  text-align: center;
+}
+:deep() .n-data-table-td {
+  text-align: center;
+}
+</style>

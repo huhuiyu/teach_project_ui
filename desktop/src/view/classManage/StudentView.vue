@@ -104,7 +104,11 @@ const columns = reactive([
           NSpace,
           { justify: 'center' },
           {
-            default: () => TdClass.list.filter((item) => item.cid == row.cid)[0].cname,
+            default: () => {
+              for (let i = 0; i < TdClass.list.length; i++) {
+                if (TdClass.list[i].cid == row.cid) return TdClass.list[i].cname
+              }
+            },
           }
         ),
       ]
