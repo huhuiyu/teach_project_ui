@@ -29,15 +29,6 @@ const bucket = reactive({
 const selectBucket = reactive({
   list: [{ label: '选择bucket节点', value: '' }],
 })
-// 应答错误
-const postError = (message: any) => {
-  dialogApi.notifyWarning({
-    title: '失败',
-    content: message,
-    duration: 2000,
-    keepAliveOnHover: true,
-  })
-}
 // 查看所有的bucket
 const queryBacket = () => {
   server.post('/oss/bucket/queryAll', {}, (data: BaseListResult<TbBucket>) => {
@@ -49,8 +40,6 @@ const queryBacket = () => {
           value: item.obid + '',
         })
       })
-    } else {
-      postError(data.message)
     }
   })
 }
@@ -81,8 +70,6 @@ const queryOssInfo = () => {
       logger.debug('erbfnlsmkd', data.list)
       OssInfoList.list = data.list
       OssInfoList.page = data.page
-    } else {
-      postError(data.message)
     }
   })
 }
@@ -144,21 +131,21 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
     titleColSpan: 2,
     render(row: queryTbOssInfoclss) {
       return [
-        // h(
-        //   NButton,
-        //   {
-        //     strong: true,
-        //     tertiary: true,
-        //     size: 'medium',
-        //     type: 'info',
-        //     onClick: () => {
-        //       UrlOssInfo(row.oiid)
-        //     },
-        //   },
-        //   {
-        //     default: () => '地址',
-        //   }
-        // ),
+        h(
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: 'medium',
+            type: 'info',
+            onClick: () => {
+              UrlOssInfo(row.oiid)
+            },
+          },
+          {
+            default: () => '地址',
+          }
+        ),
         h(
           NButton,
           {
@@ -168,8 +155,8 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
             type: 'info',
             onClick: () => {
               dialogApi.showError({
-                title: `警告是否删除oss配置编号oicd为${row.oiid}`,
-                content: '（严重警告，配置下所有的bucket以及文件也会全部删除！！！），是否删除？',
+                title: `警告是否删除该oss文件`,
+                content: `是否删除${row.filename}？`,
                 positiveText: '确定',
                 negativeText: '不确定',
                 onPositiveClick: () => {
@@ -205,7 +192,7 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
               if (row.contentType.indexOf('image') > -1) {
                 return '预览'
               } else {
-                return '不能在线预览'
+                return '文件'
               }
             },
           }
@@ -221,21 +208,21 @@ const handleCheck = (rowKeys: DataTableRowKey[]) => {
 }
 
 // 复制地址
-// const UrlOssInfo = (oiid: number) => {
-//   server.post('/oss/ossinfo/queryOssUrlInfo', { oiid: oiid }, (data: BaseResult) => {
-//     if (data.success && tools.copyText(data.message)) {
-//       dialogApi.notifyInfo({
-//         content: '复制成功',
-//         duration: 1200,
-//       })
-//     } else {
-//       dialogApi.notifyError({
-//         content: '复制失败',
-//         duration: 1200,
-//       })
-//     }
-//   })
-// }
+const UrlOssInfo = (oiid: number) => {
+  server.post('/oss/ossinfo/queryOssUrlInfo', { oiid: oiid }, (data: BaseResult) => {
+    if (data.success && tools.copyText(data.message)) {
+      dialogApi.notifyInfo({
+        content: '复制成功',
+        duration: 1200,
+      })
+    } else {
+      dialogApi.notifyError({
+        content: '复制失败',
+        duration: 1200,
+      })
+    }
+  })
+}
 // 删除文件
 const delOssInfo = (oiid: number) => {
   server.post('/oss/ossinfo/delete', { oiid: oiid }, (data: BaseResult) => {
@@ -286,7 +273,7 @@ const addquery = (info: boolean) => {
       <h1>oss添加文件</h1>
     </header>
     <main>
-      <NForm inline size="medium" style="justify-content: flex-end; padding-right: 3rem" :model="ossInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging">
+      <NForm class="queryobid" inline size="medium" style="justify-content: flex-end; padding-right: 3rem" :model="ossInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging">
         <NFormItem path="obid">
           <NSelect @update:value="queryOssInfo()" v-model:value="ossInfo.obid" :options="selectBucket.list"> </NSelect>
         </NFormItem>
@@ -315,7 +302,7 @@ const addquery = (info: boolean) => {
           <NButton type="error" dashed @click="router.back()">返回</NButton>
         </NFormItem>
       </NForm>
-      <NDataTable :columns="columns()" :data="OssInfoList.list" :row-key="rowKey" @update:checked-row-keys="handleCheck"></NDataTable>
+      <NDataTable class="taleData" :columns="columns()" :data="OssInfoList.list" :row-key="rowKey" @update:checked-row-keys="handleCheck"></NDataTable>
       <div v-if="OssInfoList.page.pageCount > 1">
         <PageComp @size-change="queryOssInfo" @page-change="queryOssInfo" @number-change="queryOssInfo" :page="OssInfoList.page"></PageComp>
       </div>
@@ -327,9 +314,9 @@ const addquery = (info: boolean) => {
         <template #active></template>
       </NModal>
     </main>
-    <NModal v-model:show="Loaidng.yuluan" preset="dialog" style="width: 50%">
-      <NImage v-if="Loaidng.imgortext == false" width="100" object-fit="cover" :src="OssInfoList.imgSrc" :previewed-img-props="{ style: { width: '50%', margin: '0 auto' } }"></NImage>
-      <space>点击放大</space>
+    <NModal class="yuluancenter" v-model:show="Loaidng.yuluan" preset="dialog" style="width: 50%">
+      <NImage class="imgclassstyle" v-if="Loaidng.imgortext == false" width="100" object-fit="cover" :src="OssInfoList.imgSrc" :previewed-img-props="{ style: { width: '50%', margin: '0 auto' } }"> </NImage>
+      <div class="actionhover">点击放大</div>
     </NModal>
   </div>
 </template>
@@ -340,10 +327,31 @@ const addquery = (info: boolean) => {
 :deep() .n-data-table-td {
   text-align: center;
 }
-::deep(.n-image) {
-  width: 1px;
-  height: 1px;
-  /* width: 150%; */
-  /* margin: 0 auto; */
+.taleData :deep() .n-button {
+  margin-right: 10px;
+}
+.imgclassstyle {
+  display: flex;
+  justify-content: center;
+}
+.yuluancenter :deep() .n-dialog__content {
+  position: relative;
+}
+.actionhover {
+  display: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 40%;
+  top: 40%;
+  color: rgb(254, 0, 0);
+}
+.imgclassstyle:hover .actionhover {
+  display: flex;
+}
+.queryobid :deep() .n-base-selection-label {
+  width: 300px;
 }
 </style>

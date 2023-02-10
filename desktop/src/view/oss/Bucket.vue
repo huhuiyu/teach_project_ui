@@ -59,21 +59,26 @@ const columns = reactive([
       ]
     },
   },
-  { title: '跨域', key: 'domains' },
-  { title: 'bucket描述信息', key: 'info' },
-  { title: '链接过期时间（秒）', key: 'expiration' },
   {
-    title: 'bucket是否启用',
-    key: 'enable',
+    title: '跨域',
+    key: 'domains',
     render(row: TbBucket) {
       return [
-        h(NSwitch, {
-          value: row.enable == 'y' ? true : false,
-          disabled: true,
-        }),
+        h(
+          NSpace,
+          { justify: 'center' },
+          {
+            default: () => {
+              return row.domains.replace(',', '\r')
+            },
+          }
+        ),
       ]
     },
   },
+  { title: 'bucket描述信息', key: 'info' },
+  { title: '链接过期时间（秒）', key: 'expiration' },
+
   {
     title: '信息最后修改时间',
     key: 'lastupdate',
@@ -125,7 +130,7 @@ const columns = reactive([
             type: 'error',
             onClick: () => {
               dialogApi.showError({
-                title: `警告是否删除bucket配置编号obid为${row.obid}`,
+                title: `警告是否删除该bucket配置`,
                 content: '（严重警告，配置下所有的bucket以及文件也会全部删除！！！），是否删除？',
                 positiveText: '确定',
                 negativeText: '不确定',
@@ -147,15 +152,6 @@ const columns = reactive([
   },
 ])
 
-// 请求错误的情况
-const postError = (string: any) => {
-  dialogApi.notifyWarning({
-    title: '失败',
-    content: string,
-    duration: 2000,
-    keepAliveOnHover: true,
-  })
-}
 // bucket
 const bucket = reactive({
   page: new PageInfo(),
@@ -169,8 +165,6 @@ const delOssBucket = (obid: number) => {
     if (data.success) {
       dialogApi.messageInfo(data.message)
       queryAllOssBucket()
-    } else {
-      postError(data.message)
     }
   })
 }
@@ -182,8 +176,6 @@ const queryAllOssBucket = () => {
     if (data.success) {
       bucket.list = data.list
       bucket.page = data.page
-    } else {
-      postError(data.message)
     }
   })
 }
@@ -193,7 +185,7 @@ const addOssbucket = reactive({
   bucketName: '',
   domains: '*',
   endpoint: '',
-  expiration: '',
+  expiration: '3600',
   info: '',
   ocid: '',
 })
@@ -206,8 +198,6 @@ const addBucket = () => {
         Loading.addBucket = false
         if (data.success) {
           queryAllOssBucket()
-        } else {
-          postError(data.message)
         }
       })
     }
@@ -267,13 +257,13 @@ const modifyRules: FormRules = {
       trigger: ['input', 'blur'],
     },
   ],
-  // endpoint: [
-  //   {
-  //     required: true,
-  //     message: 'oss节点信息不能为空',
-  //     trigger: ['input', 'blur'],
-  //   },
-  // ],
+  endpoint: [
+    {
+      required: true,
+      message: 'oss节点信息不能为空',
+      trigger: ['input', 'blur'],
+    },
+  ],
   expiration: [
     {
       required: true,
@@ -316,8 +306,6 @@ const queryossEndPoints = () => {
           value: item.endpoint,
         })
       })
-    } else {
-      postError(data.message)
     }
   })
 }
@@ -364,8 +352,6 @@ const querymodifyBucket = () => {
         Loading.modifyBucket = false
         if (data.success) {
           queryAllOssBucket()
-        } else {
-          postError(data.message)
         }
       })
     }
@@ -389,7 +375,7 @@ const querymodifyBucket = () => {
           <NButton type="error" dashed @click="router.back()">返回</NButton>
         </NFormItem>
       </NForm>
-      <n-data-table :columns="columns" :data="bucket.list" :loading="Loading.loading" />
+      <n-data-table class="taleData" :columns="columns" :data="bucket.list" :loading="Loading.loading" />
       <div v-if="bucket.page.pageCount > 1">
         <PageComp :page="bucket.page" :show-size-picker="true" @number-change="queryAllOssBucket" @page-change="queryAllOssBucket" @size-change="queryAllOssBucket"></PageComp>
       </div>
@@ -415,9 +401,9 @@ const querymodifyBucket = () => {
         <NFormItem label="oss配置编号" path="ocid">
           <NSelect v-model:value="addOssbucket.ocid" :options="selectConfig.list"></NSelect>
         </NFormItem>
-        <!-- <NFormItem label="链接过期时间（秒）" path="expiration">
+        <NFormItem label="链接过期时间（秒）" path="expiration">
           <NInput v-model:value="addOssbucket.expiration"></NInput>
-        </NFormItem> -->
+        </NFormItem>
       </NForm>
       <template #action>
         <div>
@@ -464,5 +450,8 @@ const querymodifyBucket = () => {
 }
 :deep() .n-data-table-td {
   text-align: center;
+}
+.taleData :deep() .n-button {
+  margin-right: 10px;
 }
 </style>

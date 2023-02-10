@@ -11,23 +11,10 @@ import { OssConfig } from '../../entity/OssInfo'
 
 const router = useRouter()
 const columns = reactive([
-  { title: 'oss配置编号-ocid', key: 'ocid' },
   { title: 'oss的accessKeyId', key: 'accessKeyId' },
   { title: 'oss的accessKeySecret', key: 'accessKeySecret' },
   { title: '配置描述信息', key: 'description' },
-  {
-    title: '配置是否启用（y/n）',
-    key: 'enable',
-    titleColSpan: 1,
-    render(row: OssConfig) {
-      return [
-        h(NSwitch, {
-          value: row.enable == 'y' ? true : false,
-          disabled: true,
-        }),
-      ]
-    },
-  },
+
   {
     title: '信息最后修改时间',
     key: 'lastupdate',
@@ -76,7 +63,7 @@ const columns = reactive([
             type: 'error',
             onClick: () => {
               dialog.showError({
-                title: `警告是否删除oss配置编号oicd为${row.ocid}`,
+                title: `警告是否删除该oss基本配置`,
                 content: '（严重警告，配置下所有的bucket以及文件也会全部删除！！！），是否删除？',
                 positiveText: '确定',
                 negativeText: '不确定',
@@ -181,12 +168,12 @@ const delOssConfig = (ocid: string | number) => {
           <n-button type="error" dashed @click="router.back()"> 返回 </n-button>
         </n-form-item>
       </n-form>
-      <n-data-table :columns="columns" :data="allOssConfigData.list" :loading="toolsData.loading.queryAll" />
+      <n-data-table class="taleData" :columns="columns" :data="allOssConfigData.list" :loading="toolsData.loading.queryAll" />
       <div v-if="allOssConfigData.page.pageCount > 1">
         <PageComp :page="allOssConfigData.page" :show-size-picker="true" @number-change="queryAllOssConfig" @size-change="queryAllOssConfig" @page-change="queryAllOssConfig"></PageComp>
       </div>
     </main>
-    <n-modal v-model:show="toolsData.modal.add" preset="dialog" :mask-closable="false">
+    <n-modal v-model:show="toolsData.modal.add" preset="dialog">
       <template #header>
         <div>添加oss配置信息</div>
       </template>
@@ -239,5 +226,8 @@ const delOssConfig = (ocid: string | number) => {
 }
 :deep() .n-data-table-td {
   text-align: center;
+}
+.taleData :deep() .n-button {
+  margin-right: 10px;
 }
 </style>
