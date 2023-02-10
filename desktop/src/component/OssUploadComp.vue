@@ -38,7 +38,6 @@ const queryBucket = () => {
           value: item.obid,
         })
       })
-      logger.debug('-------------', selectViewInfo.list)
     }
   })
 }
@@ -59,7 +58,7 @@ const browseFile = () => {
   })
   // , 'image/*'
 }
-
+const emit = defineEmits(['addossinfo-laoing'])
 const uploadFile = () => {
   refs.value?.validate((error) => {
     if (!error) {
@@ -143,22 +142,19 @@ const uploadFile = () => {
           ossuplader.start()
         }
       })
-      const emits = defineEmits(['addossinfo-laoing'])
-      emits('addossinfo-laoing', false)
     }
   })
 }
-
 const saveOssInfo = (info: TbOssInfo, index: number) => {
   server.post('/oss/ossinfo/add', info, (data: BaseResult) => {
     let uploadInfo = viewInfo.uploadInfo[index]
     uploadInfo.percent = 100
     uploadInfo.info = '保存上传文件信息' + info.filename + '完毕'
     viewInfo.uploadCount--
-
     if (viewInfo.uploadCount <= 0) {
       viewInfo.loading = false
       clearFiles()
+      emit('addossinfo-laoing', false)
       // viewInfo.uploadInfo.push('所有文件上传完毕')
     }
   })
@@ -196,7 +192,7 @@ const Rules: FormRules = {
     <!-- <div v-else> 请选择上传的文件 </div> -->
     <NForm ref="refs" :rules="Rules" :model="viewInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging" :style="{ maxWidth: '700px' }">
       <NFormItem label="文件描述信息" path="fileinfo">
-        <NInput v-model="viewInfo.fileinfo" placeholder="文件描述信息"></NInput>
+        <NInput v-model:value="viewInfo.fileinfo" placeholder="文件描述信息"></NInput>
       </NFormItem>
       <NFormItem label="bucket信息" path="bucket.obid">
         <NSelect v-model:value="viewInfo.bucket.obid" :options="selectViewInfo.list"> </NSelect>

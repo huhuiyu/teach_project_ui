@@ -348,7 +348,7 @@ queryOssConfig()
 // 修改bucket
 const modifyOssBucket = reactive({
   domains: '',
-  expiration: '',
+  expiration: '3600',
   info: '',
   ocid: '',
   obid: '',
@@ -415,9 +415,9 @@ const querymodifyBucket = () => {
         <NFormItem label="oss配置编号" path="ocid">
           <NSelect v-model:value="addOssbucket.ocid" :options="selectConfig.list"></NSelect>
         </NFormItem>
-        <NFormItem label="链接过期时间（秒）" path="expiration">
+        <!-- <NFormItem label="链接过期时间（秒）" path="expiration">
           <NInput v-model:value="addOssbucket.expiration"></NInput>
-        </NFormItem>
+        </NFormItem> -->
       </NForm>
       <template #action>
         <div>
@@ -444,9 +444,9 @@ const querymodifyBucket = () => {
         <NFormItem label="oss配置编号">
           <NSelect v-model:value="modifyOssBucket.ocid" :options="selectConfig.list"></NSelect>
         </NFormItem>
-        <NFormItem label="链接过期时间（秒）" path="expiration">
+        <!-- <NFormItem label="链接过期时间（秒）" path="expiration">
           <NInput v-model:value="modifyOssBucket.expiration"></NInput>
-        </NFormItem>
+        </NFormItem> -->
       </NForm>
       <template #action>
         <div>

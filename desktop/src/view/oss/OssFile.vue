@@ -1,28 +1,33 @@
 <script setup lang="ts">
-import { NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSelect, NSpace } from 'naive-ui'
-import { reactive, h } from 'vue'
+import { NButton, NImage, NDataTable, NForm, NFormItem, NInput, NModal, NSelect, NSpace } from 'naive-ui'
+import { reactive, h, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PageComp from '../../component/PageComp.vue'
-import BaseResult, { BaseDataResult, BaseListResult, PageInfo } from '../../entity/BaseResult'
-import { OssConfig, queryTbOssInfoclss, TbBucket } from '../../entity/OssInfo'
+import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
+import { queryTbOssInfoclss, TbBucket } from '../../entity/OssInfo'
 import dialogApi from '../../tools/dialog'
 import logger from '../../tools/logger'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
 import OssUploadComp from '../../component/OssUploadComp.vue'
 const router = useRouter()
+// loaidng
 const Loaidng = reactive({
   loading: false,
   addossinfo: false,
+  yuluan: false,
+  imgortext: false,
 })
+// bucket的应答结果
 const bucket = reactive({
   list: [] as TbBucket[],
   page: new PageInfo(),
 })
+// bucket的options循环数组
 const selectBucket = reactive({
   list: [{ label: '选择bucket节点', value: '' }],
 })
-
+// 应答错误
 const postError = (message: any) => {
   dialogApi.notifyWarning({
     title: '失败',
@@ -31,6 +36,7 @@ const postError = (message: any) => {
     keepAliveOnHover: true,
   })
 }
+// 查看所有的bucket
 const queryBacket = () => {
   server.post('/oss/bucket/queryAll', {}, (data: BaseListResult<TbBucket>) => {
     if (data.success) {
@@ -47,21 +53,30 @@ const queryBacket = () => {
   })
 }
 queryBacket()
+// oss文件参数
 const OssInfo = reactive({
   contentType: '',
   fileinfo: '',
   filename: '',
   obid: '',
 })
+// oss文件打开路径
+const ossInfoUrl = 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid='
+// 应答阐参数
 const OssInfoList = reactive({
   list: [] as queryTbOssInfoclss[],
   page: new PageInfo(),
+  imgSrc: '',
 })
+let nsta = 1
+// 查询oss文件
 const queryOssInfo = () => {
+  nsta = nsta + 1
   Loaidng.loading = true
   server.post('/oss/ossinfo/queryAll', tools.concatJson(OssInfo, OssInfoList.page), (data: BaseListResult<queryTbOssInfoclss>) => {
     Loaidng.loading = false
     if (data.success) {
+      logger.debug('erbfnlsmkd', data.list)
       OssInfoList.list = data.list
       OssInfoList.page = data.page
     } else {
@@ -70,14 +85,20 @@ const queryOssInfo = () => {
   })
 }
 queryOssInfo()
+// 重置
 const resaqueryOssInf = () => {
   OssInfo.contentType = ''
   OssInfo.fileinfo = ''
   OssInfo.filename = ''
   OssInfo.obid = ''
+  queryOssInfo()
 }
 
 const columns = reactive([
+  // {
+  //   type: 'selection',
+  //   disabled(row: queryTbOssInfoclss) {},
+  // },
   { title: 'bucket名称', key: 'bucket.info' },
   { title: '文件名称', key: 'filename' },
   { title: '文件描述', key: 'fileinfo' },
@@ -90,9 +111,7 @@ const columns = reactive([
           NSpace,
           { justify: 'center' },
           {
-            default: () => {
-              return tools.formatFileSize(row.filesize)
-            },
+            default: () => tools.formatFileSize(row.filesize),
           }
         ),
       ]
@@ -100,11 +119,41 @@ const columns = reactive([
   },
   { title: '文件类型', key: 'contentType' },
   {
+    title: '上传时间',
+    key: 'lastupdate',
+    render(row: queryTbOssInfoclss) {
+      return [
+        h(
+          NSpace,
+          { justify: 'center' },
+          {
+            default: () => tools.formatDate(row.lastupdate),
+          }
+        ),
+      ]
+    },
+  },
+  {
     title: '操作',
     key: 'operation',
     titleColSpan: 2,
     render(row: queryTbOssInfoclss) {
       return [
+        // h(
+        //   NButton,
+        //   {
+        //     strong: true,
+        //     tertiary: true,
+        //     size: 'medium',
+        //     type: 'info',
+        //     onClick: () => {
+        //       UrlOssInfo(row.oiid)
+        //     },
+        //   },
+        //   {
+        //     default: () => '地址',
+        //   }
+        // ),
         h(
           NButton,
           {
@@ -113,50 +162,74 @@ const columns = reactive([
             size: 'medium',
             type: 'info',
             onClick: () => {
-              UrlOssInfo(row.oiid)
-            },
-          },
-          {
-            default: () => '地址',
-          }
-        ),
-        h(
-          NButton,
-          {
-            strong: true,
-            tertiary: true,
-            size: 'medium',
-            type: 'info',
-            onClick: () => {
-              delOssInfo(row.oiid)
+              dialogApi.showError({
+                title: `警告是否删除oss配置编号oicd为${row.oiid}`,
+                content: '（严重警告，配置下所有的bucket以及文件也会全部删除！！！），是否删除？',
+                positiveText: '确定',
+                negativeText: '不确定',
+                onPositiveClick: () => {
+                  delOssInfo(row.oiid)
+                },
+                onNegativeClick: () => {
+                  return
+                },
+              })
             },
           },
           {
             default: () => '删除',
           }
         ),
+        h(
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: 'medium',
+            type: 'info',
+            onClick: () => {
+              if (row.contentType.indexOf('image') > -1) {
+                OssInfoList.imgSrc = ''
+                OssInfoList.imgSrc = ossInfoUrl + row.oiid
+                Loaidng.yuluan = true
+              }
+            },
+          },
+          {
+            default: () => {
+              if (row.contentType.indexOf('image') > -1) {
+                return '预览'
+              } else {
+                return '不能在线预览'
+              }
+            },
+          }
+        ),
       ]
     },
   },
 ])
-const UrlOssInfo = (oiid: number) => {
-  server.post('/oss/ossinfo/queryOssUrlInfo', { oiid: oiid }, (data: BaseResult) => {
-    if (data.success && tools.copyText(data.message)) {
-      dialogApi.notifyInfo({
-        content: '复制成功',
-        duration: 1200,
-      })
-    } else {
-      dialogApi.notifyError({
-        content: '复制失败',
-        duration: 1200,
-      })
-    }
-  })
-}
+// 复制地址
+// const UrlOssInfo = (oiid: number) => {
+//   server.post('/oss/ossinfo/queryOssUrlInfo', { oiid: oiid }, (data: BaseResult) => {
+//     if (data.success && tools.copyText(data.message)) {
+//       dialogApi.notifyInfo({
+//         content: '复制成功',
+//         duration: 1200,
+//       })
+//     } else {
+//       dialogApi.notifyError({
+//         content: '复制失败',
+//         duration: 1200,
+//       })
+//     }
+//   })
+// }
+// 删除文件
 const delOssInfo = (oiid: number) => {
   server.post('/oss/ossinfo/delete', { oiid: oiid }, (data: BaseResult) => {
     if (data.success) {
+      queryOssInfo()
       dialogApi.notifyInfo({
         content: '删除成功',
         duration: 1200,
@@ -169,8 +242,12 @@ const delOssInfo = (oiid: number) => {
     }
   })
 }
+// 上传文件回来后关闭添加页面
 const addquery = (info: boolean) => {
   Loaidng.addossinfo = info
+  if (info == false) {
+    queryOssInfo()
+  }
 }
 </script>
 <template>
@@ -180,17 +257,17 @@ const addquery = (info: boolean) => {
     </header>
     <main>
       <NForm inline size="medium" style="justify-content: flex-end; padding-right: 3rem" :model="OssInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging">
-        <NFormItem label="所属bucket编号" path="obid">
+        <NFormItem path="obid">
           <NSelect @update:value="queryOssInfo()" v-model:value="OssInfo.obid" :options="selectBucket.list"> </NSelect>
         </NFormItem>
-        <NFormItem label="文件名称" path="filename">
-          <NInput v-model:value="OssInfo.filename"></NInput>
+        <NFormItem path="filename">
+          <NInput v-model:value="OssInfo.filename" placeholder="文件名称"></NInput>
         </NFormItem>
-        <NFormItem label="文件类型" path="contentType">
-          <NInput v-model:value="OssInfo.contentType"></NInput>
+        <NFormItem path="contentType">
+          <NInput v-model:value="OssInfo.contentType" placeholder="文件类型"></NInput>
         </NFormItem>
-        <NFormItem label="文件描述信息" path="fileinfo">
-          <NInput v-model:value="OssInfo.fileinfo"></NInput>
+        <NFormItem path="fileinfo">
+          <NInput v-model:value="OssInfo.fileinfo" placeholder="文件描述信息"></NInput>
         </NFormItem>
         <NFormItem>
           <NButton type="success" dashed @click="Loaidng.addossinfo = true">添加</NButton>
@@ -200,6 +277,9 @@ const addquery = (info: boolean) => {
         </NFormItem>
         <NFormItem>
           <NButton type="success" dashed @click="queryOssInfo">查询</NButton>
+        </NFormItem>
+        <NFormItem>
+          <NButton type="success" dashed @click="queryOssInfo">批量删除</NButton>
         </NFormItem>
         <NFormItem>
           <NButton type="error" dashed @click="router.back()">返回</NButton>
@@ -217,6 +297,10 @@ const addquery = (info: boolean) => {
         <template #active></template>
       </NModal>
     </main>
+    <NModal v-model:show="Loaidng.yuluan" preset="dialog" style="width: 50%">
+      <NImage v-if="Loaidng.imgortext == false" width="100" object-fit="cover" :src="OssInfoList.imgSrc" :previewed-img-props="{ style: { width: '50%', margin: '0 auto' } }"></NImage>
+      <space>点击放大</space>
+    </NModal>
   </div>
 </template>
 <style scoped>
@@ -225,5 +309,11 @@ const addquery = (info: boolean) => {
 }
 :deep() .n-data-table-td {
   text-align: center;
+}
+::deep(.n-image) {
+  width: 1px;
+  height: 1px;
+  /* width: 150%; */
+  /* margin: 0 auto; */
 }
 </style>
