@@ -4,12 +4,14 @@ import { reactive, h, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PageComp from '../../component/PageComp.vue'
 import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
-import { queryTbOssInfoclss, TbBucket } from '../../entity/OssInfo'
+import { queryTbOssInfoclss, TbBucket, TbOssInfo } from '../../entity/OssInfo'
 import dialogApi from '../../tools/dialog'
 import logger from '../../tools/logger'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
 import OssUploadComp from '../../component/OssUploadComp.vue'
+
+import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
 const router = useRouter()
 // loaidng
 const Loaidng = reactive({
@@ -54,7 +56,7 @@ const queryBacket = () => {
 }
 queryBacket()
 // oss文件参数
-const OssInfo = reactive({
+const ossInfo = reactive({
   contentType: '',
   fileinfo: '',
   filename: '',
@@ -73,7 +75,7 @@ let nsta = 1
 const queryOssInfo = () => {
   nsta = nsta + 1
   Loaidng.loading = true
-  server.post('/oss/ossinfo/queryAll', tools.concatJson(OssInfo, OssInfoList.page), (data: BaseListResult<queryTbOssInfoclss>) => {
+  server.post('/oss/ossinfo/queryAll', tools.concatJson(ossInfo, OssInfoList.page), (data: BaseListResult<queryTbOssInfoclss>) => {
     Loaidng.loading = false
     if (data.success) {
       logger.debug('erbfnlsmkd', data.list)
@@ -87,18 +89,21 @@ const queryOssInfo = () => {
 queryOssInfo()
 // 重置
 const resaqueryOssInf = () => {
-  OssInfo.contentType = ''
-  OssInfo.fileinfo = ''
-  OssInfo.filename = ''
-  OssInfo.obid = ''
+  ossInfo.contentType = ''
+  ossInfo.fileinfo = ''
+  ossInfo.filename = ''
+  ossInfo.obid = ''
   queryOssInfo()
 }
 
-const columns = reactive([
-  // {
-  //   type: 'selection',
-  //   disabled(row: queryTbOssInfoclss) {},
-  // },
+const rowKey = (row: queryTbOssInfoclss) => row.oiid
+
+let deleteRows = ref<DataTableRowKey[]>([])
+
+const columns = (): DataTableColumns<queryTbOssInfoclss> => [
+  {
+    type: 'selection',
+  },
   { title: 'bucket名称', key: 'bucket.info' },
   { title: '文件名称', key: 'filename' },
   { title: '文件描述', key: 'fileinfo' },
@@ -208,7 +213,13 @@ const columns = reactive([
       ]
     },
   },
-])
+]
+
+const handleCheck = (rowKeys: DataTableRowKey[]) => {
+  logger.debug('选择的数据项', rowKeys)
+  deleteRows.value = rowKeys
+}
+
 // 复制地址
 // const UrlOssInfo = (oiid: number) => {
 //   server.post('/oss/ossinfo/queryOssUrlInfo', { oiid: oiid }, (data: BaseResult) => {
@@ -242,6 +253,24 @@ const delOssInfo = (oiid: number) => {
     }
   })
 }
+
+// 删除文件
+const delOssInfos = () => {
+  server.post('/oss/ossinfo/deleteByIds', { ids: deleteRows.value.join(',') }, (data: BaseResult) => {
+    if (data.success) {
+      queryOssInfo()
+      dialogApi.notifyInfo({
+        content: '删除成功',
+        duration: 1200,
+      })
+    } else {
+      dialogApi.notifyError({
+        content: '删除失败',
+        duration: 1200,
+      })
+    }
+  })
+}
 // 上传文件回来后关闭添加页面
 const addquery = (info: boolean) => {
   Loaidng.addossinfo = info
@@ -252,22 +281,23 @@ const addquery = (info: boolean) => {
 </script>
 <template>
   <div>
+    <!-- {{ deleteRows }} -->
     <header class="tc">
       <h1>oss添加文件</h1>
     </header>
     <main>
-      <NForm inline size="medium" style="justify-content: flex-end; padding-right: 3rem" :model="OssInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging">
+      <NForm inline size="medium" style="justify-content: flex-end; padding-right: 3rem" :model="ossInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging">
         <NFormItem path="obid">
-          <NSelect @update:value="queryOssInfo()" v-model:value="OssInfo.obid" :options="selectBucket.list"> </NSelect>
+          <NSelect @update:value="queryOssInfo()" v-model:value="ossInfo.obid" :options="selectBucket.list"> </NSelect>
         </NFormItem>
         <NFormItem path="filename">
-          <NInput v-model:value="OssInfo.filename" placeholder="文件名称"></NInput>
+          <NInput v-model:value="ossInfo.filename" placeholder="文件名称"></NInput>
         </NFormItem>
         <NFormItem path="contentType">
-          <NInput v-model:value="OssInfo.contentType" placeholder="文件类型"></NInput>
+          <NInput v-model:value="ossInfo.contentType" placeholder="文件类型"></NInput>
         </NFormItem>
         <NFormItem path="fileinfo">
-          <NInput v-model:value="OssInfo.fileinfo" placeholder="文件描述信息"></NInput>
+          <NInput v-model:value="ossInfo.fileinfo" placeholder="文件描述信息"></NInput>
         </NFormItem>
         <NFormItem>
           <NButton type="success" dashed @click="Loaidng.addossinfo = true">添加</NButton>
@@ -279,13 +309,13 @@ const addquery = (info: boolean) => {
           <NButton type="success" dashed @click="queryOssInfo">查询</NButton>
         </NFormItem>
         <NFormItem>
-          <NButton type="success" dashed @click="queryOssInfo">批量删除</NButton>
+          <NButton type="success" dashed @click="delOssInfos">批量删除</NButton>
         </NFormItem>
         <NFormItem>
           <NButton type="error" dashed @click="router.back()">返回</NButton>
         </NFormItem>
       </NForm>
-      <NDataTable :columns="columns" :data="OssInfoList.list"></NDataTable>
+      <NDataTable :columns="columns()" :data="OssInfoList.list" :row-key="rowKey" @update:checked-row-keys="handleCheck"></NDataTable>
       <div v-if="OssInfoList.page.pageCount > 1">
         <PageComp @size-change="queryOssInfo" @page-change="queryOssInfo" @number-change="queryOssInfo" :page="OssInfoList.page"></PageComp>
       </div>
