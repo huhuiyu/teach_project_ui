@@ -14,6 +14,7 @@ import OssUploadComp from '../../component/OssUploadComp.vue'
 import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
 const router = useRouter()
 // loaidng
+// 是否可以提交
 const Loaidng = reactive({
   loading: false,
   addossinfo: false,
