@@ -10,6 +10,7 @@ import tools from '../../tools/tools'
 import PageComp from '../../component/PageComp.vue'
 import logger from '../../tools/logger'
 import loading from 'naive-ui/es/_internal/loading'
+import { typeOf } from 'plupload'
 const router = useRouter()
 // 页面loading
 const Loading = reactive({
@@ -18,9 +19,12 @@ const Loading = reactive({
   delBucket: false,
   addBucket: false,
 })
+
 // table表格
+
 const columns = reactive([
-  { title: 'bucket名称', key: 'bucketName' },
+  { title: 'bucket名称', key: 'bucketBaseName' },
+  { title: 'bucket基本信息', key: 'bucketName' },
   {
     title: 'oss配置信息',
     key: 'ocid',
@@ -61,7 +65,7 @@ const columns = reactive([
   },
   {
     title: '跨域',
-    key: 'domains',
+    key: 'operations',
     render(row: TbBucket) {
       return [
         h(
@@ -69,14 +73,86 @@ const columns = reactive([
           { justify: 'center' },
           {
             default: () => {
-              return row.domains.replace(',', '\r')
+              logger.debug('1236879909')
+              return row.domains.split(',')[0]
+            },
+          }
+        ),
+        h(
+          NSpace,
+          { justify: 'center' },
+          {
+            default: () => {
+              if (row.domains.split(',').length > 0) return row.domains.split(',')[1]
+            },
+          }
+        ),
+        h(
+          NSpace,
+          { justify: 'center' },
+          {
+            default: () => {
+              if (row.domains.split(',').length > 1) return row.domains.split(',')[2]
+            },
+          }
+        ),
+        h(
+          NSpace,
+          { justify: 'center' },
+          {
+            default: () => {
+              if (row.domains.split(',').length > 2) return row.domains.split(',')[3]
+            },
+          }
+        ),
+        h(
+          NSpace,
+          { justify: 'center' },
+          {
+            default: () => {
+              if (row.domains.split(',').length > 3) return row.domains.split(',')[4]
+            },
+          }
+        ),
+        h(
+          NSpace,
+          { justify: 'center' },
+          {
+            default: () => {
+              if (row.domains.split(',').length > 4) return row.domains.split(',')[5]
+            },
+          }
+        ),
+        h(
+          NSpace,
+          { justify: 'center' },
+          {
+            default: () => {
+              if (row.domains.split(',').length > 5) return row.domains.split(',')[6]
+            },
+          }
+        ),
+        h(
+          NSpace,
+          { justify: 'center' },
+          {
+            default: () => {
+              if (row.domains.split(',').length > 6) return row.domains.split(',')[7]
+            },
+          }
+        ),
+        h(
+          NSpace,
+          { justify: 'center' },
+          {
+            default: () => {
+              if (row.domains.split(',').length > 7) return row.domains.split(',')[8]
             },
           }
         ),
       ]
     },
   },
-  { title: 'bucket描述信息', key: 'info' },
   { title: '链接过期时间（秒）', key: 'expiration' },
 
   {

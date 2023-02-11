@@ -91,7 +91,7 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
   {
     type: 'selection',
   },
-  { title: 'bucket名称', key: 'bucket.info' },
+  { title: 'bucket名称', key: 'bucket.bucketBaseName' },
   { title: '文件名称', key: 'filename' },
   { title: '文件描述', key: 'fileinfo' },
   {
@@ -137,9 +137,9 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
             strong: true,
             tertiary: true,
             size: 'medium',
-            type: 'info',
+            type: 'primary',
             onClick: () => {
-              UrlOssInfo(row.oiid)
+              tools.copyText(ossInfoUrl + row.oiid)
             },
           },
           {
@@ -152,7 +152,7 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
             strong: true,
             tertiary: true,
             size: 'medium',
-            type: 'info',
+            type: 'error',
             onClick: () => {
               dialogApi.showError({
                 title: `警告是否删除该oss文件`,
@@ -173,12 +173,22 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
           }
         ),
         h(
+          NSpace,
+          {},
+          {
+            default: () => {
+              return ''
+            },
+          }
+        ),
+        h(
           NButton,
           {
             strong: true,
             tertiary: true,
             size: 'medium',
-            type: 'info',
+            type: 'warning',
+            vertical: true,
             onClick: () => {
               if (row.contentType.indexOf('image') > -1) {
                 OssInfoList.imgSrc = ''
@@ -197,6 +207,21 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
             },
           }
         ),
+        h(
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: 'medium',
+            type: 'info',
+            onClick: () => {
+              window.open(ossInfoUrl + row.oiid)
+            },
+          },
+          {
+            default: () => '下载',
+          }
+        ),
       ]
     },
   },
@@ -207,22 +232,6 @@ const handleCheck = (rowKeys: DataTableRowKey[]) => {
   deleteRows.value = rowKeys
 }
 
-// 复制地址
-const UrlOssInfo = (oiid: number) => {
-  server.post('/oss/ossinfo/queryOssUrlInfo', { oiid: oiid }, (data: BaseResult) => {
-    if (data.success && tools.copyText(data.message)) {
-      dialogApi.notifyInfo({
-        content: '复制成功',
-        duration: 1200,
-      })
-    } else {
-      dialogApi.notifyError({
-        content: '复制失败',
-        duration: 1200,
-      })
-    }
-  })
-}
 // 删除文件
 const delOssInfo = (oiid: number) => {
   server.post('/oss/ossinfo/delete', { oiid: oiid }, (data: BaseResult) => {
@@ -328,7 +337,7 @@ const addquery = (info: boolean) => {
   text-align: center;
 }
 .taleData :deep() .n-button {
-  margin-right: 10px;
+  margin: 2px;
 }
 .imgclassstyle {
   display: flex;
