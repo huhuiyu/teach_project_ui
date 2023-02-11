@@ -24,7 +24,6 @@ const Loading = reactive({
 
 const columns = reactive([
   { title: 'bucket名称', key: 'bucketBaseName' },
-  { title: 'bucket基本信息', key: 'bucketName' },
   {
     title: 'oss配置信息',
     key: 'ocid',
@@ -506,9 +505,9 @@ const querymodifyBucket = () => {
         <NFormItem label="oss配置编号">
           <NSelect v-model:value="modifyOssBucket.ocid" :options="selectConfig.list"></NSelect>
         </NFormItem>
-        <!-- <NFormItem label="链接过期时间（秒）" path="expiration">
+        <NFormItem label="链接过期时间（秒）" path="expiration">
           <NInput v-model:value="modifyOssBucket.expiration"></NInput>
-        </NFormItem> -->
+        </NFormItem>
       </NForm>
       <template #action>
         <div>
