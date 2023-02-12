@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSelect, NSpace } from 'naive-ui'
+import { NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSelect, NSpace, NImage } from 'naive-ui'
 import { reactive, h } from 'vue'
 import { useRouter } from 'vue-router'
 import PageComp from '../../component/PageComp.vue'
@@ -12,6 +12,9 @@ import server from '../../tools/server'
 import tools from '../../tools/tools'
 
 const router = useRouter()
+const toolsData = reactive({
+  previewImg: '',
+})
 //	需要展示的列
 const columns = reactive([
   { title: '所属用户', key: 'uid' },
@@ -76,6 +79,20 @@ const columns = reactive([
             strong: true,
             tertiary: true,
             size: 'small',
+            disabled: !row.contentType.toString().includes('image/'),
+            onClick: () => {
+              modal.preview = true
+              toolsData.previewImg = server.getDownloadUrl(row.fid)
+            },
+          },
+          { default: () => '预览图片' }
+        ),
+        h(
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: 'small',
             type: 'success',
             onClick: () => {
               if (tools.copyText(server.getDownloadUrl(row.fid))) {
@@ -119,10 +136,10 @@ const columns = reactive([
 //文件类型
 const fileContentTypeOptions = [
   { value: '', label: '——请选择文件类型——' },
-  { value: 'image/', label: '图片' },
-  { value: 'audio/', label: '音频' },
-  { value: 'video/', label: '视频' },
-  { value: 'text/', label: '文本' },
+  { value: 'image/', label: '文件类型 — 图片' },
+  { value: 'audio/', label: '文件类型 — 音频' },
+  { value: 'video/', label: '文件类型 — 视频' },
+  { value: 'text/', label: '文件类型 — 文本' },
 ]
 
 const fileData = reactive({
@@ -161,6 +178,7 @@ const delFile = (fid: string) => {
 const modal = reactive({
   add: false,
   modify: false,
+  preview: false,
 })
 
 const addFileInfo = reactive({
@@ -202,6 +220,7 @@ const upload = () => {
   server.upload('/user/file/upload', addFileInfo.file.file, { fileinfo: addFileInfo.fileinfo }, (data: BaseDataResult<FileInfoResult>) => {
     if (data.success) {
       dialog.messageInfo(data.message)
+      queryFile()
     }
   })
 }
@@ -213,13 +232,13 @@ const upload = () => {
     </header>
     <main>
       <n-form inline :label-width="80" :model="fileData.queryInfo" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
-        <n-form-item label="文件类型">
-          <n-select :consistent-menu-width="false" v-model:value="fileData.queryInfo.contentType" :options="fileContentTypeOptions" />
+        <n-form-item>
+          <n-select :consistent-menu-width="false" v-model:value="fileData.queryInfo.contentType" @update:value="queryFile" :options="fileContentTypeOptions" />
         </n-form-item>
-        <n-form-item label="文件名称">
+        <n-form-item>
           <n-input v-model:value="fileData.queryInfo.filename" placeholder="输入文件名称" />
         </n-form-item>
-        <n-form-item label="文件描述">
+        <n-form-item>
           <n-input v-model:value="fileData.queryInfo.fileinfo" placeholder="输入文件描述" />
         </n-form-item>
         <n-form-item>
@@ -236,7 +255,7 @@ const upload = () => {
         </n-form-item>
       </n-form>
       <n-data-table :columns="columns" :data="fileData.list" :loading="fileData.loading" />
-      <div>
+      <div v-if="fileData.page.pageCount > 1">
         <PageComp :page="fileData.page" :show-size-picker="true" @number-change="queryFile" @size-change="queryFile" @page-change="queryFile"></PageComp>
       </div>
     </main>
@@ -260,7 +279,27 @@ const upload = () => {
         </div>
       </template>
     </n-modal>
+    <n-modal v-model:show="modal.preview" preset="dialog">
+      <template #header>
+        <div>预览图片</div>
+      </template>
+      <n-space justify="center">
+        <n-image width="200" :src="toolsData.previewImg" />
+      </n-space>
+      <template #action>
+        <div>
+          <n-button type="success" size="small" @click="modal.preview = false" class="mr05">关闭</n-button>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+:deep() .n-data-table-th {
+  text-align: center;
+}
+:deep() .n-data-table-td {
+  text-align: center;
+}
+</style>
