@@ -5,7 +5,7 @@ import { PortableInfo, PortableInfoConverter, TestPortableInfo, convert } from '
 import { server, serverInfo } from '../../tools/server'
 import { reactive } from 'vue'
 import { BaseListResult } from '../../entity/BaseResult'
-import { value } from 'dom7'
+
 // 登录用户信息相关
 const storeInfo = store()
 const { countInfo } = storeToRefs(storeInfo)
