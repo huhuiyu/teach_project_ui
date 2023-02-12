@@ -11,7 +11,7 @@ import tools from '../../tools/tools'
 const router = useRouter()
 //	需要展示的列
 const columns = reactive([
-  { title: '部门编号', key: 'deptName' },
+  { title: '部门编号', key: 'deptId' },
   { title: '部门信息', key: 'deptInfo' },
   { title: '部门名称', key: 'deptName' },
   {
@@ -237,8 +237,8 @@ function modifyDept() {
       <h1>部门管理</h1>
     </header>
     <main>
-      <n-form inline :label-width="80" :model="deptData.query" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
-        <n-form-item label="部门名称">
+      <n-form inline :model="deptData.query" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
+        <n-form-item>
           <n-input v-model:value="deptData.query.deptName" placeholder="输入部门名称" />
         </n-form-item>
         <n-form-item>
@@ -263,11 +263,11 @@ function modifyDept() {
       <template #header>
         <div>添加部门</div>
       </template>
-      <n-form ref="addRef" :model="addDeptInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }" :rules="addRules">
-        <n-form-item label="部门名称" path="deptName">
+      <n-form ref="addRef" :model="addDeptInfo" label-placement="left"  require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }" :rules="addRules">
+        <n-form-item  path="deptName">
           <n-input v-model:value="addDeptInfo.deptName" placeholder="输入部门名称" />
         </n-form-item>
-        <n-form-item label="部门描述" path="deptInfo">
+        <n-form-item  path="deptInfo">
           <n-input v-model:value="addDeptInfo.deptInfo" placeholder="输入部门描述" />
         </n-form-item>
       </n-form>
@@ -282,11 +282,11 @@ function modifyDept() {
       <template #header>
         <div>修改部门</div>
       </template>
-      <n-form ref="modifyRef" :model="modifyInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }" :rules="ModifyRules">
-        <n-form-item label="部门名称" path="deptName">
+      <n-form ref="modifyRef" :model="modifyInfo" label-placement="left"  require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }" :rules="ModifyRules">
+        <n-form-item path="deptName">
           <n-input v-model:value="modifyInfo.deptName" placeholder="输入部门名称" />
         </n-form-item>
-        <n-form-item label="部门描述" path="deptInfo">
+        <n-form-item path="deptInfo">
           <n-input v-model:value="modifyInfo.deptInfo" placeholder="输入部门描述" />
         </n-form-item>
       </n-form>
