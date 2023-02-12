@@ -6,6 +6,7 @@ import messageRouter from './message'
 import manageRouter from './manage'
 import dialog from '../tools/dialog'
 import ossRouter from './oss'
+import adminRouter from './admin'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -34,6 +35,7 @@ const routes: RouteRecordRaw[] = [
   .concat(messageRouter)
   .concat(manageRouter)
   .concat(ossRouter)
+  .concat(adminRouter)
 
 // 创建router
 const router = createRouter({

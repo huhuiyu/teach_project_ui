@@ -28,6 +28,12 @@ const list = reactive([
     info: '文件管理',
     path: '/manage/file',
   },
+  {
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '系统管理',
+    info: '系统日志、系统配置、系统用户',
+    path: '/admin/home',
+  },
 ])
 </script>
 
