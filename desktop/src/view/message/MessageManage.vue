@@ -9,6 +9,8 @@ import dialog from '../../tools/dialog'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import store from '../../store'
 const router = useRouter()
 const route = useRoute()
 const toolsData = reactive({
@@ -17,6 +19,16 @@ const toolsData = reactive({
     del: false,
   },
 })
+const storeInfo = store()
+const { loginUser } = storeToRefs(storeInfo)
+if (!loginUser.value.isLogin) {
+  dialog.messageWarning('请登录后访问！！！')
+  router.back()
+} else if (loginUser.value.tbUser.role != 'app-admin') {
+  dialog.messageWarning('必须是超级管理才能访问！！！')
+  router.back()
+}
+
 const MessageMode = computed(() => {
   return route.query.mode + ''
 })
@@ -410,8 +422,8 @@ const delComment = () => {
       <h1>管理查询留言板信息</h1>
     </header>
     <main>
-      <n-form inline :label-width="80" :model="messageData.queryInfo" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
-        <n-form-item label="查询信息">
+      <n-form inline :model="messageData.queryInfo" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
+        <n-form-item>
           <n-input v-model:value="messageData.queryInfo.info" placeholder="用户名，标题、内容模糊查询" />
         </n-form-item>
         <n-form-item>
@@ -438,7 +450,7 @@ const delComment = () => {
       <h1>管理查询评论信息</h1>
     </header>
     <main>
-      <n-form inline :label-width="80" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
+      <n-form inline size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
         <n-form-item>
           <n-button attr-type="button" @click="changeRouteInfo('message')"> 切换留言管理 </n-button>
         </n-form-item>
