@@ -22,9 +22,14 @@ const routes = [
   {
     path: '/test/wx',
     component: () => import('../view/test/Wx.vue'),
-  },{
+  },
+  {
     path: '/test/router',
     component: () => import('../view/test/TestRouter.vue'),
+  },
+  {
+    path: '/test/portable',
+    component: () => import('../view/test/TestPortable.vue'),
   },
 ]
 

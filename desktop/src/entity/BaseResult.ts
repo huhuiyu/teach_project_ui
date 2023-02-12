@@ -7,6 +7,7 @@ import UserOtherInfo from './UserOtherInfo'
  * 后端基本应答类型
  */
 class BaseResult {
+  token: string = ''
   success: boolean = false
   message: string = ''
   code: number = 500

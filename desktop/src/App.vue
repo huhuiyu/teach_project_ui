@@ -14,4 +14,5 @@ import { NDialogProvider, NLoadingBarProvider, NNotificationProvider, NMessagePr
 import store from './store'
 const storeInfo = store()
 storeInfo.queryCityInfo()
+storeInfo.queryCountInfo()
 </script>
