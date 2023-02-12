@@ -34,7 +34,7 @@ const queryBucket = () => {
       viewInfo.list = data.list
       data.list.forEach((item) => {
         selectViewInfo.list.push({
-          label: item.bucketName,
+          label: item.bucketBaseName,
           value: item.obid,
         })
       })

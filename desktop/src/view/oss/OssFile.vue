@@ -4,7 +4,7 @@ import { reactive, h, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PageComp from '../../component/PageComp.vue'
 import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
-import { queryTbOssInfoclss, TbBucket, TbOssInfo } from '../../entity/OssInfo'
+import { queryTbOssInfoclss, TbBucket } from '../../entity/OssInfo'
 import dialogApi from '../../tools/dialog'
 import logger from '../../tools/logger'
 import server from '../../tools/server'
@@ -13,8 +13,9 @@ import OssUploadComp from '../../component/OssUploadComp.vue'
 
 import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
 const router = useRouter()
+// oss文件打开路径
+const ossInfoUrl = 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid='
 // loaidng
-// 是否可以提交
 const Loaidng = reactive({
   loading: false,
   addossinfo: false,
@@ -37,7 +38,7 @@ const queryBacket = () => {
       bucket.list = data.list
       data.list.forEach((item) => {
         selectBucket.list.push({
-          label: item.bucketName,
+          label: item.bucketBaseName,
           value: item.obid + '',
         })
       })
@@ -52,8 +53,6 @@ const ossInfo = reactive({
   filename: '',
   obid: '',
 })
-// oss文件打开路径
-const ossInfoUrl = 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid='
 // 应答阐参数
 const OssInfoList = reactive({
   list: [] as queryTbOssInfoclss[],
@@ -68,7 +67,6 @@ const queryOssInfo = () => {
   server.post('/oss/ossinfo/queryAll', tools.concatJson(ossInfo, OssInfoList.page), (data: BaseListResult<queryTbOssInfoclss>) => {
     Loaidng.loading = false
     if (data.success) {
-      logger.debug('erbfnlsmkd', data.list)
       OssInfoList.list = data.list
       OssInfoList.page = data.page
     }
@@ -253,27 +251,43 @@ const delOssInfo = (oiid: number) => {
 
 // 删除文件
 const delOssInfos = () => {
-  server.post('/oss/ossinfo/deleteByIds', { ids: deleteRows.value.join(',') }, (data: BaseResult) => {
-    if (data.success) {
-      queryOssInfo()
-      dialogApi.notifyInfo({
-        content: '删除成功',
-        duration: 1200,
+  if (deleteRows.value.length <= 0) {
+    dialogApi.messageError('请选择需要删除的文件')
+    return
+  }
+  Loaidng.loading = true
+  dialogApi.showError({
+    title: '是否删除一下oss文件',
+    content: `您确定删除选中文件`,
+    positiveText: '删除',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      server.post('/oss/ossinfo/deleteByIds', { ids: deleteRows.value.join(',') }, (data: BaseResult) => {
+        Loaidng.loading = false
+        if (data.success) {
+          queryOssInfo()
+          dialogApi.notifyInfo({
+            content: '删除成功',
+            duration: 1200,
+          })
+        } else {
+          dialogApi.notifyError({
+            content: '删除失败',
+            duration: 1200,
+          })
+        }
       })
-    } else {
-      dialogApi.notifyError({
-        content: '删除失败',
-        duration: 1200,
-      })
-    }
+    },
+    onNegativeClick: () => {
+      Loaidng.loading = false
+      dialogApi.messageError('取消')
+    },
   })
 }
 // 上传文件回来后关闭添加页面
 const addquery = (info: boolean) => {
+  queryOssInfo()
   Loaidng.addossinfo = info
-  if (info == false) {
-    queryOssInfo()
-  }
 }
 </script>
 <template>

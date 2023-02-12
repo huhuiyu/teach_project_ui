@@ -1,4 +1,5 @@
 class TbBucket {
+  bucketBaseName: string = ''
   bucketName: string = ''
   cachetime: string = ''
   endpoint: string = ''

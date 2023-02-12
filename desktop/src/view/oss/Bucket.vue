@@ -8,9 +8,6 @@ import server from '../../tools/server'
 import dialogApi from '../../tools/dialog'
 import tools from '../../tools/tools'
 import PageComp from '../../component/PageComp.vue'
-import logger from '../../tools/logger'
-import loading from 'naive-ui/es/_internal/loading'
-import { typeOf } from 'plupload'
 const router = useRouter()
 // 页面loading
 const Loading = reactive({
@@ -71,10 +68,7 @@ const columns = reactive([
           NSpace,
           { justify: 'center' },
           {
-            default: () => {
-              logger.debug('1236879909')
-              return row.domains.split(',')[0]
-            },
+            default: () => row.domains.split(',')[0],
           }
         ),
         h(
