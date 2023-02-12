@@ -96,7 +96,7 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
   {
     title: '文件大小',
     key: 'filesize',
-    render(row: any) {
+    render(row: queryTbOssInfoclss) {
       return [
         h(
           NSpace,

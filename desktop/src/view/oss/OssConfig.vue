@@ -1,5 +1,5 @@
 <script setup lang="ts" name="OssConfig">
-import { NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSpace, NSwitch } from 'naive-ui'
+import { DataTableColumns, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSpace, NSwitch } from 'naive-ui'
 import { reactive, h } from 'vue'
 import { useRouter } from 'vue-router'
 import PageComp from '../../component/PageComp.vue'
@@ -10,7 +10,7 @@ import tools from '../../tools/tools'
 import { OssConfig } from '../../entity/OssInfo'
 
 const router = useRouter()
-const columns = reactive([
+const columns: DataTableColumns<OssConfig> = [
   { title: 'oss的accessKeyId', key: 'accessKeyId' },
   { title: 'oss的accessKeySecret', key: 'accessKeySecret' },
   { title: '配置描述信息', key: 'description' },
@@ -81,7 +81,7 @@ const columns = reactive([
       ]
     },
   },
-])
+]
 const toolsData = reactive({
   loading: {
     queryAll: false,

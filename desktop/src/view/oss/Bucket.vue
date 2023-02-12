@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FormInst, FormRules, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSelect, NSpace, NSwitch } from 'naive-ui'
+import { DataTableColumns, FormInst, FormRules, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSelect, NSpace, NSwitch } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import { reactive, h, ref } from 'vue'
 import { TbBucket, OssEndPoints, OssConfig } from '../../entity/OssInfo'
@@ -19,7 +19,7 @@ const Loading = reactive({
 
 // table表格
 
-const columns = reactive([
+const columns: DataTableColumns<TbBucket> = [
   { title: 'bucket名称', key: 'bucketBaseName' },
   {
     title: 'oss配置信息',
@@ -219,7 +219,7 @@ const columns = reactive([
       ]
     },
   },
-])
+]
 
 // bucket
 const bucket = reactive({
