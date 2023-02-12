@@ -333,6 +333,7 @@ const queryMessageExamineInfo = () => {
     }
   })
 }
+
 const queryCommentExamineInfo = () => {
   server.post('/message/manage/queryExamineInfoReply', { umrid: queryExamineInfoData.commentInfo.umrid }, (data: BaseListResult<ExamineInfo>) => {
     if (data.success) {
@@ -358,7 +359,7 @@ const queryMessageAll = () => {
     messageData.list = data.list
   })
 }
-queryMessageAll()
+
 const delData = reactive({
   messageInfo: new MessageDetail(),
   commentInfo: new MessageReply(),
@@ -398,7 +399,10 @@ const queryCommentAll = () => {
     commentData.list = data.list
   })
 }
-queryCommentAll()
+if (loginUser.value.isLogin && loginUser.value.tbUser.role == 'app-adming') {
+  queryMessageAll()
+  queryCommentAll()
+}
 const delComment = () => {
   if (delData.disableReason == '') {
     dialog.messageWarning('删除必须填写原因')
@@ -436,7 +440,7 @@ const delComment = () => {
           <n-button attr-type="button" @click="changeRouteInfo('comment')"> 切换评论管理 </n-button>
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="router.push('/manage')"> 返回主站 </n-button>
+          <n-button attr-type="button" @click="router.back"> 返回 </n-button>
         </n-form-item>
       </n-form>
       <n-data-table default-expand-all :columns="messageColumns" :data="messageData.list" :loading="commentData.loading" />

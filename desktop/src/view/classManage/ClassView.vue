@@ -154,6 +154,15 @@ function reset() {
   ClassData.page.pageNumber = 1
   queryClass()
 }
+const addRese = () => {
+  addClassInfo.cinfo = ''
+  addClassInfo.cname = ''
+}
+const modigyRese = () => {
+  modifyInfo.cid = -1
+  modifyInfo.cinfo = ''
+  modifyInfo.cname = ''
+}
 const addForm = ref<FormInst | null>(null)
 // 添加班级
 function addClass() {
@@ -163,15 +172,9 @@ function addClass() {
       server.post('/manage/class/add', addClassInfo, (data: BaseResult) => {
         if (data.success) {
           queryClass()
+          addRese()
           dialogApi.notifyInfo({
             title: '成功',
-            content: data.message,
-            duration: 2000,
-            keepAliveOnHover: true,
-          })
-        } else {
-          dialogApi.notifyWarning({
-            title: '失败',
             content: data.message,
             duration: 2000,
             keepAliveOnHover: true,
@@ -189,15 +192,10 @@ function modifyClass() {
       server.post('/manage/class/update', modifyInfo, (data: BaseResult) => {
         if (data.success) {
           queryClass()
+          modigyRese()
+          loading.modify = false
           dialogApi.notifyInfo({
             title: '成功',
-            content: data.message,
-            duration: 2000,
-            keepAliveOnHover: true,
-          })
-        } else {
-          dialogApi.notifyWarning({
-            title: '失败',
             content: data.message,
             duration: 2000,
             keepAliveOnHover: true,
@@ -212,7 +210,7 @@ function modifyClass() {
   <header> <h1>班级管理</h1> </header>
   <main>
     <n-form inline :label-width="80" :model="query.querys" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
-      <n-form-item label="班级名称">
+      <n-form-item>
         <n-input v-model:value="query.querys.cname" placeholder="输入班级名称"> </n-input>
       </n-form-item>
       <n-form-item>
