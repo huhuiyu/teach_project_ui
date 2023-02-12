@@ -8,7 +8,7 @@ const list = reactive([
     img: '',
     title: '简易留言板',
     info: '简介、多平台的留言板项目',
-    path: '/message/home',
+    path: '/messagehome',
   },
   {
     img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
@@ -29,10 +29,16 @@ const list = reactive([
     path: '/manage/file',
   },
   {
-    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    img: '',
     title: '系统管理',
     info: '系统日志、系统配置、系统用户',
     path: '/admin/home',
+  },
+  {
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '常用工具',
+    info: '常用工具',
+    path: '/toll',
   },
 ])
 </script>

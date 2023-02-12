@@ -15,7 +15,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/manage',
-    component: () => import('../view/MansgeHome.vue'),
+    component: () => import('../view/ManageHome.vue'),
   },
   {
     path: '/osshome',
@@ -24,6 +24,14 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/chatroom',
     component: () => import('../view/ChatRoom.vue'),
+  },
+  {
+    path: '/messagehome',
+    component: () => import('../view/MessageHome.vue'),
+  },
+  {
+    path: '/toll',
+    component: () => import('../view/ToolHome.vue'),
   },
   {
     path: '/login',

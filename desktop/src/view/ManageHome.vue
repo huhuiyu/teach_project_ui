@@ -1,17 +1,11 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
-import MainTopNavComp from '../component/Home/MainTopNavComp.vue'
 import MainHomeComp from '../component/Home/MainHomeComp.vue'
+import MainTopNavComp from '../component/Home/MainTopNavComp.vue'
 const title = '教学管理项目'
 const list = reactive([
   {
     img: '',
-    title: '管理留言板',
-    info: '管理简介、多平台的留言板项目',
-    path: '/message/manage',
-  },
-  {
-    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
     title: '部门管理',
     info: '教学任务中的练习',
     path: '/manage/dept',

@@ -52,6 +52,7 @@ main > div {
   transition: all 0.8s;
   text-decoration: none;
   color: #000;
+  height: 100%;
 }
 .conter_menu:hover {
   box-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.3);
@@ -79,6 +80,11 @@ main > div {
 .conter_img {
   transition: transform 0.8s;
   transform-origin: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.conter_menu :deep() img {
   width: 100%;
   height: 100%;
   object-fit: cover;
