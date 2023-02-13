@@ -25,7 +25,7 @@ if (!loginUser.value.isLogin) {
   dialog.messageWarning('请登录后访问！！！')
   router.back()
 } else if (loginUser.value.tbUser.role != 'app-admin') {
-  dialog.messageWarning('必须是超级管理才能访问！！！')
+  dialog.messageWarning('必须是app管理员才能访问！！！')
   router.back()
 }
 
