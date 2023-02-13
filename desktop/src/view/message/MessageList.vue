@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
-import { NBackTop, NEmpty, NAvatar, NButton, NCard, NTime, NGi, NInput, NTabs, NTabPane, NGrid, NSkeleton, NSpace } from 'naive-ui'
+import { reactive, ref } from 'vue'
+import { NBackTop, NEmpty, NAvatar, NButton, NCard, NTime, NGi, NInput, NTabs, NTabPane, NGrid, NSkeleton, NSpace, NModal, NForm, NFormItem, FormInst, FormRules } from 'naive-ui'
 import { useRoute, useRouter } from 'vue-router'
 import MessageTopNavComp from '../../component/MessageTopNavComp.vue'
 import BaseResult, { PageInfo } from '../../entity/BaseResult'
@@ -11,6 +11,8 @@ import tools from '../../tools/tools'
 import store from '../../store'
 import { storeToRefs } from 'pinia'
 import PageComp from '../../component/PageComp.vue'
+import logger from '../../tools/logger'
+
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
 const Route = useRoute()
@@ -20,6 +22,8 @@ const queryUmid = reactive({
 })
 const loadings = reactive({
   loading: false,
+  MessageReportLoaidng: false,
+  MessageListReportLoaidng: false,
 })
 const comments = reactive({
   info: '',
@@ -56,8 +60,8 @@ const searchMessageList = () => {
   MessageDataList.page.pageSize = 200
   loadings.loading = true
   server.post('/message/queryDetail', tools.concatJson(queryMessageList, MessageDataList.page), (data: MessageDetailResult) => {
+    loadings.loading = false
     if (data.success) {
-      loadings.loading = false
       MessageDataList.page = data.page
       MessageDataList.list = data.list
       MessageDataList.info = data.info
@@ -76,71 +80,147 @@ const updatequerymessageLise = () => {
 const supportMessage = (value: string) => {
   loadings.loading = true
   if (!loginUser.value.isLogin) {
+    loadings.loading = false
     dialogApi.messageWarning('请登录后再进行操作哦')
-    return false
-  } else {
-    server.post('/message/supportReply', { umrid: value }, (data: BaseResult) => {
-      if (data.success) {
-        loadings.loading = false
-        searchMessageList()
-      }
-    })
+    return
   }
+  server.post('/message/support', { umid: value }, (data: BaseResult) => {
+    loadings.loading = false
+    if (data.success) {
+      searchMessageList()
+    }
+  })
 }
 // 关注取消关注
 const actionconcern = (username: string) => {
   loadings.loading = true
   if (!loginUser.value.isLogin) {
+    loadings.loading = false
     dialogApi.messageWarning('请登录后再进行操作哦')
-    return false
-  } else {
-    server.post('/message/followUser', { username: username }, (data: BaseResult) => {
-      if (data.success) {
-        loadings.loading = false
-        searchMessageList()
-        if (MessageDataList.info.userOtherInfo.mineFollow) {
-        } else {
-          successTrue('操作成功')
-        }
-      } else {
-        successFalse(data.message)
-      }
-    })
+    return
   }
+  server.post('/message/followUser', { username: username }, (data: BaseResult) => {
+    loadings.loading = false
+    if (data.success) {
+      searchMessageList()
+      if (MessageDataList.info.userOtherInfo.mineFollow) {
+      } else {
+        successTrue('操作成功')
+      }
+    } else {
+      successFalse(data.message)
+    }
+  })
 }
 // 发布评论
 const pushComments = () => {
   // comments
   loadings.loading = true
   if (!loginUser.value.isLogin) {
+    loadings.loading = false
     dialogApi.messageWarning('请登录后再进行操作哦')
-    return false
-  } else {
-    server.post('/message/addReply', comments, (data: BaseResult) => {
-      if (data.success) {
-        loadings.loading = false
-        searchMessageList()
-        successTrue('发布成功')
-        comments.info = ''
-      }
-    })
+    return
   }
+  server.post('/message/addReply', comments, (data: BaseResult) => {
+    loadings.loading = false
+    if (data.success) {
+      searchMessageList()
+      successTrue('发布成功')
+      comments.info = ''
+    }
+  })
 }
 // 发布用户删除评论
 const delMessageData = (umrid: number) => {
   loadings.loading = true
   if (!loginUser.value.isLogin) {
+    loadings.loading = false
     dialogApi.messageWarning('请登录后再进行操作哦')
-    return false
-  } else {
-    server.post('/message/manage/deletUserMessageReply', { umrid: umrid }, (data: BaseResult) => {
-      if (data.success) {
-        loadings.loading = false
-        searchMessageList()
-        successTrue('删除成功')
-      }
-    })
+    return
   }
+  let umrnamr = ''
+  MessageDataList.list.filter((item) => {
+    if (item.umrid == umrid) {
+      umrnamr = item.info
+    }
+  })
+  dialogApi.showError({
+    title: '删除评论',
+    content: `是否删除:${umrnamr}评论`,
+    positiveText: '删除',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      server.post('/message/manage/deletUserMessageReply', { umrid: umrid }, (data: BaseResult) => {
+        if (data.success) {
+          searchMessageList()
+          successTrue('删除成功')
+        }
+      })
+    },
+    onNegativeClick: () => {
+      return
+    },
+  })
+  loadings.loading = false
+}
+// 举报留言
+const MessageReplyInfo = reactive({
+  umid: -1,
+  info: '',
+})
+const ClickMessageReport = (umid: number) => {
+  MessageReplyInfo.umid = umid
+  loadings.MessageReportLoaidng = true
+  if (!loginUser.value.isLogin) {
+    MessageReplyInfo.umid = -1
+    loadings.MessageReportLoaidng = false
+    dialogApi.messageWarning('请登录后再进行操作哦')
+    return
+  }
+}
+const MessageReport = () => {
+  server.post('/message/examine', MessageReplyInfo, (data: BaseResult) => {
+    MessageReplyInfo.umid = -1
+    MessageReplyInfo.info = ''
+    loadings.MessageReportLoaidng = false
+    if (data.success) {
+      dialogApi.messageInfo('举报成功')
+    }
+  })
+}
+const MessageListReplyInfo = reactive({
+  umrid: -1,
+  info: '',
+})
+const ClickMessageListReport = (umrid: number) => {
+  MessageListReplyInfo.umrid = umrid
+  loadings.MessageListReportLoaidng = true
+  if (!loginUser.value.isLogin) {
+    MessageListReplyInfo.umrid = -1
+    loadings.MessageListReportLoaidng = false
+    dialogApi.messageWarning('请登录后再进行操作哦')
+    return
+  }
+}
+const MessageListReport = () => {
+  server.post('/message/examineReply', MessageListReplyInfo, (data: BaseResult) => {
+    MessageListReplyInfo.umrid = -1
+    MessageListReplyInfo.info = ''
+    loadings.MessageListReportLoaidng = false
+    if (data.success) {
+      dialogApi.messageInfo('举报成功')
+    }
+  })
+}
+const Ref = ref<FormInst | null>(null)
+const rules: FormRules = {
+  info: [
+    {
+      required: true,
+      message: '举报原因不能为空',
+      trigger: ['input', 'blur'],
+    },
+  ],
 }
 </script>
 <template>
@@ -187,7 +267,7 @@ const delMessageData = (umrid: number) => {
                     <div><n-time :time="MessageDataList.info.userInfo.lastupdate"></n-time></div>
                   </n-space>
                 </n-space>
-                <n-space>
+                <n-space v-if="loginUser.tbUser.username != MessageDataList.info.user.username">
                   <n-button strong secondary type="warning" @click="actionconcern(MessageDataList.info.user.username)" v-if="MessageDataList.info.userOtherInfo.mineFollow"> 取消关注 </n-button>
                   <n-button strong secondary type="info" @click="actionconcern(MessageDataList.info.user.username)" v-else> 关注 </n-button>
                 </n-space>
@@ -208,10 +288,10 @@ const delMessageData = (umrid: number) => {
                     <i class="iconfont">&#xe619;</i>
                   </template>
                 </n-button>
-                <n-button text>
+                <n-button v-if="loginUser.tbUser.username != MessageDataList.info.user.username" text @click="ClickMessageReport(MessageDataList.info.umid)">
                   举报
                   <template #icon>
-                    <i class="iconfont">&#xe630;</i>
+                    <i class="iconfont">&#xe89d;</i>
                   </template>
                 </n-button>
               </n-space>
@@ -272,23 +352,23 @@ const delMessageData = (umrid: number) => {
                 {{ item.info }}
               </n-space>
               <template #footer>
-                <n-space justify="end" align="center">
-                  <n-button @click="supportMessage(item.umrid + '')" text :type="item.praise ? 'primary' : 'default'">
-                    {{ item.praiseCount }}点赞
-                    <template #icon>
-                      <i class="iconfont">&#xec7f;</i>
-                    </template>
-                  </n-button>
+                <n-space class="MessageListIconfont" justify="end" align="center">
                   <n-button @click="delMessageData(item.umrid)" text v-if="item.mine">
                     删除
                     <template #icon>
                       <i class="iconfont">&#xe68e;</i>
                     </template>
                   </n-button>
-                  <n-button text>
+                  <n-button @click="supportMessage(item.umrid + '')" text :type="item.praise ? 'primary' : 'default'">
+                    {{ item.praiseCount }}点赞
+                    <template #icon>
+                      <i class="iconfont">&#xec7f;</i>
+                    </template>
+                  </n-button>
+                  <n-button text @click="ClickMessageListReport(item.umrid)">
                     举报
                     <template #icon>
-                      <i class="iconfont">&#xe630;</i>
+                      <i class="iconfont">&#xe89d;</i>
                     </template>
                   </n-button>
                 </n-space>
@@ -302,7 +382,7 @@ const delMessageData = (umrid: number) => {
               </template>
             </n-empty>
           </n-card>
-          <PageComp :page="MessageDataList.page" :show-size-picker="true" @number-change="searchMessageList()" @page-change="searchMessageList()"></PageComp>
+          <PageComp v-if="MessageDataList.page.pageCount > 1" :page="MessageDataList.page" :show-size-picker="true" @number-change="searchMessageList()" @page-change="searchMessageList()"></PageComp>
         </n-gi>
       </n-grid>
     </main>
@@ -314,6 +394,38 @@ const delMessageData = (umrid: number) => {
       </n-space>
     </footer>
     <n-back-top :right="100" />
+    <NModal v-model:show="loadings.MessageReportLoaidng" preset="dialog" :mask-closable="true" style="width: 50%">
+      <template #header>
+        <h2>举报留言</h2>
+      </template>
+      <NForm ref="Ref" :rules="rules" :model="MessageReplyInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging" :style="{ maxWidth: '700px' }">
+        <NFormItem label="举报原因" path="info">
+          <NInput v-model:value="MessageReplyInfo.info" placeholder="举报原因"></NInput>
+        </NFormItem>
+      </NForm>
+      <template #action>
+        <div>
+          <NButton type="success" size="small" @click="MessageReport" dashed class="mr05">举报</NButton>
+          <NButton type="error" size="small" @click="loadings.MessageReportLoaidng = false" dashed class="mr05">关闭</NButton>
+        </div>
+      </template>
+    </NModal>
+    <NModal v-model:show="loadings.MessageListReportLoaidng" preset="dialog" :mask-closable="true" style="width: 50%">
+      <template #header>
+        <h2>举报评论</h2>
+      </template>
+      <NForm ref="Ref" :rules="rules" :model="MessageListReplyInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging" :style="{ maxWidth: '700px' }">
+        <NFormItem label="举报原因" path="info">
+          <NInput v-model:value="MessageListReplyInfo.info" placeholder="举报原因"></NInput>
+        </NFormItem>
+      </NForm>
+      <template #action>
+        <div>
+          <NButton type="success" size="small" @click="MessageListReport" dashed class="mr05">举报</NButton>
+          <NButton type="error" size="small" @click="loadings.MessageListReportLoaidng = false" dashed class="mr05">关闭</NButton>
+        </div>
+      </template>
+    </NModal>
   </div>
 </template>
 
@@ -445,5 +557,8 @@ footer {
 }
 .footermartop {
   margin-top: 10%;
+}
+:deep() .MessageListIconfont > div {
+  margin: 0 5px;
 }
 </style>
