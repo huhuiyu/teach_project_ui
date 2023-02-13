@@ -210,10 +210,10 @@ const kickUser = (uid: string | number) => {
     <main>
       <n-form inline style="justify-content: flex-end; padding-right: 3rem">
         <n-form-item>
-          <n-select v-model:value="userData.queryInfo.orderBy" :options="userData.orderByList" @update:value="queryUser" :consistent-menu-width="false" />
+          <n-select v-model:value="userData.queryInfo.orderBy" :options="userData.orderByList" :consistent-menu-width="false" />
         </n-form-item>
         <n-form-item>
-          <n-select v-model:value="userData.queryInfo.enable" :options="userData.enableList" @update:value="queryUser" :consistent-menu-width="false" />
+          <n-select v-model:value="userData.queryInfo.enable" :options="userData.enableList" :consistent-menu-width="false" />
         </n-form-item>
         <n-form-item>
           <n-input v-model:value="userData.queryInfo.username" placeholder="请输入用户名" clearable />

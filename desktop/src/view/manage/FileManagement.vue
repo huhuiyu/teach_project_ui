@@ -17,7 +17,6 @@ const toolsData = reactive({
 })
 //	需要展示的列
 const columns = reactive([
-  { title: '所属用户', key: 'uid' },
   { title: '原始文件名', key: 'filename' },
   { title: '文件描述', key: 'fileinfo' },
   { title: '文件类型', key: 'contentType' },
@@ -37,99 +36,86 @@ const columns = reactive([
       ]
     },
   },
+
   {
     title: '信息最后修改时间',
     key: 'lastupdate',
     titleColSpan: 1,
     render(row: FileInfoResult) {
-      return [
-        h(
-          NSpace,
-          {
-            justify: 'center',
-          },
-          { default: () => tools.formatDate(parseInt(row.lastupdate)) }
-        ),
-      ]
-    },
-  },
-  {
-    title: '操作',
-    key: 'operation',
-    titleColSpan: 2,
-    render(row: FileInfoResult) {
-      return [
-        h(
-          NButton,
-          {
-            strong: true,
-            tertiary: true,
-            size: 'small',
-            type: 'info',
-            onClick: () => {
-              window.open(server.getDownloadUrl(row.fid))
-              logger.debug(server.getDownloadUrl(row.fid))
+      return h(NSpace, { justify: 'center' }, [
+        [
+          h(
+            NButton,
+            {
+              strong: true,
+              tertiary: true,
+              size: 'small',
+              type: 'info',
+              onClick: () => {
+                window.open(server.getDownloadUrl(row.fid))
+                logger.debug(server.getDownloadUrl(row.fid))
+              },
             },
-          },
-          { default: () => '下载' }
-        ),
-        h(
-          NButton,
-          {
-            strong: true,
-            tertiary: true,
-            size: 'small',
-            disabled: !row.contentType.toString().includes('image/'),
-            onClick: () => {
-              modal.preview = true
-              toolsData.previewImg = server.getDownloadUrl(row.fid)
+            { default: () => '下载' }
+          ),
+          h(
+            NButton,
+            {
+              strong: true,
+              tertiary: true,
+              size: 'small',
+              disabled: !row.contentType.toString().includes('image/'),
+              onClick: () => {
+                modal.preview = true
+                toolsData.previewImg = server.getDownloadUrl(row.fid)
+              },
             },
-          },
-          { default: () => '预览图片' }
-        ),
-        h(
-          NButton,
-          {
-            strong: true,
-            tertiary: true,
-            size: 'small',
-            type: 'success',
-            onClick: () => {
-              if (tools.copyText(server.getDownloadUrl(row.fid))) {
-                dialog.notifyInfo({
-                  content: '复制成功',
-                  duration: 1200,
+            { default: () => '预览图片' }
+          ),
+          h(
+            NButton,
+            {
+              strong: true,
+              tertiary: true,
+              size: 'small',
+              type: 'success',
+              onClick: () => {
+                if (tools.copyText(server.getDownloadUrl(row.fid))) {
+                  dialog.notifyInfo({
+                    content: '复制成功',
+                    duration: 1200,
+                  })
+                }
+              },
+            },
+            { default: () => '复制文件路径' }
+          ),
+          h(
+            NButton,
+            {
+              strong: true,
+              tertiary: true,
+              size: 'small',
+              type: 'warning',
+              onClick: () => {
+                dialog.showWarning({
+                  title: '警告',
+                  content: `你确定${row.filename}`,
+                  positiveText: '确定',
+                  negativeText: '不确定',
+                  onPositiveClick: () => {
+                    delFile(row.fid + '')
+                  },
+                  onNegativeClick: () => {
+                    return
+                  },
                 })
-              }
+              },
             },
-          },
-          { default: () => '复制文件路径' }
-        ),
-        h(
-          NButton,
-          {
-            strong: true,
-            tertiary: true,
-            size: 'small',
-            type: 'warning',
-            onClick: () => {
-              dialog.showWarning({
-                title: '警告',
-                content: `你确定${row.filename}`,
-                positiveText: '确定',
-                negativeText: '不确定',
-                onPositiveClick: () => {
-                  delFile(row.fid + '')
-                },
-                onNegativeClick: () => {
-                  return
-                },
-              })
-            },
-          },
-          { default: () => '删除' }
-        ),
-      ]
+            { default: () => '删除' }
+          ),
+        ],
+      ])
     },
   },
 ])
@@ -233,7 +219,7 @@ const upload = () => {
     <main>
       <n-form inline :label-width="80" :model="fileData.queryInfo" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
         <n-form-item>
-          <n-select :consistent-menu-width="false" v-model:value="fileData.queryInfo.contentType" @update:value="queryFile" :options="fileContentTypeOptions" />
+          <n-select :consistent-menu-width="false" v-model:value="fileData.queryInfo.contentType" :options="fileContentTypeOptions" />
         </n-form-item>
         <n-form-item>
           <n-input v-model:value="fileData.queryInfo.filename" placeholder="输入文件名称" />

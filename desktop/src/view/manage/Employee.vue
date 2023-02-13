@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FormInst, FormItemRule, FormRules, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NPagination, NSelect, NSpace } from 'naive-ui'
+import { FormInst, FormItemRule, FormRules, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NPagination, NSelect, NSpace, NPopconfirm } from 'naive-ui'
 import { ref, h, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import PageComp from '../../component/PageComp.vue'
@@ -7,7 +7,7 @@ import { BaseListResult, BaseResult, PageInfo } from '../../entity/BaseResult'
 import { DeptInfo, Employee } from '../../entity/DeptResult'
 import dialog from '../../tools/dialog'
 import logger from '../../tools/logger'
-import server from '../../tools/server'
+import server, { serverInfo } from '../../tools/server'
 import tools from '../../tools/tools'
 
 const router = useRouter()
@@ -184,6 +184,7 @@ const employeeData = reactive({
   },
   list: [] as Employee[],
   page: new PageInfo(),
+  exportLoading: false,
 })
 const deptData = reactive({
   list: [] as DeptInfo[],
@@ -235,6 +236,7 @@ function reset() {
   employeeData.query.employeeName = ''
   employeeData.query.phone = ''
   employeeData.query.deptId = ''
+  employeeData.query.deptName = ''
   queryEmployee()
 }
 
@@ -383,6 +385,25 @@ function modifyEmployee() {
     }
   })
 }
+function exportEmployee() {
+  let params = JSON.parse(JSON.stringify(employeeData.query))
+  delete params.deptName
+  let paramsArray: any[] = []
+  let url = serverInfo.url + '/manage/employee/exportExcel'
+  Object.keys(params).forEach((key) => {
+    if (params[key] != '') {
+      paramsArray.push(key + '=' + params[key])
+    }
+  })
+  if (url.search(/\?/) === -1) {
+    url += '?' + paramsArray.join('&')
+  } else {
+    url += '&' + paramsArray.join('&')
+  }
+  logger.debug(url)
+  logger.debug(params)
+  window.open(url)
+}
 </script>
 <template>
   <div>
@@ -395,7 +416,7 @@ function modifyEmployee() {
           <n-button attr-type="button" @click="modal.dept = true"> {{ employeeData.query.deptName == '' ? '选择部门' : `当前选择的部门：${employeeData.query.deptName}` }} </n-button>
         </n-form-item>
         <n-form-item>
-          <n-select v-model:value="employeeData.query.orderBy" :options="orderBy" @update:value="queryEmployee" :consistent-menu-width="false" />
+          <n-select v-model:value="employeeData.query.orderBy" :options="orderBy" :consistent-menu-width="false" />
         </n-form-item>
         <n-form-item>
           <n-input v-model:value="employeeData.query.employeeName" placeholder="请输入员工名称" />
@@ -411,6 +432,14 @@ function modifyEmployee() {
         </n-form-item>
         <n-form-item>
           <n-button attr-type="button" @click="modal.add = true"> 添加 </n-button>
+        </n-form-item>
+        <n-form-item>
+          <n-popconfirm @positive-click="exportEmployee" @negative-click="dialog.messageInfo('已取消')" negative-text="取消" positive-text="确定">
+            <template #trigger>
+              <n-button attr-type="button">导出为Excel </n-button>
+            </template>
+            确认要导出当前所查询到的员工表吗
+          </n-popconfirm>
         </n-form-item>
         <n-form-item>
           <n-button attr-type="button" @click="router.back()"> 返回 </n-button>

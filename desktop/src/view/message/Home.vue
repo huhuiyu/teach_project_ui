@@ -12,6 +12,7 @@ import tools from '../../tools/tools'
 import PageComp from '../../component/PageComp.vue'
 import dialogApi from '../../tools/dialog'
 import { convert } from '../../entity/PortableInfo'
+import logger from '../../tools/logger'
 
 //pinia
 const storeInfo = store()
@@ -77,6 +78,7 @@ const webSiteInformation = reactive({
   visitors: parseInt(countInfo.value),
 })
 
+logger.debug(webSiteInformation.visitors, countInfo)
 //查询所有留言信息
 const queryMessage = () => {
   messageData.loading = true
@@ -324,7 +326,7 @@ const queryAnnouncementDetail = (announcement: Announcement) => {
               <n-list-item>
                 <n-space justify="space-between">
                   <div>本站总访客</div>
-                  <div><n-number-animation show-separator :from="0" :to="webSiteInformation.visitors" /></div>
+                  <div><n-number-animation show-separator :from="0" :to="parseInt(countInfo)" /></div>
                 </n-space>
               </n-list-item>
               <n-list-item>
