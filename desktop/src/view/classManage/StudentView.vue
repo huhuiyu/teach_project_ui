@@ -210,7 +210,6 @@ const ClassColumns: DataTableColumns<ClassInfo> = [
                   }
                   if (loading.modifyclass == false && loading.addclass == false) {
                     query.querys.cid = item.cid + ''
-                    queryStudent
                     return (query.querys.classname = item.cname)
                   }
                 }
