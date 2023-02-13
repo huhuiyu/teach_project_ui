@@ -11,7 +11,6 @@ import tools from '../../tools/tools'
 import store from '../../store'
 import { storeToRefs } from 'pinia'
 import PageComp from '../../component/PageComp.vue'
-import logger from '../../tools/logger'
 
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)

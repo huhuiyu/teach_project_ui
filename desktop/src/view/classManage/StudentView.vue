@@ -8,8 +8,6 @@ import server from '../../tools/server'
 import tools from '../../tools/tools'
 import dialogApi from '../../tools/dialog'
 import PageComp from '../../component/PageComp.vue'
-import { value } from 'dom7'
-import logger from '../../tools/logger'
 const router = useRouter()
 // 返回的数据
 const StudengData = reactive({
@@ -204,16 +202,14 @@ const ClassColumns: DataTableColumns<ClassInfo> = [
                 if (item.cid == row.cid) {
                   if (loading.addclass == true) {
                     addStudentInfo.cid = item.cid + ''
-                    logger.debug('添加-------')
                     return (addStudentInfo.classname = item.cname)
                   }
                   if (loading.modifyclass == true) {
-                    logger.debug('修改-----')
                     modifyInfo.cid = item.cid + ''
                     return (modifyInfo.classname = item.cname)
                   }
                   if (loading.modifyclass == false && loading.addclass == false) {
-                    logger.debug('查询-------')
+                    query.querys.cid = item.cid + ''
                     return (query.querys.classname = item.cname)
                   }
                 }
@@ -273,7 +269,6 @@ const queryStudent = () => {
   loading.loading = true
   StudengData.page.pageSize = 10
   StudengData.list = [] as StudentInfo[]
-  logger.debug('查看学生条件', query.querys)
   server.post('/manage/student/queryAll', tools.concatJson(query.querys, StudengData.page), (data: BaseListResult<StudentInfo>) => {
     loading.loading = false
     if (data.success) {
@@ -383,7 +378,7 @@ const modifyClassDiaong = () => {
   <main>
     <n-form inline :model="query.querys" size="medium" style="justify-content: flex-end; padding-right: 3rem">
       <n-form-item>
-        <n-button @click="loading.class = true">{{ query.querys.classname == '' ? '选择班级' : `当前选择的部门：${query.querys.classname}` }}</n-button>
+        <n-button @click="loading.class = true">{{ query.querys.classname == '' ? '选择班级' : `当前选择的班级：${query.querys.classname}` }}</n-button>
       </n-form-item>
       <n-form-item>
         <n-select v-model:value="query.querys.orderBy" :options="orderBy" @update:value="queryStudent" :consistent-menu-width="false" />
