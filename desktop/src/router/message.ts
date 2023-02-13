@@ -23,6 +23,10 @@ const routes = [
     path: '/message/manage',
     component: () => import('../view/message/MessageManage.vue'),
   },
+  {
+    path: '/message/notice',
+    component: () => import('../view/message/NoticeManage.vue'),
+  },
 ]
 
 export default routes

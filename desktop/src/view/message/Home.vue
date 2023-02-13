@@ -165,6 +165,13 @@ const queryAnnouncement = () => {
   })
 }
 queryAnnouncement()
+//查看公告详情
+const queryAnnouncementDetail = (announcement: Announcement) => {
+  dialogApi.showInfo({
+    title: announcement.title,
+    content: announcement.info,
+  })
+}
 </script>
 <template>
   <div class="container">
@@ -298,7 +305,9 @@ queryAnnouncement()
               <i style="font-size: 14px"> <i class="iconfont">&#xe604;</i> 网站公告</i>
             </template>
             <n-list>
-              <n-list-item v-for="a in announcement.list" :key="a.niid">{{ a.title }}</n-list-item>
+              <n-list-item class="announcement" v-for="a in announcement.list" :key="a.niid">
+                <n-button text @click="queryAnnouncementDetail(a)">{{ a.title }}</n-button>
+              </n-list-item>
             </n-list>
           </n-card>
           <n-card>

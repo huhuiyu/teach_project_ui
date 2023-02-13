@@ -375,30 +375,52 @@ const followUser = (username: string) => {
 
 //删除动态
 const delUserMessage = (umid: string) => {
-  toolsData.loading.mainLeft = true
-  server.post('/message/manage/deletUserMessage', { umid }, (data: BaseResult) => {
-    toolsData.loading.mainLeft = false
-    if (data.success) {
-      dialogApi.notifyInfo({
-        content: data.message,
-        duration: 2000,
-        keepAliveOnHover: true,
+  dialogApi.showWarning({
+    title: '警告',
+    content: '你确定删除该动态嘛',
+    positiveText: '确定',
+    negativeText: '不确定',
+    onPositiveClick: () => {
+      toolsData.loading.mainLeft = true
+      server.post('/message/manage/deletUserMessage', { umid }, (data: BaseResult) => {
+        toolsData.loading.mainLeft = false
+        if (data.success) {
+          dialogApi.notifyInfo({
+            content: data.message,
+            duration: 2000,
+            keepAliveOnHover: true,
+          })
+        }
       })
-    }
+    },
+    onNegativeClick: () => {
+      dialogApi.messageInfo('已取消')
+    },
   })
 }
 //删除评论
 const delUserComment = (umrid: string) => {
-  toolsData.loading.mainLeft = true
-  server.post('/message/manage/deletUserMessageReply', { umrid }, (data: BaseResult) => {
-    toolsData.loading.mainLeft = false
-    if (data.success) {
-      dialogApi.notifyInfo({
-        content: data.message,
-        duration: 2000,
-        keepAliveOnHover: true,
+  dialogApi.showWarning({
+    title: '警告',
+    content: '你确定删除该动态嘛',
+    positiveText: '确定',
+    negativeText: '不确定',
+    onPositiveClick: () => {
+      toolsData.loading.mainLeft = true
+      server.post('/message/manage/deletUserMessageReply', { umrid }, (data: BaseResult) => {
+        toolsData.loading.mainLeft = false
+        if (data.success) {
+          dialogApi.notifyInfo({
+            content: data.message,
+            duration: 2000,
+            keepAliveOnHover: true,
+          })
+        }
       })
-    }
+    },
+    onNegativeClick: () => {
+      dialogApi.messageInfo('已取消')
+    },
   })
 }
 // 点击跳留言详情页面
