@@ -8,6 +8,7 @@ class UserOtherInfo {
   reply: number = 0
   supporteMessage: number = 0
   supporteReply: number = 0
+  totalHits: number = 0
 
   constructor() {}
 }

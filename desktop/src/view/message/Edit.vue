@@ -53,8 +53,8 @@ const btnDisabled = () => {
     <main>
       <n-card title="写文章">
         <template #header-extra>
-          <n-button @click="router.back()">
-            返回上一页
+          <n-button @click="router.push('/message/home')" size="small">
+            返回首页
             <template #icon>
               <i class="iconfont">&#xe615; </i>
             </template>

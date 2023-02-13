@@ -21,6 +21,7 @@ const toolsData = reactive({
     queryFriend: false,
   },
   twoMenuValue: route.query.mode + '',
+  lazyImg: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81',
 })
 const changeRouteInfo = (info: string) => {
   if (info == route.query.mode) {
@@ -34,7 +35,7 @@ const changeRouteInfo = (info: string) => {
   })
 }
 const viewMode = computed({
-  get: () => toolsData.twoMenuValue,
+  get: () => route.query.mode + '',
   set: (value) => {
     toolsData.twoMenuValue = value
   },
@@ -103,7 +104,7 @@ const queryPrivateMessageUser = () => {
           return h(NSpace, { align: 'center', style: 'line-height:1' }, [
             h(NAvatar, {
               round: true,
-              src: item.userInfo.img ? item.userInfo.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg',
+              src: item.userInfo.img ? item.userInfo.img : toolsData.lazyImg,
             }),
             h(NText, { depth: 2 }, { default: () => item.user.nickname }),
           ])
@@ -210,7 +211,7 @@ const delFriend = (username: string) => {
           </n-card>
           <n-card content-style="display:flex; padding:0; height: 100%;" v-if="viewMode == 'myMessage'">
             <n-scrollbar style="min-width: 25%; max-width: 30%; height: 80vh">
-              <div style="background-color: #fff; margin-left: 1rem; line-height: 2">最新消息</div>
+              <div style="background-color: #fff; margin-left: 1rem; line-height: 2">{{ privateMessageByUserData.list.length > 1 ? '最新消息' : '暂时还没有消息哦' }}</div>
               <n-divider style="margin: 0" />
               <n-list hoverable show-divider>
                 <n-list-item v-if="toolsData.loading.twoMenu">
@@ -222,7 +223,7 @@ const delFriend = (username: string) => {
                 <n-list-item v-else v-for="u in privateMessageUserData.list" :key="u.user.username" @click="queryPrivateMessageByUser(u.user.username, u.userInfo.img)" :class="{ menuActive: u.user.username == privateMessageByUserData.username }">
                   <n-badge :value="u.newMessage">
                     <n-space align="center">
-                      <n-avatar round :src="u.userInfo.img ? u.userInfo.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
+                      <n-avatar round :src="u.userInfo.img ? u.userInfo.img : toolsData.lazyImg"></n-avatar>
                       <n-text>{{ u.user.nickname }}</n-text>
                     </n-space>
                   </n-badge>
@@ -234,19 +235,23 @@ const delFriend = (username: string) => {
               <n-divider style="margin: 0" />
               <n-card style="height: 80vh" v-if="privateMessageByUserData.username == ''">
                 <n-space align="center" justify="center" style="height: 100%">
-                  <n-empty description="什么都没有哦" size="huge"></n-empty>
+                  <n-empty description="暂时没有消息哦" size="huge">
+                    <template #icon>
+                      <i class="iconfont">&#xe624;</i>
+                    </template>
+                  </n-empty>
                 </n-space>
               </n-card>
               <n-card embedded :bordered="false" content-style="overflow-y: auto;padding-right:0" footer-style="padding:0px" style="height: 80vh" v-else>
                 <n-scrollbar style="padding-right: 24px">
                   <div v-for="m in privateMessageByUserData.list" :key="m.lastupdate">
-                    <n-space v-if="m.from == privateMessageByUserData.username" :wrap="false" class="mr05">
-                      <n-avatar round :src="privateMessageByUserData.userImg != '' ? privateMessageByUserData.userImg : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
+                    <n-space v-if="m.from == privateMessageByUserData.username" :wrap="false" class="mr05" @click="router.push(`/message/personal/${m.from}`)">
+                      <n-avatar round :src="privateMessageByUserData.userImg != '' ? privateMessageByUserData.userImg : toolsData.lazyImg"></n-avatar>
                       <n-card size="small" class="is-you">{{ m.info }}</n-card>
                     </n-space>
                     <n-space v-if="m.from == loginUser.tbUser.username" justify="end" :wrap="false" class="mr05">
                       <n-card size="small" class="is-me">{{ m.info }}</n-card>
-                      <n-avatar round :src="loginUser.tbUserInfo.img != '' ? loginUser.tbUserInfo.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
+                      <n-avatar round :src="loginUser.tbUserInfo.img != '' ? loginUser.tbUserInfo.img : toolsData.lazyImg"></n-avatar>
                     </n-space>
                   </div>
                 </n-scrollbar>
@@ -286,11 +291,11 @@ const delFriend = (username: string) => {
                 <n-list-item v-for="u in friendData.list" :key="u.user.uid" v-else>
                   <n-space align="center" justify="space-between">
                     <n-space align="center" @click="router.push(`/message/personal/${u.user.username}`)">
-                      <n-avatar round :src="u.userInfo.img ? u.userInfo.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
+                      <n-avatar round :src="u.userInfo.img ? u.userInfo.img : toolsData.lazyImg"></n-avatar>
                       <n-text>{{ u.user.nickname }}</n-text>
                     </n-space>
                     <n-space>
-                      <n-button @click="router.push({ path: '/message/privateMessage', query: { img: u.userInfo.img, username: u.user.username, nickname: u.user.nickname, mode: 'myMessage' } })">私信好友</n-button>
+                      <n-button @click="router.push({ path: '/message/privateMessage', query: { mode: 'myMessage', img: u.userInfo.img, username: u.user.username, nickname: u.user.nickname } })">私信好友</n-button>
                       <n-popconfirm @positive-click="delFriend(u.user.username)" negative-text="取消" positive-text="确定">
                         <template #trigger>
                           <n-button>删除好友</n-button>
@@ -302,7 +307,11 @@ const delFriend = (username: string) => {
                 </n-list-item>
               </n-list>
               <n-space align="center" justify="center" style="height: 100%" v-if="friendData.list.length < 1 && !toolsData.loading.queryFriend">
-                <n-empty description="你暂时还没有好友哦" size="huge"></n-empty>
+                <n-empty description="你暂时还没有好友哦" size="huge">
+                  <template #icon>
+                    <i class="iconfont">&#xe624;</i>
+                  </template>
+                </n-empty>
               </n-space>
             </n-scrollbar>
           </n-card>
@@ -322,7 +331,7 @@ const delFriend = (username: string) => {
                 <n-list-item v-for="u in friendData.applyList" :key="u.user.uid" v-else>
                   <n-space align="center" justify="space-between">
                     <n-space align="center">
-                      <n-avatar round :src="u.userInfo.img ? u.userInfo.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
+                      <n-avatar round :src="u.userInfo.img ? u.userInfo.img : toolsData.lazyImg"></n-avatar>
                       <n-text>{{ u.user.nickname }}</n-text>
                     </n-space>
                     <div>您申请成为{{ u.user.nickname }}的好友</div>
@@ -330,7 +339,11 @@ const delFriend = (username: string) => {
                   </n-space>
                 </n-list-item>
                 <n-space align="center" justify="center" style="height: 100%" v-if="friendData.applyList.length < 1 && !toolsData.loading.queryFriend">
-                  <n-empty description="你还没有发出过好友申请哦" size="huge"></n-empty>
+                  <n-empty description="你还没有发出过好友申请哦" size="huge">
+                    <template #icon>
+                      <i class="iconfont">&#xe624;</i>
+                    </template>
+                  </n-empty>
                 </n-space>
               </n-list>
               <n-list show-divider>
@@ -347,7 +360,7 @@ const delFriend = (username: string) => {
                 <n-list-item v-for="u in friendData.elseList" :key="u.user.uid" v-else>
                   <n-space align="center" justify="space-between">
                     <n-space align="center">
-                      <n-avatar round :src="u.userInfo.img ? u.userInfo.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
+                      <n-avatar round :src="u.userInfo.img ? u.userInfo.img : toolsData.lazyImg"></n-avatar>
                       <n-text>{{ u.user.nickname }}</n-text>
                     </n-space>
                     <div>{{ u.user.nickname }}申请成为您的好友</div>
@@ -358,7 +371,11 @@ const delFriend = (username: string) => {
                   </n-space>
                 </n-list-item>
                 <n-space align="center" justify="center" style="height: 100%" v-if="friendData.elseList.length < 1 && !toolsData.loading.queryFriend">
-                  <n-empty description="还没有好友向您发出申请哦" size="huge"></n-empty>
+                  <n-empty description="还没有好友向您发出申请哦" size="huge">
+                    <template #icon>
+                      <i class="iconfont">&#xe624;</i>
+                    </template>
+                  </n-empty>
                 </n-space>
               </n-list>
             </n-scrollbar>
@@ -371,23 +388,19 @@ const delFriend = (username: string) => {
 <style scoped>
 .container {
   background-color: rgb(246, 246, 246);
-  height: 100%;
-
   justify-content: space-between;
 }
 .greyBg {
   background-color: rgb(246, 246, 246);
 }
 
-.border {
-  border: 1px solid #000;
-}
 main {
   width: 60%;
   margin: 0 auto;
   padding: 1rem 0;
   display: flex;
   height: calc(100vh - 58px);
+  min-height: 100%;
 }
 
 .is-me {

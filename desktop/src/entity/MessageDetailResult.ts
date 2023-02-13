@@ -77,6 +77,16 @@ class ExamineInfo {
   nickname: string = ''
   username: string = ''
 }
+
+/*
+ *查询留言板公告
+ */
+class Announcement {
+  info: string = ''
+  lastupdate: string = ''
+  niid: number = 0
+  title: string = ''
+}
 /**
  * 留言板详情应答结果
  */
@@ -84,5 +94,5 @@ class MessageDetailResult extends BaseListResult<MessageReply> {
   info: MessageDetail = new MessageDetail()
 }
 
-export { MessageDetail as MessageDetail, MessageDetailResult as MessageDetailResult, MessageReply as MessageReply, MessageFollow as MessageFollow, PrivateMessage as PrivateMessage, ExamineInfo as ExamineInfo }
+export { MessageDetail as MessageDetail, MessageDetailResult as MessageDetailResult, MessageReply as MessageReply, MessageFollow as MessageFollow, PrivateMessage as PrivateMessage, ExamineInfo as ExamineInfo, Announcement as Announcement }
 export default MessageDetailResult

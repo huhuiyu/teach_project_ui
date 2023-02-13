@@ -8,10 +8,11 @@ import PageComp from '../../component/PageComp.vue'
 import BaseResult, { BaseDataResult, BaseListResult, PageInfo, BaseUserInfoResult } from '../../entity/BaseResult'
 import FileInfo from '../../entity/FileInfo'
 import { MessageDetail, MessageReply, MessageFollow } from '../../entity/MessageDetailResult'
+import { convert } from '../../entity/PortableInfo'
 import store from '../../store'
 import dialogApi from '../../tools/dialog'
 import logger from '../../tools/logger'
-import server from '../../tools/server'
+import server, { serverInfo } from '../../tools/server'
 import tools from '../../tools/tools'
 //pinia
 const storeInfo = store()
@@ -24,8 +25,26 @@ const toolsData = reactive({
     userInfo: false,
     mainLeft: false,
   },
+  personalInfoBg: {
+    personalInfoBg: '',
+  },
   username: route.params.username + '',
 })
+const queryMessageCarousel = () => {
+  server.post(
+    '/portable/message/queryAll',
+    {
+      accessKey: serverInfo.accessKey,
+      messageGroup: 'messagePersonal',
+      pageSize: 1000,
+      pageNumber: 1,
+    },
+    (data: BaseListResult<any>) => {
+      toolsData.personalInfoBg = convert(data.list)
+    }
+  )
+}
+queryMessageCarousel()
 
 const noLogin = () => {
   if (!loginUser.value.isLogin) {
@@ -50,7 +69,7 @@ const queryUserInfoByUsername = () => {
 }
 queryUserInfoByUsername()
 //懒加载默认图片
-const lazyImg = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
+const lazyImg = 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81'
 const obj = reactive({
   editUserinfo: false,
 })
@@ -68,8 +87,8 @@ const userInfo = reactive({
 
 //当前登录用户信息
 const userMessage = reactive({
-  supportAll: 0,
-  hits: 0,
+  supportAll: loginUser.value.userOtherInfo.supporteMessage + loginUser.value.userOtherInfo.supporteReply,
+  hits: loginUser.value.userOtherInfo.totalHits,
 })
 //菜单选项
 const MenuOptions = [
@@ -270,12 +289,6 @@ const queryMessage = () => {
     toolsData.loading.mainLeft = false
     messageData.list = data.list
     messageData.page = data.page
-    userMessage.hits = 0
-    userMessage.supportAll = 0
-    data.list.forEach((item) => {
-      userMessage.supportAll += item.praiseCount
-      userMessage.hits += item.hits
-    })
   })
 }
 queryMessage()
@@ -405,7 +418,7 @@ const addFriend = () => {
       <MessageTopNavComp></MessageTopNavComp>
       <n-card>
         <template #header>
-          <n-image height="200" src="https://picx.zhimg.com/v2-75bb18804109dd2fa0405f31c3007126_1440w.jpg?source=fdaf910d" />
+          <n-image height="200" :src="toolsData.personalInfoBg.personalInfoBg" />
           <div class="headerSpace">
             <div class="avatarParent" v-if="loginUser.tbUser.username == toolsData.username">
               <n-avatar class="avatarUser" bordered object-fit="cover" color="#fff" :size="140" :fallback-src="lazyImg" :src="userInfo.img ? userInfo.img : lazyImg" @click="browserFile"> </n-avatar>
@@ -571,7 +584,11 @@ const addFriend = () => {
               <div v-if="messageData.page.pageNumber > 1">
                 <PageComp :page="messageData.page" :showSizePicker="true" @number-change="queryMessage" @page-change="queryMessage" @size-change="queryMessage"></PageComp>
               </div>
-              <n-empty description="什么也找不到。。。" v-if="messageData.list.length < 1"> </n-empty>
+              <n-empty description="您暂时还没发表留言哦，赶紧去发表吧" v-if="messageData.list.length < 1">
+                <template #icon>
+                  <i class="iconfont">&#xe624;</i>
+                </template>
+              </n-empty>
             </div>
             <div v-else-if="menuKey.indexOf('comment') != -1 && !toolsData.loading.mainLeft">
               <n-card v-for="item in commentData.list" :key="item.uid" :bordered="false" class="message-item" size="small">
@@ -619,12 +636,16 @@ const addFriend = () => {
               <div v-if="commentData.page.pageNumber > 1">
                 <PageComp :page="commentData.page" :showSizePicker="true" @number-change="queryComment" @page-change="queryComment" @size-change="queryComment"></PageComp>
               </div>
-              <n-empty description="什么也找不到。。。" v-if="commentData.list.length < 1"> </n-empty>
+              <n-empty description="您暂时还没有评论哦。" v-if="commentData.list.length < 1">
+                <template #icon>
+                  <i class="iconfont">&#xe61f;</i>
+                </template>
+              </n-empty>
             </div>
             <div v-else-if="menuKey == 'followMe' && !toolsData.loading.mainLeft">
               <n-card v-for="item in followMeData.list" :key="item.user.username" :bordered="false" class="message-item" size="small">
                 <template #header>
-                  <n-space align="center">
+                  <n-space align="center" @click="tools.jumpRoute_Blank(`/message/personal/${item.user.username}`)">
                     <div>
                       <n-space vertical>
                         <n-avatar round lazy :src="item.userInfo.img ? item.userInfo.img : lazyImg" object-fit="cover" />
@@ -642,12 +663,16 @@ const addFriend = () => {
               <div v-if="followMeData.page.pageNumber > 1">
                 <PageComp :page="followMeData.page" :showSizePicker="true" @number-change="queryFollowMe" @page-change="queryFollowMe" @size-change="queryFollowMe"></PageComp>
               </div>
-              <n-empty description="什么也找不到。。。" v-if="followMeData.list.length < 1"> </n-empty>
+              <n-empty description="暂时还没有人关注您哦。" v-if="followMeData.list.length < 1">
+                <template #icon>
+                  <i class="iconfont">&#xe624;</i>
+                </template>
+              </n-empty>
             </div>
             <div v-else-if="menuKey == 'meFollow' && !toolsData.loading.mainLeft">
               <n-card v-for="item in meFollowData.list" :key="item.user.username" :bordered="false" class="message-item" size="small">
                 <template #header>
-                  <n-space align="center">
+                  <n-space align="center" @click="tools.jumpRoute_Blank(`/message/personal/${item.user.username}`)">
                     <div>
                       <n-space vertical>
                         <n-avatar round lazy :src="item.userInfo.img ? item.userInfo.img : lazyImg" object-fit="cover" />
@@ -663,7 +688,11 @@ const addFriend = () => {
               <div v-if="meFollowData.page.pageNumber > 1">
                 <PageComp :page="meFollowData.page" :showSizePicker="true" @number-change="queryMeFollow" @page-change="queryMeFollow" @size-change="queryMeFollow"></PageComp>
               </div>
-              <n-empty description="什么也找不到。。。" v-if="meFollowData.list.length < 1"> </n-empty>
+              <n-empty description="您还没有关注任何人呢。" v-if="meFollowData.list.length < 1">
+                <template #icon>
+                  <i class="iconfont">&#xe624;</i>
+                </template>
+              </n-empty>
             </div>
           </n-card>
         </n-gi>
@@ -714,7 +743,8 @@ const addFriend = () => {
 }
 .container {
   background-color: rgb(246, 246, 246);
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
 }
 
 main,
@@ -765,6 +795,7 @@ header .n-card .avatarParent {
   line-height: 1.5;
   border-radius: 5px;
   right: 0;
+  padding: 0 0.3rem;
 }
 .avatarUser::before {
   content: '\e8bc';

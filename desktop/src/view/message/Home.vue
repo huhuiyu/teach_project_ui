@@ -1,23 +1,49 @@
 <script setup lang="ts">
-import { NAvatar, NBackTop, NButton, NCard, NCarousel, NGi, NGrid, NList, NListItem, NMenu, NNumberAnimation, NSkeleton, NSpace, NTime } from 'naive-ui'
+import { NAvatar, NBackTop, NButton, NCard, NCarousel, NGi, NGrid, NList, NListItem, NMenu, NNumberAnimation, NSkeleton, NSpace, NTime, NEmpty } from 'naive-ui'
 import { reactive } from 'vue'
 import MessageTopNavComp from '../../component/MessageTopNavComp.vue'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import store from '../../store'
 import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
-import server from '../../tools/server'
-import { MessageDetail } from '../../entity/MessageDetailResult'
+import server, { serverInfo } from '../../tools/server'
+import { MessageDetail, Announcement } from '../../entity/MessageDetailResult'
 import tools from '../../tools/tools'
 import PageComp from '../../component/PageComp.vue'
 import dialogApi from '../../tools/dialog'
+import { convert } from '../../entity/PortableInfo'
 
 //pinia
 const storeInfo = store()
-const { loginUser } = storeToRefs(storeInfo)
+const { loginUser, countInfo } = storeToRefs(storeInfo)
 //路由
 const router = useRouter()
 const route = useRoute()
+const toolsData = reactive({
+  messageCarousel: {
+    carousel1: '',
+    carousel2: '',
+    carousel3: '',
+    carousel4: '',
+  },
+  lazyUrl: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81',
+})
+const queryMessageCarousel = () => {
+  server.post(
+    '/portable/message/queryAll',
+    {
+      accessKey: serverInfo.accessKey,
+      messageGroup: 'messageCarousel',
+      pageSize: 1000,
+      pageNumber: 1,
+    },
+    (data: BaseListResult<any>) => {
+      toolsData.messageCarousel = convert(data.list)
+    }
+  )
+}
+queryMessageCarousel()
+
 const messageData = reactive({
   queryInfo: {
     info: route.query.info,
@@ -29,7 +55,6 @@ const messageData = reactive({
   loading: false,
 })
 
-const lazyUrl = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
 //排序方式选项
 const orderByMenuOptions = [
   {
@@ -49,14 +74,9 @@ const orderByMenuOptions = [
 const webSiteInformation = reactive({
   total: 0,
   lastupdate: 0,
-  visitors: 0,
+  visitors: parseInt(countInfo.value),
 })
-//网站公告列表
-const announcement = [
-  { id: 1, text: '公告1' },
-  { id: 2, text: '公告2' },
-  { id: 3, text: '公告3' },
-]
+
 //查询所有留言信息
 const queryMessage = () => {
   messageData.loading = true
@@ -82,10 +102,10 @@ const searchMessage = (info: string) => {
 //当前登录用户信息
 const userMessage = reactive({
   list: [new MessageDetail()],
-  supportAll: 0,
-  hits: 0,
+  supportAll: loginUser.value.userOtherInfo.supporteMessage + loginUser.value.userOtherInfo.supporteReply,
+  hits: loginUser.value.userOtherInfo.totalHits,
 })
-//通过姓名查询留言板
+/* //通过姓名查询留言板
 const queryMessageByUsername = (username: string) => {
   server.post(
     '/message/queryAll',
@@ -93,34 +113,29 @@ const queryMessageByUsername = (username: string) => {
       username: username,
     },
     (data: BaseListResult<MessageDetail>) => {
-      userMessage.hits = 0
-      userMessage.supportAll = 0
       userMessage.list = []
       userMessage.list = data.list
-      data.list.forEach((item) => {
-        userMessage.supportAll += item.praiseCount
-        userMessage.hits += item.hits
-      })
     }
   )
-}
+} */
 queryMessage()
 const noLoginTips = () => {
   if (!loginUser.value.isLogin) {
     dialogApi.messageWarning('请登录后再进行操作哦')
     return false
-  } else {
+  } /* else {
     queryMessageByUsername(loginUser.value.tbUser.username)
-  }
+  } */
   return true
 }
+//未登录提示
 noLoginTips()
 //点赞/取消赞留言板
 const supportMessage = (umid: string = '') => {
   if (noLoginTips()) {
     server.post('/message/support', { umid: umid }, (data: BaseResult) => {
       if (data.success) {
-        queryMessageByUsername(loginUser.value.tbUser.username)
+        // queryMessageByUsername(loginUser.value.tbUser.username)
         queryMessage()
         return
       }
@@ -131,18 +146,35 @@ const supportMessage = (umid: string = '') => {
 const messageList = (umid: number) => {
   router.push({ path: '/message/edits', query: { umid: umid } })
 }
+//网站公告列表
+const announcement = reactive({
+  list: [] as Announcement[],
+  loading: false,
+  page: new PageInfo(),
+})
 
-//未登录提示
+//查询留言板公告
+const queryAnnouncement = () => {
+  announcement.loading = true
+  server.post('/message/queryNotice', { pageNumber: 1, pageSize: 3 }, (data: BaseListResult<Announcement>) => {
+    announcement.loading = false
+    if (data.success) {
+      announcement.list = data.list
+      announcement.page = data.page
+    }
+  })
+}
+queryAnnouncement()
 </script>
 <template>
   <div class="container">
     <header>
       <MessageTopNavComp @queryInfo-change="searchMessage"></MessageTopNavComp>
       <n-carousel show-arrow autoplay>
-        <img class="carousel-img" src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel1.jpeg" />
-        <img class="carousel-img" src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel2.jpeg" />
-        <img class="carousel-img" src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel3.jpeg" />
-        <img class="carousel-img" src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel4.jpeg" />
+        <img class="carousel-img" :src="toolsData.messageCarousel.carousel1" />
+        <img class="carousel-img" :src="toolsData.messageCarousel.carousel2" />
+        <img class="carousel-img" :src="toolsData.messageCarousel.carousel3" />
+        <img class="carousel-img" :src="toolsData.messageCarousel.carousel4" />
         <template #arrow="{ prev, next }">
           <div class="custom-arrow">
             <button type="button" class="custom-arrow--left" @click="prev"> <i class="iconfont">&#xebef;</i></button>
@@ -178,7 +210,7 @@ const messageList = (umid: number) => {
                       <n-avatar
                         round
                         lazy
-                        :src="item.userInfo.img ? item.userInfo.img : lazyUrl"
+                        :src="item.userInfo.img ? item.userInfo.img : toolsData.lazyUrl"
                         :intersection-observer-options="{
                           root: '#image-scroll-container',
                         }"
@@ -219,6 +251,18 @@ const messageList = (umid: number) => {
               </template>
             </n-card>
             <PageComp :page="messageData.page" :showSizePicker="true" @number-change="queryMessage" @page-change="queryMessage" @size-change="queryMessage"></PageComp>
+            <n-card v-if="!messageData.loading" :bordered="false">
+              <n-empty description="暂时没有留言哦" v-if="messageData.list.length < 1 && !messageData.queryInfo.info">
+                <template #icon>
+                  <i class="iconfont">&#xe624;</i>
+                </template>
+              </n-empty>
+              <n-empty description="没有找到您想看的内容哦" v-if="messageData.list.length < 1 && messageData.queryInfo.info">
+                <template #icon>
+                  <i class="iconfont">&#xe624;</i>
+                </template>
+              </n-empty>
+            </n-card>
           </n-card>
         </n-gi>
         <n-gi span="2" x-gap="12px">
@@ -254,7 +298,7 @@ const messageList = (umid: number) => {
               <i style="font-size: 14px"> <i class="iconfont">&#xe604;</i> 网站公告</i>
             </template>
             <n-list>
-              <n-list-item v-for="a in announcement" :key="a.id">{{ a.text }}</n-list-item>
+              <n-list-item v-for="a in announcement.list" :key="a.niid">{{ a.title }}</n-list-item>
             </n-list>
           </n-card>
           <n-card>
@@ -271,7 +315,7 @@ const messageList = (umid: number) => {
               <n-list-item>
                 <n-space justify="space-between">
                   <div>本站总访客</div>
-                  <div><n-number-animation show-separator :from="0" :to="10000" /></div>
+                  <div><n-number-animation show-separator :from="0" :to="webSiteInformation.visitors" /></div>
                 </n-space>
               </n-list-item>
               <n-list-item>
