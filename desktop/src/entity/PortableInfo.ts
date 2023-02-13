@@ -17,6 +17,23 @@ class TestPortableInfo {
   title: string = ''
 }
 
+// 留言用户邮箱列表
+class PortableEmailAll {
+  accessKey: string = ''
+  email: string = ''
+  lastupdate: string = ''
+  peid: number = 0
+  username: string = ''
+}
+//指定邮箱留言信息列表
+class PortableEmailInfo {
+  info: string = ''
+  infoType: string = ''
+  lastupdate: string = ''
+  peid: number = 0
+  peiid: string = ''
+}
+
 class PortableInfoConverter<T extends Object> {
   convert(data: Array<PortableInfo>, t: T): T {
     data.forEach((element) => {
@@ -37,6 +54,6 @@ function convert(data: Array<PortableInfo>): any {
   return json
 }
 
-export { PortableInfo as PortableInfo, TestPortableInfo as TestPortableInfo, PortableInfoConverter as PortableInfoConverter, convert as convert }
+export { PortableInfo as PortableInfo, TestPortableInfo as TestPortableInfo, PortableInfoConverter as PortableInfoConverter, convert as convert, PortableEmailAll as PortableEmailAll, PortableEmailInfo as PortableEmailInfo }
 
 export default PortableInfo

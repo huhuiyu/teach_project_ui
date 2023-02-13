@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSelect, NSpace, NImage } from 'naive-ui'
+import { storeToRefs } from 'pinia'
 import { reactive, h } from 'vue'
 import { useRouter } from 'vue-router'
 import PageComp from '../../component/PageComp.vue'
 import BaseResult, { BaseDataResult, BaseListResult, PageInfo } from '../../entity/BaseResult'
 import FileInfo from '../../entity/FileInfo'
 import { FileInfoResult } from '../../entity/FileResult'
+import store from '../../store'
 import dialog from '../../tools/dialog'
 import logger from '../../tools/logger'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
-
+const storeInfo = store()
+const { loginUser } = storeToRefs(storeInfo)
 const router = useRouter()
 const toolsData = reactive({
   previewImg: '',
@@ -142,7 +145,16 @@ const queryFile = () => {
     fileData.page = data.page
   })
 }
-queryFile()
+if (!loginUser.value.isLogin) {
+  dialog.messageWarning('请登录后访问！！！', {
+    duration: 1000,
+    onAfterLeave: () => {
+      router.back()
+    },
+  })
+} else {
+  queryFile()
+}
 const reset = () => {
   for (const key in fileData.queryInfo) {
     fileData.queryInfo[key] = ''
