@@ -2,10 +2,14 @@
 import { reactive } from 'vue'
 import MainTopNavComp from '../component/Home/MainTopNavComp.vue'
 import MainHomeComp from '../component/Home/MainHomeComp.vue'
+import store from '../store'
+import { storeToRefs } from 'pinia'
 const title = '教学演示项目'
+const storeInfo = store()
+const { loginUser } = storeToRefs(storeInfo)
 const list = reactive([
   {
-    img: '',
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
     title: '简易留言板',
     info: '简介、多平台的留言板项目',
     path: '/messagehome',
@@ -29,7 +33,7 @@ const list = reactive([
     path: '/manage/file',
   },
   {
-    img: '',
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
     title: '系统管理',
     info: '系统日志、系统配置、系统用户',
     path: '/admin/home',
@@ -41,6 +45,15 @@ const list = reactive([
     path: '/toll',
   },
 ])
+if (loginUser.value.isLogin && loginUser.value.tbUser.accessKey == '18c4e6cf-e54b-4e64-a764-c3fdd15226f8') {
+  list.push({
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '门户管理',
+    info: '教学演示项目门户管理',
+    path: '/portal',
+  })
+}
+
 </script>
 
 <template>

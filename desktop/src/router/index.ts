@@ -8,6 +8,7 @@ import dialog from '../tools/dialog'
 import ossRouter from './oss'
 import adminRouter from './admin'
 import portableRouter from './portable'
+import toll from './toll'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -18,21 +19,10 @@ const routes: RouteRecordRaw[] = [
     path: '/manage',
     component: () => import('../view/ManageHome.vue'),
   },
-  {
-    path: '/osshome',
-    component: () => import('../view/OssHome.vue'),
-  },
+
   {
     path: '/chatroom',
     component: () => import('../view/ChatRoom.vue'),
-  },
-  {
-    path: '/messagehome',
-    component: () => import('../view/MessageHome.vue'),
-  },
-  {
-    path: '/toll',
-    component: () => import('../view/ToolHome.vue'),
   },
   {
     path: '/login',
@@ -46,6 +36,7 @@ const routes: RouteRecordRaw[] = [
   .concat(ossRouter)
   .concat(adminRouter)
   .concat(portableRouter)
+  .concat(toll)
 
 // 创建router
 const router = createRouter({

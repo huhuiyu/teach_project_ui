@@ -11,6 +11,7 @@ let serverInfo = {
   counterKey: 'teach_project_service_counter',
   counterMessageKey: 'teach_project_service_counter',
   accessKey: '18c4e6cf-e54b-4e64-a764-c3fdd15226f8',
+  ossUrl: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=',
   saveToken: (data: BaseResult) => {
     if (data && data.token) {
       localStorage.setItem(serverInfo.tokenKey, data.token)

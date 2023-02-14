@@ -21,13 +21,6 @@ const toolsData = reactive({
 })
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
-if (!loginUser.value.isLogin) {
-  dialog.messageWarning('请登录后访问！！！')
-  router.back()
-} else if (loginUser.value.tbUser.role != 'app-admin') {
-  dialog.messageWarning('必须是app管理员才能访问！！！')
-  router.back()
-}
 
 const MessageMode = computed(() => {
   return route.query.mode + ''
@@ -333,7 +326,6 @@ const queryMessageExamineInfo = () => {
     }
   })
 }
-
 const queryCommentExamineInfo = () => {
   server.post('/message/manage/queryExamineInfoReply', { umrid: queryExamineInfoData.commentInfo.umrid }, (data: BaseListResult<ExamineInfo>) => {
     if (data.success) {
@@ -342,7 +334,6 @@ const queryCommentExamineInfo = () => {
     }
   })
 }
-
 const messageData = reactive({
   queryInfo: {
     info: '',
@@ -399,10 +390,9 @@ const queryCommentAll = () => {
     commentData.list = data.list
   })
 }
-if (loginUser.value.isLogin && loginUser.value.tbUser.role == 'app-adming') {
-  queryMessageAll()
-  queryCommentAll()
-}
+queryMessageAll()
+queryCommentAll()
+
 const delComment = () => {
   if (delData.disableReason == '') {
     dialog.messageWarning('删除必须填写原因')
@@ -459,7 +449,7 @@ const delComment = () => {
           <n-button attr-type="button" @click="changeRouteInfo('message')"> 切换留言管理 </n-button>
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="router.push('/manage')"> 返回主站 </n-button>
+          <n-button attr-type="button" @click="router.push('/messagehome')"> 返回主站 </n-button>
         </n-form-item>
       </n-form>
       <n-data-table default-expand-all :columns="commentColumns" :data="commentData.list" :loading="messageData.loading" />
