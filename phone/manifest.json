@@ -1,7 +1,7 @@
 {
-    "name" : "phone",
-    "appid" : "",
-    "description" : "",
+    "name" : "teach_project_ui",
+    "appid" : "__UNI__16CF60A",
+    "description" : "教学演示项目界面",
     "versionName" : "1.0.0",
     "versionCode" : "100",
     "transformPx" : false,
@@ -50,7 +50,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "",
+        "appid" : "wxba439cf723cca623",
         "setting" : {
             "urlCheck" : false,
             "minified" : true

@@ -1,6 +1,7 @@
 <template>
 	<view class="content">
-		<image class="logo" src="https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81">
+		<image @click="toTest" class="logo"
+			src="https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81">
 		</image>
 		<view class="text-area">
 			<text class="title">{{viewdata.title}}</text>
@@ -13,8 +14,18 @@
 		reactive
 	} from 'vue'
 	const viewdata = reactive({
-		title: '教学演示首页'
+		title: '教学演示界面首页',
+		testCount: 0
 	});
+	const toTest = () => {
+		viewdata.testCount++
+		if (viewdata.testCount >= 5) {
+			viewdata.testCount = 0
+			uni.navigateTo({
+				url: "/pages/test/test"
+			})
+		}
+	}
 </script>
 
 <style>
