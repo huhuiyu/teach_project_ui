@@ -1,26 +1,20 @@
 <template>
 	<view class="content">
-		<image class="logo" src="https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81"></image>
+		<image class="logo" src="https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81">
+		</image>
 		<view class="text-area">
-			<text class="title">{{title}}</text>
+			<text class="title">{{viewdata.title}}</text>
 		</view>
 	</view>
 </template>
 
-<script>
-	export default {
-		data() {
-			return {
-				title: '首页'
-			}
-		},
-		onLoad() {
-
-		},
-		methods: {
-
-		}
-	}
+<script setup lang="ts">
+	import {
+		reactive
+	} from 'vue'
+	const viewdata = reactive({
+		title: '教学演示首页'
+	});
 </script>
 
 <style>

@@ -1,0 +1,23 @@
+{
+  "hash": "de93333c",
+  "browserHash": "5f96a7a2",
+  "optimized": {
+    "qs": {
+      "src": "../../node_modules/qs/lib/index.js",
+      "file": "qs.js",
+      "fileHash": "6f015fb8",
+      "needsInterop": true
+    },
+    "spark-md5": {
+      "src": "../../node_modules/spark-md5/spark-md5.js",
+      "file": "spark-md5.js",
+      "fileHash": "bdee9d6b",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-RSJERJUL": {
+      "file": "chunk-RSJERJUL.js"
+    }
+  }
+}

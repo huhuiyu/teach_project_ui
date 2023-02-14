@@ -52,9 +52,15 @@
     "mp-weixin" : {
         "appid" : "",
         "setting" : {
-            "urlCheck" : false
+            "urlCheck" : false,
+            "minified" : true
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "permission" : {
+            "scope.userLocation" : {
+                "desc" : "程序需要演示地址信息收集和地图调用"
+            }
+        }
     },
     "mp-alipay" : {
         "usingComponents" : true

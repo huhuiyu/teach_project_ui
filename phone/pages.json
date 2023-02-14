@@ -6,7 +6,16 @@
 				"navigationBarTitleText": "胡辉煜的教学演示项目"
 			}
 		}
-	],
+	    ,{
+            "path" : "pages/test/test",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "胡辉煜的教学演示项目",
