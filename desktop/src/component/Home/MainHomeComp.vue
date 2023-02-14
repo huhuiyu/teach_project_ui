@@ -52,7 +52,7 @@ main > div {
   transition: all 0.8s;
   text-decoration: none;
   color: #000;
-  height: 100%;
+  height: 110%;
 }
 .conter_menu:hover {
   box-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.3);
@@ -62,7 +62,7 @@ main > div {
 }
 .conter_menu > div:first-child {
   width: 100%;
-  height: 40%;
+  height: 50%;
   overflow: hidden;
 }
 .conter_menu > div:last-child {

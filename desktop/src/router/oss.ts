@@ -4,6 +4,10 @@ const routes = [
     component: () => import('../view/oss/Home.vue'),
   },
   {
+    path: '/osshome',
+    component: () => import('../view/oss/OssHome.vue'),
+  },
+  {
     path: '/oss/config',
     component: () => import('../view/oss/OssConfig.vue'),
   },

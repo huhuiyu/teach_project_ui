@@ -7,14 +7,12 @@ import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
 import { queryTbOssInfoclss, TbBucket } from '../../entity/OssInfo'
 import dialogApi from '../../tools/dialog'
 import logger from '../../tools/logger'
-import server from '../../tools/server'
+import { server, serverInfo } from '../../tools/server'
 import tools from '../../tools/tools'
 import OssUploadComp from '../../component/OssUploadComp.vue'
 
 import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
 const router = useRouter()
-// oss文件打开路径
-const ossInfoUrl = 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid='
 // loaidng
 const Loaidng = reactive({
   loading: false,
@@ -138,7 +136,7 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
             size: 'medium',
             type: 'primary',
             onClick: () => {
-              tools.copyText(ossInfoUrl + row.oiid)
+              tools.copyText(serverInfo.ossUrl + row.oiid)
             },
           },
           {
@@ -191,7 +189,7 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
             onClick: () => {
               if (row.contentType.indexOf('image') > -1) {
                 OssInfoList.imgSrc = ''
-                OssInfoList.imgSrc = ossInfoUrl + row.oiid
+                OssInfoList.imgSrc = serverInfo.ossUrl + row.oiid
                 Loaidng.yuluan = true
               }
             },
@@ -214,7 +212,7 @@ const columns = (): DataTableColumns<queryTbOssInfoclss> => [
             size: 'medium',
             type: 'info',
             onClick: () => {
-              window.open(ossInfoUrl + row.oiid)
+              window.open(serverInfo.ossUrl + row.oiid)
             },
           },
           {
