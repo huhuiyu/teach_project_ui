@@ -71,7 +71,7 @@ const toolsData = reactive({
 //需要展示的列
 const columns = reactive([
   { title: '留言用户名', key: 'username' },
-  { title: '	电子邮件', key: 'email' },
+  { title: '电子邮件', key: 'email' },
   { title: '开发者key', key: 'accessKey' },
   {
     title: '信息最后修改时间',
@@ -98,7 +98,7 @@ const columns = reactive([
         h(
           NButton,
           {
-            justify: 'center',
+            dashed: true,
             onClick: () => {
               toolsData.modal.emailDetail = true
               emailDetailData.peid = row.peid
@@ -201,16 +201,16 @@ const reset = () => {
           <n-input v-model:value="emailData.queryAllEmailInfo.email" placeholder="请输入留言用户" clearable />
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="queryAll"> 查询 </n-button>
+          <n-button dashed @click="queryAll"> 查询 </n-button>
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="reset"> 重置 </n-button>
+          <n-button dashed type="info" @click="reset"> 重置 </n-button>
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="toolsData.modal.add = true"> 发留言 </n-button>
+          <n-button dashed type="primary" @click="toolsData.modal.add = true"> 发留言 </n-button>
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="router.back()"> 返回 </n-button>
+          <n-button dashed type="warning" @click="router.back()"> 返回 </n-button>
         </n-form-item>
       </n-form>
       <n-data-table :columns="columns" :data="emailData.list" :loading="toolsData.loading.queryAll" />
@@ -230,7 +230,16 @@ const reset = () => {
           <n-input v-model:value="emailData.addEmailInfo.email" placeholder="请输入邮箱" />
         </n-form-item>
         <n-form-item path="info">
-          <n-input type="textarea" v-model:value="emailData.addEmailInfo.info" placeholder="请输入信息" />
+          <n-input
+            type="textarea"
+            v-model:value="emailData.addEmailInfo.info"
+            placeholder="请输入信息"
+            :autosize="{
+              maxRows: 3,
+              minRows: 3,
+            }"
+            count
+          />
         </n-form-item>
       </n-form>
       <template #action>
@@ -269,6 +278,7 @@ const reset = () => {
               maxRows: 5,
               minRows: 5,
             }"
+            count
           >
             <template #suffix>
               <n-button @click="sendEmailDetail" v-loading="toolsData.loading.sendDetail" :disabled="emailDetailData.info == '' ? true : false">发送</n-button>
