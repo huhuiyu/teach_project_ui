@@ -44,6 +44,12 @@ const list = reactive([
     info: '常用工具',
     path: '/toll',
   },
+  {
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '备忘录',
+    info: '用于未雨绸缪',
+    path: '/notepad',
+  },
 ])
 if (loginUser.value.isLogin) {
   list.push({
