@@ -50,6 +50,12 @@ const list = reactive([
     info: '用于未雨绸缪',
     path: '/notepad',
   },
+  {
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '通讯录',
+    info: '用于未雨绸缪',
+    path: '/contacts',
+  },
 ])
 if (loginUser.value.isLogin) {
   list.push({

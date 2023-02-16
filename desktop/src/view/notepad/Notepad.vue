@@ -211,8 +211,8 @@ const reset = () => {
 }
 const resetAddInfo = () => {
   Loading.addNoeLoading = false
-  notepad.query.info = ''
-  notepad.query.title = ''
+  notepad.add.info = ''
+  notepad.add.title = ''
 }
 const addNotepad = () => {
   server.post('/user/note/add', notepad.add, (data: BaseResult) => {
@@ -223,15 +223,20 @@ const addNotepad = () => {
   })
 }
 const delsQueryNotepad = () => {
-  Loading.delLoaidng = !Loading.delLoaidng
+  Loading.delLoaidng = true
   Loading.loading = true
-  server.post('/user/note/queryAllDeleted', {}, (data: BaseListResult<ListNote>) => {
+  server.post('/user/note/queryAllDeleted', notepad.query, (data: BaseListResult<ListNote>) => {
     Loading.loading = false
     if (data.success) {
       notepad.delList = data.list
       notepad.delPage = data.page
     }
   })
+}
+const resetdel = () => {
+  notepad.query.info = ''
+  notepad.query.title = ''
+  delsQueryNotepad()
 }
 </script>
 <template>
@@ -248,17 +253,19 @@ const delsQueryNotepad = () => {
           <NInput placeholder="内容模糊查询" v-model:value="notepad.query.info"></NInput>
         </NFormItem>
         <NFormItem>
-          <NButton type="success" dashed @click="queryNotepad">查询</NButton>
+          <NButton v-if="!Loading.delLoaidng" type="success" dashed @click="queryNotepad">查询</NButton>
+          <NButton v-if="Loading.delLoaidng" type="success" dashed @click="delsQueryNotepad">查询</NButton>
         </NFormItem>
         <NFormItem>
-          <NButton type="info" dashed @click="Loading.addNoeLoading = true">添加</NButton>
+          <NButton v-if="!Loading.delLoaidng" type="info" dashed @click="Loading.addNoeLoading = true">添加</NButton>
         </NFormItem>
         <NFormItem>
-          <NButton type="warning" dashed @click="reset">重置</NButton>
+          <NButton v-if="!Loading.delLoaidng" type="warning" dashed @click="reset">重置</NButton>
+          <NButton v-if="Loading.delLoaidng" type="warning" dashed @click="resetdel">重置</NButton>
         </NFormItem>
         <NFormItem>
-          <NButton v-if="!Loading.delLoaidng" type="primary" dashed @click="delsQueryNotepad">已删除</NButton>
-          <NButton v-if="Loading.delLoaidng" type="primary" dashed @click="queryNotepad">未删除</NButton>
+          <NButton v-if="!Loading.delLoaidng" type="primary" dashed @click="resetdel">已删除</NButton>
+          <NButton v-if="Loading.delLoaidng" type="primary" dashed @click="reset">未删除</NButton>
         </NFormItem>
         <NFormItem>
           <NButton type="error" dashed @click="router.back()">返回</NButton>
