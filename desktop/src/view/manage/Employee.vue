@@ -268,7 +268,7 @@ const addRules: FormRules = {
     {
       required: true,
       validator: (rule: FormItemRule, value: string) => {
-        if (!/^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/.test(value)) return new Error('请输入正确手机号格式')
+        if (!/^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/.test(value)) return new Error('请输入正确手机号格式')
         return true
       },
       message: '请输入正确手机号格式',
@@ -345,7 +345,7 @@ const ModifyRules: FormRules = {
     {
       required: true,
       validator: (rule: FormItemRule, value: string) => {
-        if (!/^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/.test(value)) return new Error('请输入正确手机号格式')
+        if (!/^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/.test(value)) return new Error('请输入正确手机号格式')
         return true
       },
       message: '请输入正确手机号格式',
