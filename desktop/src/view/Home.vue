@@ -18,7 +18,8 @@ const list = reactive([
     path: '',
   },
 ])
-const listPush = () => {
+const listPush = (info: string) => {
+  list.splice(0, list.length)
   if (loginUser.value.isLogin && loginUser.value.tbUser.role == 'admin') {
     title.titles = '内置管理员'
     list.push(
@@ -117,9 +118,8 @@ const listPush = () => {
       }
     )
   }
-  list.shift()
 }
-listPush()
+listPush('ceshi')
 </script>
 
 <template>
