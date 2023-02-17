@@ -44,6 +44,10 @@ ajax.before = (config: AjaxConfig) => {
 	config.headers = headers
 }
 
+ajax.after = (data: BaseResult | any) => {
+	serverInfo.saveToken(data)
+}
+
 const server = {
 	post: (url: string, param: any, cb: Function) => {
 		ajax.send(AjaxConfig.buildPostConfig(url, param, cb))
