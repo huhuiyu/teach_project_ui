@@ -73,7 +73,7 @@ function renderCustomHeader() {
   return h(
     'div',
     {
-      style: 'display: flex; align-items: center; padding: 8px 12px;',
+      style: 'display: flex; align-items: center; justify-content: center; padding: 8px 12px;',
     },
     [h('div', { style: 'text-align: center;' }, [h('div', { style: 'font-size: 20px;' }, [h(NText, { depth: 1 }, { default: () => loginUser.value.tbUser.nickname })]), h('div', { style: 'font-size: 12px;' }, [h(NText, { depth: 2 }, { default: () => (loginUser.value.tbUserInfo.info ? loginUser.value.tbUserInfo.info : '毫无疑问，你是办公室里最亮的星') })])])]
   )
