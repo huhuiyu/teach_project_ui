@@ -14,6 +14,9 @@
 	<view class="pd10">
 		{{viewdata.error}}
 	</view>
+	<view class="pd10">
+		{{viewdata.token1}}=={{viewdata.token2}}
+	</view>
 </template>
 
 <script setup lang="ts">
@@ -47,9 +50,20 @@
 			qq: '',
 			title: ''
 		},
-		error: ''
+		error: '',
+		token1: '',
+		token2: ''
 	});
 	const query = () => {
+		console.log('测试token')
+		server.get('/token', {}, (data: BaseResult) => {
+			console.log('token信息1：', data)
+			viewdata.token1 = data.token
+			server.get('/token', {}, (data: BaseResult) => {
+				console.log('token信息2：', data)
+				viewdata.token2 = data.token
+			})
+		})
 		console.log("测试数据查询")
 		server.post('/portable/message/queryAll', tools.concatJson(viewdata.queryParam, viewdata.page), (data:
 			BaseListResult <
