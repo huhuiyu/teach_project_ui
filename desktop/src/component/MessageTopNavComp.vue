@@ -85,7 +85,7 @@ const handleSelect = (key: string | number) => {
     return
   }
   if (key == 'personalHome ') {
-    router.push('/message/personal/' + loginUser.value.tbUser.username)
+    tools.jumpRoute_Blank('/message/personal/' + loginUser.value.tbUser.username)
     return
   }
 }
