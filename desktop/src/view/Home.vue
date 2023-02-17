@@ -44,16 +44,27 @@ const list = reactive([
     info: '常用工具',
     path: '/toll',
   },
+  {
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '备忘录',
+    info: '用于未雨绸缪',
+    path: '/notepad',
+  },
+  {
+    img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+    title: '通讯录',
+    info: '用于未雨绸缪',
+    path: '/contacts',
+  },
 ])
-if (loginUser.value.isLogin && loginUser.value.tbUser.accessKey == '18c4e6cf-e54b-4e64-a764-c3fdd15226f8') {
+if (loginUser.value.isLogin) {
   list.push({
     img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
     title: '门户管理',
     info: '教学演示项目门户管理',
-    path: '/portal',
+    path: '/portable',
   })
 }
-
 </script>
 
 <template>

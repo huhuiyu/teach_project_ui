@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DataTableColumns, FormInst, FormRules, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSelect, NSpace, NSwitch } from 'naive-ui'
+import { DataTableColumns, FormInst, FormRules, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSelect, NSpace } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import { reactive, h, ref } from 'vue'
 import { TbBucket, OssEndPoints, OssConfig } from '../../entity/OssInfo'
@@ -265,6 +265,7 @@ const addBucket = () => {
       server.post('/oss/bucket/add', addOssbucket, (data: BaseResult) => {
         Loading.loading = false
         Loading.addBucket = false
+        resetAddBucket()
         if (data.success) {
           queryAllOssBucket()
         }
@@ -425,6 +426,13 @@ const querymodifyBucket = () => {
       })
     }
   })
+}
+const resetAddBucket = () => {
+  addOssbucket.bucketName = ''
+  addOssbucket.domains = '*'
+  addOssbucket.expiration = '3600'
+  addOssbucket.info = ''
+  addOssbucket.ocid = ''
 }
 </script>
 <template>

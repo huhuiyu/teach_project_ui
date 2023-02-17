@@ -9,6 +9,8 @@ import ossRouter from './oss'
 import adminRouter from './admin'
 import portableRouter from './portable'
 import toll from './toll'
+import contacts from './contacts'
+import notepad from './notepad'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -36,7 +38,9 @@ const routes: RouteRecordRaw[] = [
   .concat(ossRouter)
   .concat(adminRouter)
   .concat(portableRouter)
+  .concat(notepad)
   .concat(toll)
+  .concat(contacts)
 
 // 创建router
 const router = createRouter({

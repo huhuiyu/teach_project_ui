@@ -1,5 +1,5 @@
 <script setup lang="ts" name="OssConfig">
-import { DataTableColumns, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSpace, NSwitch } from 'naive-ui'
+import { DataTableColumns, NButton, NDataTable, NForm, NFormItem, NInput, NModal, NSpace } from 'naive-ui'
 import { reactive, h } from 'vue'
 import { useRouter } from 'vue-router'
 import PageComp from '../../component/PageComp.vue'
