@@ -7,7 +7,7 @@ const lazyUrl = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
 </script>
 <template>
   <main>
-    <div>
+    <div class="conter">
       <a class="conter_menu" v-for="d in props.list" :key="d.path" href="javascript:void(0)" @click="router.push(`${d.path}`)">
         <div>
           <n-avatar
@@ -37,13 +37,15 @@ p {
 }
 
 main {
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
 }
-main > div {
-  padding: 10% 10%;
+
+.conter {
+  width: 980px;
   display: grid;
   grid-template-columns: repeat(4, 20%);
-  grid-gap: 4rem;
+  grid-gap: 6.7%;
 }
 .conter_menu {
   display: inline-block;

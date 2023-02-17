@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { NButton, NAvatar, NSpace, NDropdown, NText } from 'naive-ui'
 import store from '../../store'
-import logger from '../../tools/logger'
 import server from '../../tools/server'
-import { reactive, h } from 'vue'
+import { h, defineProps } from 'vue'
 const router = useRouter()
+const route = useRoute()
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
 const props = defineProps(['title'])
@@ -46,7 +46,6 @@ const options = [
   },
 ]
 const handleSelect = (key: string | number) => {
-  logger.debug(key)
   if (key == 'logOut') {
     logout()
     return
@@ -56,14 +55,13 @@ const handleSelect = (key: string | number) => {
     return
   }
 }
-const emits = defineEmits(['update-page'])
-// 退出登录
+const emits = defineEmits(['update-page']) // 退出登录
 const logout = () => {
   server.post('/user/auth/logout', {}, () => {
     storeInfo.updateLoginUser(() => {
       router.push('/')
       //退出登录返回主站
-      // emits('update-page', listPush)
+      emits('update-page', 'ceshi')
     })
   })
 }
@@ -84,7 +82,7 @@ const logout = () => {
         <n-space v-else>
           <n-button v-if="!loginUser.isLogin" @click="router.push('/login')">登录</n-button>
         </n-space>
-        <n-button @click="router.push('/')">主站</n-button>
+        <n-button v-if="route.path != '/'" @click="router.push('/')">返回</n-button>
       </div>
     </header>
   </div>
@@ -99,7 +97,7 @@ header {
   align-items: center;
   background-color: hsla(0, 0%, 100%, 0.6);
   box-shadow: 0 0 10px rgb(0 0 0 / 20%);
-  padding: 15px 50px;
+  padding: 15px 200px;
 }
 
 .header_title {
