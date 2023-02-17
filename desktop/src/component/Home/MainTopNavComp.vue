@@ -1,26 +1,61 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
-import { NButton, NAvatar } from 'naive-ui'
+import { NButton, NAvatar, NSpace, NDropdown, NText } from 'naive-ui'
 import store from '../../store'
 import logger from '../../tools/logger'
 import server from '../../tools/server'
+import { reactive, h } from 'vue'
 const router = useRouter()
 const route = useRoute()
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
 const props = defineProps(['title'])
 const lazyUrl = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
-const changeRouteInfo = (info: string) => {
-  if (info == route.query.abc) {
+//用户信息下拉选项
+const options = [
+  {
+    key: 'header',
+    type: 'render',
+    render(row: any) {
+      return h(
+        'div',
+        {
+          style: 'display: flex; align-items: center; justify-content: center; padding:12px 8px 0px 8px;',
+        },
+        [h('div', { style: 'text-align: center;' }, [h('div', { style: 'font-size: 20px;' }, [h(NText, { depth: 1 }, { default: () => loginUser.value.tbUser.nickname })]), h('div', { style: 'font-size: 12px;' }, [h(NText, { depth: 2 }, { default: () => (loginUser.value.tbUserInfo.info ? loginUser.value.tbUserInfo.info : '毫无疑问，你是办公室里最亮的星') })])])]
+      )
+    },
+  },
+  {
+    key: 'header-divider',
+    type: 'divider',
+  },
+  {
+    label: '用户信息',
+    key: 'personalHome ',
+    icon: () => {
+      return h('i', { class: 'iconfont', innerHTML: '&#xe6da;' })
+    },
+  },
+  {
+    label: '退出登录',
+    key: 'logOut',
+    icon: () => {
+      return h('i', { class: 'iconfont', innerHTML: '&#xe612;' })
+    },
+  },
+]
+const handleSelect = (key: string | number) => {
+  logger.debug(key)
+  if (key == 'logOut') {
+    logout()
     return
   }
-  router.push({
-    path: '/user/userinfo',
-    query: {
-      abc: info,
-    },
-  })
+  if (key == 'personalHome ') {
+    router.push('/user/userinfo')
+    return
+  }
 }
 // 退出登录
 const logout = () => {
@@ -31,7 +66,6 @@ const logout = () => {
     })
   })
 }
-if (route.query.abc == '用户信息') logger.debug('aaaaaaaaaaaaaaaaaaaaaaaaaaa')
 </script>
 <template>
   <div>
@@ -41,15 +75,14 @@ if (route.query.abc == '用户信息') logger.debug('aaaaaaaaaaaaaaaaaaaaaaaaaaa
         <div>{{ props.title }}</div>
       </div>
       <div class="header_menu">
-        <p v-if="loginUser.isLogin == false">黑暗骑士</p>
-        <p v-else>欢迎，{{ loginUser.tbUser.nickname }}</p>
-        <div v-if="route.query.abc == '用户信息'">
-          <n-button @click="logout">退出登录 </n-button>
-        </div>
-        <div v-else>
-          <n-button v-if="loginUser.isLogin" @click="changeRouteInfo('用户信息')">用户信息</n-button>
-          <n-button v-else @click="router.push('/login')">登录</n-button>
-        </div>
+        <NSpace v-if="loginUser.isLogin" class="avatar">
+          <NDropdown trigger="hover" :options="options" :show-arrow="true" @select="handleSelect">
+            <n-avatar round :src="loginUser.tbUserInfo.img ? loginUser.tbUserInfo.img : 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81'"></n-avatar>
+          </NDropdown>
+        </NSpace>
+        <n-space v-else>
+          <n-button circle secondary size="medium" v-if="!loginUser.isLogin" @click="router.push('/login')">登录</n-button>
+        </n-space>
         <n-button @click="router.push('/')">主站</n-button>
       </div>
     </header>
