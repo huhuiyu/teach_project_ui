@@ -11,8 +11,10 @@ const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
 const props = defineProps(['title'])
 const lazyUrl = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
+
 //用户信息下拉选项
 const options = [
+
   {
     key: 'header',
     type: 'render',

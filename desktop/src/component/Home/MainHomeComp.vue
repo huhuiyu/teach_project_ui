@@ -3,11 +3,11 @@ import { NAvatar } from 'naive-ui'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const props = defineProps(['list'])
-const lazyUrl = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
+const lazyUrl = 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=90'
 </script>
 <template>
   <main>
-    <div class="conter">
+    <div>
       <a class="conter_menu" v-for="d in props.list" :key="d.path" href="javascript:void(0)" @click="router.push(`${d.path}`)">
         <div>
           <n-avatar
@@ -37,15 +37,13 @@ p {
 }
 
 main {
-  display: flex;
-  justify-content: center;
+  margin: 0 auto;
 }
-
-.conter {
-  width: 980px;
+main > div {
+  padding: 10% 10%;
   display: grid;
   grid-template-columns: repeat(4, 20%);
-  grid-gap: 6.7%;
+  grid-gap: 4rem;
 }
 .conter_menu {
   display: inline-block;
