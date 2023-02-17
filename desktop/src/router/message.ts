@@ -1,9 +1,5 @@
 const routes = [
   {
-    path: '/messagehome',
-    component: () => import('../view/message/MessageHome.vue'),
-  },
-  {
     path: '/message/home',
     component: () => import('../view/message/Home.vue'),
   },

@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { NButton, NAvatar, NSpace, NDropdown, NText } from 'naive-ui'
 import store from '../../store'
 import logger from '../../tools/logger'
 import server from '../../tools/server'
 import { reactive, h } from 'vue'
 const router = useRouter()
-const route = useRoute()
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
 const props = defineProps(['title'])
@@ -57,12 +56,14 @@ const handleSelect = (key: string | number) => {
     return
   }
 }
+const emits = defineEmits(['update-page'])
 // 退出登录
 const logout = () => {
   server.post('/user/auth/logout', {}, () => {
     storeInfo.updateLoginUser(() => {
-      //退出登录返回主站
       router.push('/')
+      //退出登录返回主站
+      // emits('update-page', listPush)
     })
   })
 }
@@ -81,7 +82,7 @@ const logout = () => {
           </NDropdown>
         </NSpace>
         <n-space v-else>
-          <n-button circle secondary size="medium" v-if="!loginUser.isLogin" @click="router.push('/login')">登录</n-button>
+          <n-button v-if="!loginUser.isLogin" @click="router.push('/login')">登录</n-button>
         </n-space>
         <n-button @click="router.push('/')">主站</n-button>
       </div>

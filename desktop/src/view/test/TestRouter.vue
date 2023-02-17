@@ -27,6 +27,7 @@ const abc = computed(() => {
   logRouteInfo()
   return route.query.abc
 })
+
 </script>
 
 <template>
@@ -43,4 +44,5 @@ const abc = computed(() => {
   <div>
     {{ abc }}
   </div>
+  <div v-if="route.query.abc == 'batman'"> batman </div>
 </template>

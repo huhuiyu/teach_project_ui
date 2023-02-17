@@ -1,9 +1,5 @@
 const routes = [
   {
-    path: '/admin/home',
-    component: () => import('../view/superAdminManage/Home.vue'),
-  },
-  {
     path: '/admin/log',
     component: () => import('../view/superAdminManage/SystemLog.vue'),
   },
