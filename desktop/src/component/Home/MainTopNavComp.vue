@@ -115,6 +115,7 @@ p {
   display: flex;
   justify-content: center;
   box-shadow: 0 0 10px rgb(0 0 0 / 20%);
+  background-color: hsla(0, 0%, 100%, 0.6);
 }
 header {
   width: 1020px;
