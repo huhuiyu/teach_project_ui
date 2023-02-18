@@ -446,7 +446,7 @@ function exportEmployee() {
         </n-form-item>
       </n-form>
       <n-data-table :columns="columns" :data="employeeData.list" :loading="employeeData.loading" />
-      <div class="flex-box-center mr05">
+      <div class="flex-box-center mr05" v-if="employeeData.page.pageCount > 1">
         <n-pagination :item-count="employeeData.page.total" :page-size="employeeData.page.pageSize" v-model:page="employeeData.page.pageNumber" show-size-picker :page-sizes="[5, 10, 20]" @update-page="changeNumber" @update:page-size="updatePageSize" />
       </div>
     </main>

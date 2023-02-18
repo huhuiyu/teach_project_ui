@@ -255,7 +255,7 @@ function modifyDept() {
         </n-form-item>
       </n-form>
       <n-data-table :columns="columns" :data="deptData.list" :loading="deptData.loading" />
-      <div class="flex-box-center mr05">
+      <div class="flex-box-center mr05" v-if="deptData.page.pageCount > 1">
         <n-pagination :item-count="deptData.page.total" :page-size="deptData.page.pageSize" v-model:page="deptData.page.pageNumber" show-size-picker :page-sizes="[5, 10, 20]" @update-page="changeNumber" @update:page-size="updatePageSize" />
       </div>
     </main>
@@ -263,11 +263,11 @@ function modifyDept() {
       <template #header>
         <div>添加部门</div>
       </template>
-      <n-form ref="addRef" :model="addDeptInfo" label-placement="left"  require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }" :rules="addRules">
-        <n-form-item  path="deptName">
+      <n-form ref="addRef" :model="addDeptInfo" label-placement="left" require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }" :rules="addRules">
+        <n-form-item path="deptName">
           <n-input v-model:value="addDeptInfo.deptName" placeholder="输入部门名称" />
         </n-form-item>
-        <n-form-item  path="deptInfo">
+        <n-form-item path="deptInfo">
           <n-input v-model:value="addDeptInfo.deptInfo" placeholder="输入部门描述" />
         </n-form-item>
       </n-form>
@@ -282,7 +282,7 @@ function modifyDept() {
       <template #header>
         <div>修改部门</div>
       </template>
-      <n-form ref="modifyRef" :model="modifyInfo" label-placement="left"  require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }" :rules="ModifyRules">
+      <n-form ref="modifyRef" :model="modifyInfo" label-placement="left" require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }" :rules="ModifyRules">
         <n-form-item path="deptName">
           <n-input v-model:value="modifyInfo.deptName" placeholder="输入部门名称" />
         </n-form-item>
