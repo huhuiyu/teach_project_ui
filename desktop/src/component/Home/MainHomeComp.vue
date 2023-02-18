@@ -1,53 +1,90 @@
 <script setup lang="ts">
-import { NAvatar } from 'naive-ui'
+import { NAvatar, NBackTop, NSpace } from 'naive-ui'
+import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { BaseListResult } from '../../entity/BaseResult'
+import server, { serverInfo } from '../../tools/server'
 const router = useRouter()
 const props = defineProps(['list'])
-const lazyUrl = 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=90'
+const lazyUrl = reactive({
+  img: '',
+})
+const portableLazUrl = () => {
+  server.post(
+    '/portable/message/queryAll',
+    {
+      accessKey: serverInfo.accessKey,
+      messageGroup: 'homePathImg',
+      pageSize: 1000,
+      pageNumber: 1,
+    },
+    (data: BaseListResult<any>) => {
+      for (let i = 0; i < data.list.length; i++) {
+        if (data.list[i].messageKey == 'default') lazyUrl.img = data.list[i].message
+      }
+    }
+  )
+}
+portableLazUrl()
 </script>
 <template>
   <main>
-    <div>
-      <a class="conter_menu" v-for="d in props.list" :key="d.path" href="javascript:void(0)" @click="router.push(`${d.path}`)">
-        <div>
-          <n-avatar
-            class="conter_img"
-            size="small"
-            :src="d.img ? d.img : lazyUrl"
-            lazy
-            :intersection-observer-options="{
-              root: '#image-scroll-container',
-            }"
-          />
-        </div>
-        <div>
-          <div class="conter_title">
-            {{ d.title }}
+    <div class="stylediasplay">
+      <div class="stylewidth">
+        <a class="conter_menu" v-for="d in props.list" :key="d.path" href="javascript:void(0)" @click="router.push(`${d.path}`)">
+          <div>
+            <n-avatar
+              class="conter_img"
+              size="small"
+              :src="d.img ? d.img : lazyUrl.img"
+              lazy
+              :intersection-observer-options="{
+                root: '#image-scroll-container',
+              }"
+            />
           </div>
-          <p>{{ d.info }}</p>
-        </div>
-      </a>
+          <div>
+            <div class="conter_title">
+              {{ d.title }}
+            </div>
+            <p>{{ d.info }}</p>
+          </div>
+        </a>
+      </div>
     </div>
   </main>
+  <footer :class="{ footermartop: props.list.length <= 4 }">
+    <NSpace align="center" vertical>
+      <NSpace style="margin-top: 12px">©2020 - 2022 By huhuiyu</NSpace>
+      <NSpace>Vue3 | Pinia | TypeScript</NSpace>
+      <NSpace>Hi, welcome to simple message</NSpace>
+    </NSpace>
+  </footer>
+  <NBackTop :right="100" />
 </template>
 
 <style scoped>
+/* 这个css别乱动 */
 p {
   margin: 0;
 }
 
 main {
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
 }
-main > div {
-  padding: 10% 10%;
+.stylediasplay {
+  padding-top: 3%;
+  width: 1020px;
+}
+.stylewidth {
   display: grid;
-  grid-template-columns: repeat(4, 20%);
+  grid-template-columns: repeat(4, 20.3%);
   grid-gap: 4rem;
 }
 .conter_menu {
   display: inline-block;
-  border-radius: 10px;
+  border-radius: 20px;
   box-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.15);
   transition: all 0.8s;
   text-decoration: none;
@@ -58,16 +95,20 @@ main > div {
   box-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.3);
 }
 .conter_menu:hover .conter_img {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   transform: scale(1.3);
 }
 .conter_menu > div:first-child {
   width: 100%;
   height: 50%;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   overflow: hidden;
 }
 .conter_menu > div:last-child {
   padding: 1rem;
-  margin-bottom: 15%;
+  padding-bottom: 15%;
 }
 .conter_title {
   font-size: 1.5em;
@@ -81,12 +122,21 @@ main > div {
   transition: transform 0.8s;
   transform-origin: center;
   width: 100%;
-  height: 100%;
+  height: 128px;
   overflow: hidden;
 }
 .conter_menu :deep() img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+footer {
+  margin-top: 10%;
+  background-color: #495a80;
+  height: 14vh;
+  color: #fff;
+}
+.footermartop {
+  margin-top: 40vh;
 }
 </style>

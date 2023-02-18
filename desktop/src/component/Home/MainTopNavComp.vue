@@ -3,18 +3,36 @@ import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { NButton, NAvatar, NSpace, NDropdown, NText } from 'naive-ui'
 import store from '../../store'
-import server from '../../tools/server'
-import { h, defineProps } from 'vue'
+import server, { serverInfo } from '../../tools/server'
+import { h, defineProps, reactive } from 'vue'
+import { BaseListResult } from '../../entity/BaseResult'
 const router = useRouter()
 const route = useRoute()
 const storeInfo = store()
 const { loginUser } = storeToRefs(storeInfo)
 const props = defineProps(['title'])
-const lazyUrl = 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'
-
+const lazyUrl = reactive({
+  img: '',
+})
+const portableLazUrl = () => {
+  server.post(
+    '/portable/message/queryAll',
+    {
+      accessKey: serverInfo.accessKey,
+      messageGroup: 'homePathImg',
+      pageSize: 1000,
+      pageNumber: 1,
+    },
+    (data: BaseListResult<any>) => {
+      for (let i = 0; i < data.list.length; i++) {
+        if (data.list[i].messageKey == 'lettopimg') lazyUrl.img = data.list[i].message
+      }
+    }
+  )
+}
+portableLazUrl()
 //用户信息下拉选项
 const options = [
-
   {
     key: 'header',
     type: 'render',
@@ -69,10 +87,10 @@ const logout = () => {
 }
 </script>
 <template>
-  <div>
+  <div class="styletop">
     <header>
       <div class="header_title">
-        <div><n-avatar round size="small" :src="lazyUrl"></n-avatar></div>
+        <div><n-avatar round size="small" :src="lazyUrl.img"></n-avatar></div>
         <div>{{ props.title }}</div>
       </div>
       <div class="header_menu">
@@ -93,13 +111,18 @@ const logout = () => {
 p {
   margin: 0;
 }
+.styletop {
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 0 10px rgb(0 0 0 / 20%);
+}
 header {
+  width: 1020px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: hsla(0, 0%, 100%, 0.6);
-  box-shadow: 0 0 10px rgb(0 0 0 / 20%);
-  padding: 15px 200px;
+  padding: 15px 0px;
 }
 
 .header_title {
