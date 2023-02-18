@@ -338,6 +338,9 @@ const updatePhone = () => {
               phone: phoneInfo.newPhone,
             },
             (data: BaseResult) => {
+              if (data.success) {
+                storeInfo.updateLoginUser(() => {})
+              }
               dialog.notifyWarning({
                 content: data.message,
                 duration: 2000,
@@ -425,6 +428,9 @@ const updateEmail = () => {
         '/user/auth/updateUserEmail',
         { email: emailInfo.email, code: emailInfo.emailCode },
         (data: BaseResult) => {
+          if (data.success) {
+            storeInfo.updateLoginUser(() => {})
+          }
           dialog.notifyWarning({
             content: data.message,
             duration: 2000,

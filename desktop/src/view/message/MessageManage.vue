@@ -433,7 +433,7 @@ const delComment = () => {
           <n-button attr-type="button" @click="router.back"> 返回 </n-button>
         </n-form-item>
       </n-form>
-      <n-data-table default-expand-all :columns="messageColumns" :data="messageData.list" :loading="commentData.loading" />
+      <n-data-table default-expand-all :columns="messageColumns" :data="messageData.list" :loading="messageData.loading" />
       <div>
         <PageComp :page="messageData.page" :show-size-picker="true" @number-change="queryMessageAll" @size-change="queryMessageAll" @page-change="queryMessageAll"></PageComp>
       </div>
@@ -449,7 +449,7 @@ const delComment = () => {
           <n-button attr-type="button" @click="changeRouteInfo('message')"> 切换留言管理 </n-button>
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="router.push('/messagehome')"> 返回主站 </n-button>
+          <n-button attr-type="button" @click="router.push('/')"> 返回主站 </n-button>
         </n-form-item>
       </n-form>
       <n-data-table default-expand-all :columns="commentColumns" :data="commentData.list" :loading="messageData.loading" />
@@ -467,7 +467,7 @@ const delComment = () => {
       <n-list-item v-for="e in queryExamineInfoData.list" :key="e.username">
         <n-space align="center" justify="space-between">
           <n-space align="center">
-            <n-avatar round size="large" :src="e.img" fallback-src="https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg"></n-avatar>
+            <n-avatar round size="large" :src="e.img ? e.img : 'https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg'"></n-avatar>
             <n-thing :title="`用户名：${e.username}`" :description="`昵称：${e.nickname}`"> </n-thing>
           </n-space>
           <div>举报原因：{{ e.info }}</div>
