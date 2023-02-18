@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { h, reactive, ref } from 'vue'
-import { NForm, NFormItem, NInput, NButton, NDataTable, NSpace, NModal, FormRules, FormInst, NSelect, FormItemRule, DataTableColumns, c } from 'naive-ui'
+import { NForm, NFormItem, NInput, NButton, NDataTable, NSpace, NModal, FormRules, FormInst, NSelect, FormItemRule, DataTableColumns, c, NPopconfirm } from 'naive-ui'
 import { ClassInfo, StudentInfo } from '../../entity/ClassResult'
 import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
 import { useRouter } from 'vue-router'
-import server from '../../tools/server'
+import server, { serverInfo } from '../../tools/server'
 import tools from '../../tools/tools'
 import dialogApi from '../../tools/dialog'
 import PageComp from '../../component/PageComp.vue'
@@ -370,6 +370,23 @@ const modifyClassDiaong = () => {
   loading.class = true
   loading.modifyclass = true
 }
+const exportEmployee = () => {
+  let params = JSON.parse(JSON.stringify(query.querys))
+  delete params.deptName
+  let paramsArray: any[] = []
+  let url = serverInfo.url + '/manage/student/exportExcel'
+  Object.keys(params).forEach((key) => {
+    if (params[key] != '') {
+      paramsArray.push(key + '=' + params[key])
+    }
+  })
+  if (url.search(/\?/) === -1) {
+    url += '?' + paramsArray.join('&')
+  } else {
+    url += '&' + paramsArray.join('&')
+  }
+  window.open(url)
+}
 </script>
 <template>
   <header>
@@ -403,6 +420,14 @@ const modifyClassDiaong = () => {
       </n-form-item>
       <n-form-item>
         <n-button attr-type="button" @click="loading.add = true">添加</n-button>
+      </n-form-item>
+      <n-form-item>
+        <NPopconfirm @positive-click="exportEmployee" @negative-click="dialogApi.messageInfo('已取消')" negative-text="取消" positive-text="确定">
+          <template #trigger>
+            <n-button attr-type="button">导出为Excel </n-button>
+          </template>
+          确认要导出当前所查询到的学生表吗
+        </NPopconfirm>
       </n-form-item>
       <n-form-item>
         <n-button attr-type="button" @click="router.back()">返回</n-button>

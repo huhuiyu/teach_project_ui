@@ -90,6 +90,20 @@ const supportMessage = (value: string) => {
     }
   })
 }
+const supportMessageList = (value: Number) => {
+  loadings.loading = true
+  if (!loginUser.value.isLogin) {
+    loadings.loading = false
+    dialogApi.messageWarning('请登录后再进行操作哦')
+    return
+  }
+  server.post('/message/supportReply', { umrid: value }, (data: BaseResult) => {
+    loadings.loading = false
+    if (data.success) {
+      searchMessageList()
+    }
+  })
+}
 // 关注取消关注
 const actionconcern = (username: string) => {
   loadings.loading = true
@@ -358,7 +372,7 @@ const rules: FormRules = {
                       <i class="iconfont">&#xe68e;</i>
                     </template>
                   </n-button>
-                  <n-button @click="supportMessage(item.umrid + '')" text :type="item.praise ? 'primary' : 'default'">
+                  <n-button @click="supportMessageList(item.umrid)" text :type="item.praise ? 'primary' : 'default'">
                     {{ item.praiseCount }}点赞
                     <template #icon>
                       <i class="iconfont">&#xec7f;</i>
