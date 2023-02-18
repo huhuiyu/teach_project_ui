@@ -4,7 +4,8 @@ import MainTopNavComp from '../component/Home/MainTopNavComp.vue'
 import MainHomeComp from '../component/Home/MainHomeComp.vue'
 import store from '../store'
 import { storeToRefs } from 'pinia'
-import logger from '../tools/logger'
+import server, { serverInfo } from '../tools/server'
+import { BaseListResult } from '../entity/BaseResult'
 const title = reactive({
   titles: '教学演示项目',
 })
@@ -18,8 +19,10 @@ const list = reactive([
     path: '',
   },
 ])
+
 const listPush = (info: string) => {
   list.splice(0, list.length)
+  // 登录超级管理员
   if (loginUser.value.isLogin && loginUser.value.tbUser.role == 'admin') {
     title.titles = '内置管理员'
     list.push(
@@ -43,81 +46,112 @@ const listPush = (info: string) => {
       }
     )
   }
+  // 登录app管理员
   if (loginUser.value.isLogin && loginUser.value.tbUser.role == 'app-admin') {
     title.titles = '内置应用管理员'
     list.push(
       {
-        img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+        img: '',
         title: '管理留言板',
         info: '管理留言、评论、举报信息',
         path: '/message/manage',
       },
       {
-        img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+        img: '',
         title: '留言版公告管理',
         info: '查询、添加、删除、留言板公告',
         path: '/message/notice',
       }
     )
   }
-  logger.debug('ceshi-------------1', loginUser.value.tbUser.role == 'user' || !loginUser.value.isLogin)
+  // 不登录也能看见
   if (loginUser.value.tbUser.role == 'user' || !loginUser.value.isLogin) {
     list.push(
       {
-        img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+        img: '',
         title: '简易留言板',
         info: '简介、多平台的留言板项目',
         path: '/message/home',
       },
       {
-        img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+        img: '',
         title: '教学演示项目',
         info: '教学演示项目',
         path: '/manage',
       },
       {
-        img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+        img: '',
         title: '常用工具',
         info: '常用工具',
         path: '/toll',
       }
     )
   }
-
+  // 用户登录
   if (loginUser.value.tbUser.role == 'user' && loginUser.value.isLogin) {
     list.push(
       {
-        img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+        img: '',
         title: 'OSS管理程序',
         info: 'OSS管理程序',
         path: '/osshome',
       },
       {
-        img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+        img: '',
         title: '文件管理',
         info: '文件管理',
         path: '/manage/file',
       },
       {
-        img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+        img: '',
         title: '备忘录',
         info: '用于未雨绸缪',
         path: '/notepad',
       },
       {
-        img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+        img: '',
         title: '通讯录',
         info: '摇人',
         path: '/contacts',
       },
       {
-        img: 'https://klcxy.top/oss-manage-service/ossinfo/queryOssUrl?tbOssInfo.oiid=542',
+        img: '',
         title: '门户管理',
         info: '教学演示项目门户管理',
         path: '/portable',
       }
     )
   }
+  portableQueryAll()
+}
+const portableQueryAll = () => {
+  server.post(
+    '/portable/message/queryAll',
+    {
+      accessKey: serverInfo.accessKey,
+      messageGroup: 'homePathImg',
+      pageSize: 1000,
+      pageNumber: 1,
+    },
+    (data: BaseListResult<any>) => {
+      let i = 0
+      for (let i = 0; i < data.list.length; i++) {
+        for (let j = 0; j < list.length; j++) {
+          let abc = data.list[i].messageKey + ''
+          if (list[j].path.lastIndexOf('/') == 0) {
+            if (abc.indexOf(list[j].path.substring(1)) > -1) {
+              list[j].img = data.list[i].message
+            }
+          } else {
+            let middle = list[j].path.lastIndexOf('/')
+            if (abc.indexOf(list[j].path.substring(1, middle)) > -1 && abc.indexOf(list[j].path.substring(middle + 1))) {
+              list[j].img = data.list[i].message
+            }
+          }
+        }
+      }
+    }
+  )
 }
 listPush('ceshi')
 </script>
