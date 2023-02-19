@@ -57,7 +57,7 @@ portableLazUrl()
     <NSpace align="center" vertical>
       <NSpace style="margin-top: 12px">©2020 - 2022 By huhuiyu</NSpace>
       <NSpace>Vue3 | Pinia | TypeScript</NSpace>
-      <NSpace>Hi, welcome to simple message</NSpace>
+      <NSpace>Hello and welcome to the instructional demo</NSpace>
     </NSpace>
   </footer>
   <NBackTop :right="100" />
