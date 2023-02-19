@@ -157,8 +157,26 @@ listPush('ceshi')
 </script>
 
 <template>
-  <div>
+  <div class="main-container">
     <MainTopNavComp :title="title.titles" @update-page="listPush"></MainTopNavComp>
     <MainHomeComp :list="list"></MainHomeComp>
   </div>
+  <div class="phone-main-container pd10 tc"> 手机版网站建设中。。。 </div>
 </template>
+
+<style>
+.main-container {
+  display: block;
+}
+.phone-main-container {
+  display: none;
+}
+@media screen and (max-width: 768px) {
+  .main-container {
+    display: none;
+  }
+  .phone-main-container {
+    display: block;
+  }
+}
+</style>
