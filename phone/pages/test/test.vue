@@ -17,6 +17,13 @@
 	<view class="pd10">
 		{{viewdata.token1}}=={{viewdata.token2}}
 	</view>
+	<view class="pd10">
+		{{loginUser.isLogin }}-
+		{{loginUser.tbUser }}-
+		{{loginUser.tbUserInfo }}-
+		{{loginUser.userOtherInfo }}-
+
+	</view>
 </template>
 
 <script setup lang="ts">
@@ -36,6 +43,10 @@
 		BaseResult
 	} from '../../script/entity/BaseResult'
 	import tools from '../../script/tools';
+	import store from '../../store/index'
+	const {
+		loginUser
+	} = store()
 	const viewdata = reactive({
 		title: '教学演示测试首页',
 		list: new Array < PortableInfo > (),

@@ -6,6 +6,10 @@
 		<view class="text-area">
 			<text class="title">{{viewdata.title}}</text>
 		</view>
+		<view class="text-area">
+			<text class="title">开发中，童鞋们再等等</text>
+
+		</view>
 	</view>
 </template>
 
