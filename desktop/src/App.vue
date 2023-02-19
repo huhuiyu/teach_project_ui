@@ -15,4 +15,8 @@ import store from './store'
 const storeInfo = store()
 storeInfo.queryCityInfo()
 storeInfo.queryCountInfo()
+
+if (top != window) {
+  top?.postMessage('loaded', '*')
+}
 </script>
