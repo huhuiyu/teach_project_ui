@@ -98,6 +98,12 @@ const listPush = (info: string) => {
       },
       {
         img: '',
+        title: '网站通用聊天室',
+        info: '教学演示项目-网站通用聊天室',
+        path: '/chatroom',
+      },
+      {
+        img: '',
         title: '文件管理',
         info: '文件管理',
         path: '/manage/file',

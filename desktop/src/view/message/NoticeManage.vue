@@ -10,7 +10,6 @@ import { Announcement } from '../../entity/MessageDetailResult'
 import dialogApi from '../../tools/dialog'
 import store from '../../store'
 import { storeToRefs } from 'pinia'
-import { noConflict } from 'lodash'
 const router = useRouter()
 //pinia
 const storeInfo = store()

@@ -206,9 +206,9 @@ const reset = () => {
         <n-form-item>
           <n-button dashed type="info" @click="reset"> 重置 </n-button>
         </n-form-item>
-        <n-form-item>
+        <!-- <n-form-item>
           <n-button dashed type="primary" @click="toolsData.modal.add = true"> 发留言 </n-button>
-        </n-form-item>
+        </n-form-item> -->
         <n-form-item>
           <n-button dashed type="warning" @click="router.back()"> 返回 </n-button>
         </n-form-item>
@@ -258,6 +258,7 @@ const reset = () => {
             </n-space>
           </div>
           <div v-for="m in emailDetailData.list" :key="m.lastupdate" v-else>
+            <div class="tc"> {{ tools.formatDate(parseInt(m.lastupdate)) }}</div>
             <n-space v-if="m.infoType == 'user'" :wrap="false" class="mr05">
               <n-card size="small" class="is-you">{{ m.info }}</n-card>
             </n-space>
