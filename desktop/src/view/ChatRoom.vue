@@ -5,7 +5,7 @@ import store from '../store/index'
 import logger from '../tools/logger'
 import chat_service from '../tools/chat_service'
 import { ChatInfo } from '../entity/ChatInfo'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { NCard, NSpace, NInput, NThing, NButton, NBreadcrumb, NBreadcrumbItem, NText, NDropdown, NAvatar, NGradientText, NTime } from 'naive-ui'
 import server from '../tools/server'
 import dialogApi from '../tools/dialog'
@@ -13,6 +13,7 @@ import dialogApi from '../tools/dialog'
 const title = '教学演示项目-网站通用聊天室'
 
 const router = useRouter()
+const route = useRoute()
 
 // store数据
 const storeInfo = store()
@@ -168,7 +169,18 @@ const logout = () => {
       </NDropdown>
     </NSpace>
     <n-space v-else>
-      <n-button v-if="!loginUser.isLogin" @click="router.push('/login')">登录</n-button>
+      <n-button
+        v-if="!loginUser.isLogin"
+        @click="
+          router.push({
+            path: '/login',
+            query: {
+              oldUrl: route.path,
+            },
+          })
+        "
+        >登录</n-button
+      >
     </n-space>
   </n-space>
   <div v-if="loginUser.isLogin">

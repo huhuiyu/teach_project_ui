@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NCard, NForm, NInput, NFormItemRow, NTabPane, NTabs, NButton, FormInst, FormItemRule } from 'naive-ui'
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import BaseResult from '../entity/BaseResult'
 import store from '../store'
 import dialog from '../tools/dialog'
@@ -11,6 +11,7 @@ import tools from '../tools/tools'
 //路由
 const router = useRouter()
 const storeInfo = store()
+const route = useRoute()
 
 //登录ref
 const loginRef = ref<FormInst | null>(null)
@@ -27,7 +28,7 @@ const loginForm = reactive({
     password: '',
   },
   loading: false,
-
+  oldUrl: '/',
   rules: {
     username: [
       {
@@ -45,6 +46,9 @@ const loginForm = reactive({
     ],
   },
 })
+if (route.query.oldUrl != '' && route.query.oldUrl != undefined) {
+  loginForm.oldUrl = route.query.oldUrl + ''
+}
 const login = () => {
   loginRef.value?.validate().then(() => {
     loginForm.loading = true
@@ -58,7 +62,7 @@ const login = () => {
           keepAliveOnHover: true,
         })
         storeInfo.updateLoginUser(() => {
-          router.push('/')
+          router.push(loginForm.oldUrl)
         })
       }
       loginForm.loginInfo.password = ''
@@ -160,7 +164,7 @@ const emailLogin = () => {
           keepAliveOnHover: true,
         })
         storeInfo.updateLoginUser(() => {
-          router.push('/')
+          router.push(loginForm.oldUrl)
         })
       }
       emailLoginForm.loginInfo.info = ''
@@ -322,7 +326,7 @@ const phoneLogin = () => {
           keepAliveOnHover: true,
         })
         storeInfo.updateLoginUser(() => {
-          router.push('/')
+          router.push(loginForm.oldUrl)
         })
       }
       phoneLoginForm.loginInfo.info = ''
@@ -410,7 +414,7 @@ const register = () => {
               keepAliveOnHover: true,
             })
             storeInfo.updateLoginUser(() => {
-              router.push('/')
+              router.push(loginForm.oldUrl)
             })
           }
         })

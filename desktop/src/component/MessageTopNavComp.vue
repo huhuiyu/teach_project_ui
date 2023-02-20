@@ -128,7 +128,21 @@ const logOut = () => {
           </n-dropdown>
         </n-space>
         <n-space v-else>
-          <n-button circle secondary size="medium" v-if="!loginUser.isLogin" @click="router.push('/login')">登录</n-button>
+          <n-button
+            circle
+            secondary
+            size="medium"
+            v-if="!loginUser.isLogin"
+            @click="
+              router.push({
+                path: '/login',
+                query: {
+                  oldUrl: route.path,
+                },
+              })
+            "
+            >登录</n-button
+          >
         </n-space>
         <n-space style="column-gap: 25px; margin-left: 0.5rem" align="center">
           <n-button text @click="tools.jumpRoute_Blank('/message/privateMessage', { mode: 'myFriend' })"> 好友 </n-button>
