@@ -235,6 +235,7 @@ const rules: FormRules = {
     },
   ],
 }
+// 点击进入用户主页
 </script>
 <template>
   <div class="container">
@@ -311,7 +312,7 @@ const rules: FormRules = {
             </n-space>
           </n-card>
           <!-- 评论排序 -->
-          <n-card>
+          <n-card class="orderBy">
             <n-tabs type="line" v-model:value="queryMessageList.orderBy" @update:value="updatequerymessageLise">
               <n-tab-pane animated name="2" tab="最新"></n-tab-pane>
               <n-tab-pane name="3" tab="最热"></n-tab-pane>
@@ -340,52 +341,54 @@ const rules: FormRules = {
             </n-card>
             <!-- 评论详细信息 -->
             <n-card v-for="item in MessageDataList.list" :key="item.umrid" size="small" :bordered="false" v-else>
-              <template #header>
-                <n-space align="center">
-                  <div id="image-scroll-container">
-                    <n-space>
-                      <n-avatar
-                        round
-                        lazy
-                        :src="item.userInfo.img ? item.userInfo.img : lazyUrl"
-                        :intersection-observer-options="{
-                          root: '#image-scroll-container',
-                        }"
-                        object-fit="cover"
-                      ></n-avatar>
+              <NCard class="messageList">
+                <template #header>
+                  <n-space align="center" style="cursor: pointer" @click="router.push(`/message/personal/${item.user.username}`)">
+                    <div id="image-scroll-container">
+                      <n-space>
+                        <n-avatar
+                          round
+                          lazy
+                          :src="item.userInfo.img ? item.userInfo.img : lazyUrl"
+                          :intersection-observer-options="{
+                            root: '#image-scroll-container',
+                          }"
+                          object-fit="cover"
+                        ></n-avatar>
+                      </n-space>
+                    </div>
+                    <n-space vertical style="gap: 0px">
+                      <div>{{ item.user.nickname }}</div>
+                      <div style="font-size: 12px">{{ tools.formatDate(item.lastupdate) }}</div>
                     </n-space>
-                  </div>
-                  <n-space vertical style="gap: 0px">
-                    <div>{{ item.user.nickname }}</div>
-                    <div style="font-size: 12px">{{ tools.formatDate(item.lastupdate) }}</div>
                   </n-space>
+                </template>
+                <n-space text size="large" style="margin-left: 2.7rem">
+                  {{ item.info }}
                 </n-space>
-              </template>
-              <n-space text size="large" style="margin-left: 2.7rem">
-                {{ item.info }}
-              </n-space>
-              <template #footer>
-                <n-space class="MessageListIconfont" justify="end" align="center">
-                  <n-button @click="delMessageData(item.umrid)" text v-if="item.mine">
-                    删除
-                    <template #icon>
-                      <i class="iconfont">&#xe68e;</i>
-                    </template>
-                  </n-button>
-                  <n-button @click="supportMessageList(item.umrid)" text :type="item.praise ? 'primary' : 'default'">
-                    {{ item.praiseCount }}点赞
-                    <template #icon>
-                      <i class="iconfont">&#xec7f;</i>
-                    </template>
-                  </n-button>
-                  <n-button text @click="ClickMessageListReport(item.umrid)">
-                    举报
-                    <template #icon>
-                      <i class="iconfont">&#xe89d;</i>
-                    </template>
-                  </n-button>
-                </n-space>
-              </template>
+                <template #footer>
+                  <n-space class="MessageListIconfont" justify="end" align="center">
+                    <n-button @click="delMessageData(item.umrid)" text v-if="item.mine">
+                      删除
+                      <template #icon>
+                        <i class="iconfont">&#xe68e;</i>
+                      </template>
+                    </n-button>
+                    <n-button @click="supportMessageList(item.umrid)" text :type="item.praise ? 'primary' : 'default'">
+                      {{ item.praiseCount }}点赞
+                      <template #icon>
+                        <i class="iconfont">&#xec7f;</i>
+                      </template>
+                    </n-button>
+                    <n-button text @click="ClickMessageListReport(item.umrid)">
+                      举报
+                      <template #icon>
+                        <i class="iconfont">&#xe89d;</i>
+                      </template>
+                    </n-button>
+                  </n-space>
+                </template>
+              </NCard>
             </n-card>
           </n-card>
           <n-card v-else>
@@ -573,5 +576,11 @@ footer {
 }
 :deep() .MessageListIconfont > div {
   margin: 0 5px;
+}
+.paddingtopstyle {
+  border-top: 0px;
+}
+.orderBy {
+  border-bottom: 0px;
 }
 </style>
