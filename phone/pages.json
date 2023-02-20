@@ -14,11 +14,57 @@
                 "enablePullDownRefresh": false
             }
             
-        },{
-            "path" : "pages/test/login",
+        },
+		{
+		    "path" : "pages/login",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "登录 | 注册",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
+            "path" : "pages/home",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "",
+                "navigationBarTitleText": "首页",
+                "enablePullDownRefresh": false
+            }
+            
+        },
+			{
+			    "path" : "pages/message/home",
+			    "style" :                                                                                    
+			    {
+			        "navigationBarTitleText": "留言板首页",
+			        "enablePullDownRefresh": false
+			    }
+			    
+			},
+		{
+            "path" : "pages/message/personalHome",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "留言板个人首页",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/message/detail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "留言详情",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/message/privateMessage",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "私信",
                 "enablePullDownRefresh": false
             }
             
