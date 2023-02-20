@@ -22,8 +22,32 @@ const list = reactive([
 
 const listPush = (info: string) => {
   list.splice(0, list.length)
+  if (!loginUser.value.isLogin) {
+    list.push(
+      {
+        img: '',
+        title: '简易留言板',
+        info: '简介、多平台的留言板项目',
+        path: '/message/home',
+      },
+      {
+        img: '',
+        title: '教学演示项目',
+        info: '教学演示项目',
+        path: '/manage',
+      },
+      {
+        img: '',
+        title: '常用工具',
+        info: '常用工具',
+        path: '/toll',
+      }
+    )
+    portableQueryAll()
+    return
+  }
   // 登录超级管理员
-  if (loginUser.value.isLogin && loginUser.value.tbUser.role == 'admin') {
+  if (loginUser.value.tbUser.role == 'admin') {
     title.titles = '内置管理员'
     list.push(
       {
@@ -47,7 +71,7 @@ const listPush = (info: string) => {
     )
   }
   // 登录app管理员
-  if (loginUser.value.isLogin && loginUser.value.tbUser.role == 'app-admin') {
+  else if (loginUser.value.tbUser.role == 'app-admin') {
     title.titles = '内置应用管理员'
     list.push(
       {
@@ -64,31 +88,8 @@ const listPush = (info: string) => {
       }
     )
   }
-  // 不登录也能看见
-  if (loginUser.value.tbUser.role == 'user' || !loginUser.value.isLogin) {
-    list.push(
-      {
-        img: '',
-        title: '简易留言板',
-        info: '简介、多平台的留言板项目',
-        path: '/message/home',
-      },
-      {
-        img: '',
-        title: '教学演示项目',
-        info: '教学演示项目',
-        path: '/manage',
-      },
-      {
-        img: '',
-        title: '常用工具',
-        info: '常用工具',
-        path: '/toll',
-      }
-    )
-  }
   // 用户登录
-  if (loginUser.value.tbUser.role == 'user' && loginUser.value.isLogin) {
+  else if (loginUser.value.tbUser.role == 'user') {
     list.push(
       {
         img: '',
