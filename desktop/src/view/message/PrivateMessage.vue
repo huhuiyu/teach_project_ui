@@ -143,7 +143,10 @@ const sendMessage = () => {
   sendMessageData.username = privateMessageByUserData.username
   toolsData.loading.sendMessage = true
   server.post('/user/auth/sendMesage', sendMessageData, (data: BaseResult) => {
-    if (data.success) queryPrivateMessageByUser(sendMessageData.username, privateMessageByUserData.userImg)
+    if (data.success) {
+      queryPrivateMessageByUser(sendMessageData.username, privateMessageByUserData.userImg)
+      sendMessageData.info = ''
+    }
   })
   toolsData.loading.sendMessage = false
 }

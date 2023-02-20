@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { NButton, NCard, NFormItem, NInput, NSpace } from 'naive-ui'
+import { storeToRefs } from 'pinia'
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import MessageTopNavComp from '../../component/MessageTopNavComp.vue'
 import WangEditorComp from '../../component/WangEditorComp.vue'
 import BaseResult from '../../entity/BaseResult'
+import store from '../../store'
 import dialog from '../../tools/dialog'
 import logger from '../../tools/logger'
 import server from '../../tools/server'
+//pinia
+const storeInfo = store()
+const { loginUser } = storeToRefs(storeInfo)
 const router = useRouter()
 const addMessageData = reactive({
   disabled: false,
@@ -29,11 +34,16 @@ const editorCreated = (editor: any) => {
   logger.debug(editor)
 }
 const addMessage = () => {
+  if (!loginUser.value.isLogin) {
+    dialog.messageWarning('请登录后操作')
+    return
+  }
   addMessageData.loading = true
   server.post('/message/add', addMessageData.addInfo, (data: BaseResult) => {
     addMessageData.loading = false
     if (data.success) {
       dialog.messageInfo(data.message)
+      
     } else {
       dialog.messageWarning(data.message)
     }

@@ -87,9 +87,13 @@ const userInfo = reactive({
 
 //当前登录用户信息
 const userMessage = reactive({
-  supportAll: loginUser.value.userOtherInfo.supporteMessage + loginUser.value.userOtherInfo.supporteReply,
-  hits: loginUser.value.userOtherInfo.totalHits,
+  supportAll: 0,
+  hits: 0,
 })
+if (loginUser.value.isLogin) {
+  userMessage.supportAll = loginUser.value.userOtherInfo.supporteMessage + loginUser.value.userOtherInfo.supporteReply
+  userMessage.hits = loginUser.value.userOtherInfo.totalHits
+}
 //菜单选项
 const MenuOptions = [
   {

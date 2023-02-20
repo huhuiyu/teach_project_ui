@@ -47,7 +47,7 @@ queryMessageCarousel()
 
 const messageData = reactive({
   queryInfo: {
-    info: route.query.info,
+    info: route.query.info || '',
     orderBy: '1',
     username: '',
   },
@@ -75,8 +75,11 @@ const orderByMenuOptions = [
 const webSiteInformation = reactive({
   total: 0,
   lastupdate: 0,
-  visitors: parseInt(countInfo.value),
+  visitors: 0,
 })
+if (countInfo.value != '' && countInfo.value != undefined) {
+  webSiteInformation.visitors = parseInt(countInfo.value)
+}
 
 logger.debug(webSiteInformation.visitors, countInfo)
 //查询所有留言信息
@@ -104,9 +107,13 @@ const searchMessage = (info: string) => {
 //当前登录用户信息
 const userMessage = reactive({
   list: [new MessageDetail()],
-  supportAll: loginUser.value.userOtherInfo.supporteMessage + loginUser.value.userOtherInfo.supporteReply,
-  hits: loginUser.value.userOtherInfo.totalHits,
+  supportAll: 0,
+  hits: 0,
 })
+if (loginUser.value.isLogin) {
+  userMessage.supportAll = loginUser.value.userOtherInfo.supporteMessage + loginUser.value.userOtherInfo.supporteReply
+  userMessage.hits = loginUser.value.userOtherInfo.totalHits
+}
 /* //通过姓名查询留言板
 const queryMessageByUsername = (username: string) => {
   server.post(
