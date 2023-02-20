@@ -40,20 +40,16 @@ const portableQueryAll = () => {
       let i = 0
       for (let i = 0; i < data.list.length; i++) {
         for (let j = 0; j < props.list.length; j++) {
-          logger.debug('0000', props.list[j].path)
+          if (props.list[j].path == '') {
+            return
+          }
           let abc = data.list[i].messageKey + ''
           if (props.list[j].path.lastIndexOf('/') == 0) {
-            logger.debug('111111true')
-            if (abc.indexOf(props.list[j].path.substring(1)) > -1) {
-              props.list[j].img = data.list[i].message
-            }
+            if (abc.indexOf(props.list[j].path.substring(1)) > -1) props.list[j].img = data.list[i].message
           } else {
-            logger.debug('22222false')
             let middle = props.list[j].path.lastIndexOf('/')
             logger.debug('第一个参数', abc.indexOf(props.list[j].path.substring(1, middle)) > -1)
-            if (abc.indexOf(props.list[j].path.substring(1, middle)) > -1 && abc.indexOf(props.list[j].path.substring(middle + 1)) > -1) {
-              props.list[j].img = data.list[i].message
-            }
+            if (abc.indexOf(props.list[j].path.substring(1, middle)) > -1 && abc.indexOf(props.list[j].path.substring(middle + 1)) > -1) props.list[j].img = data.list[i].message
           }
         }
       }
