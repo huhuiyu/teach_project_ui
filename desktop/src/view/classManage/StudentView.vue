@@ -278,6 +278,10 @@ const queryStudent = () => {
   })
 }
 
+const ClickQueryStudent = () => {
+  StudengData.page.pageNumber = 1
+  queryStudent()
+}
 queryStudent()
 const queryClassSelect = () => {
   server.post('/manage/class/queryAll', {}, (data: BaseListResult<ClassInfo>) => {
@@ -398,7 +402,7 @@ const exportEmployee = () => {
         <n-button @click="loading.class = true">{{ query.querys.classname == '' ? '选择班级' : `当前选择的班级：${query.querys.classname}` }}</n-button>
       </n-form-item>
       <n-form-item>
-        <n-select v-model:value="query.querys.orderBy" :options="orderBy" @update:value="queryStudent" :consistent-menu-width="false" />
+        <n-select v-model:value="query.querys.orderBy" :options="orderBy" :consistent-menu-width="false" />
       </n-form-item>
       <n-form-item>
         <n-input v-model:value="query.querys.sname" placeholder="输入学生姓名" />
@@ -413,7 +417,7 @@ const exportEmployee = () => {
         <n-input v-model:value="query.querys.qq" placeholder="学生QQ" />
       </n-form-item>
       <n-form-item>
-        <n-button attr-type="button" @click="queryStudent()"> 查询 </n-button>
+        <n-button attr-type="button" @click="ClickQueryStudent()"> 查询 </n-button>
       </n-form-item>
       <n-form-item>
         <n-button attr-type="button" @click="reset()">重置</n-button>

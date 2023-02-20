@@ -5,7 +5,6 @@ import { useRouter } from 'vue-router'
 import PageComp from '../../component/PageComp.vue'
 import BaseResult, { BaseListResult, PageInfo } from '../../entity/BaseResult'
 import { Contacts } from '../../entity/Contacts'
-import { ListNote } from '../../entity/notepad'
 import dialogApi from '../../tools/dialog'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
@@ -47,13 +46,17 @@ const contacts = reactive({
 const queryContacts = () => {
   Loading.loading = true
   Loading.delLoaidng = false
-  server.post('/user/contact/queryAll', contacts.query, (data: BaseListResult<Contacts>) => {
+  server.post('/user/contact/queryAll', tools.concatJson(contacts.query, contacts.page), (data: BaseListResult<Contacts>) => {
     if (data.success) {
       Loading.loading = false
       contacts.list = data.list
       contacts.page = data.page
     }
   })
+}
+const ClickQueryContacts = () => {
+  contacts.page.pageNumber = 1
+  queryContacts()
 }
 queryContacts()
 const contactsColumns: DataTableColumns<Contacts> = [
@@ -169,6 +172,7 @@ const modifyContacts = () => {
   })
 }
 const reset = () => {
+  contacts.page.pageNumber = 1
   contacts.query.username = ''
   contacts.query.phone = ''
   contacts.query.wechat = ''
@@ -193,13 +197,17 @@ const addContacts = () => {
 const delsqueryContacts = () => {
   Loading.delLoaidng = !Loading.delLoaidng
   Loading.loading = true
-  server.post('/user/contact/queryAllDeleted', contacts.query, (data: BaseListResult<Contacts>) => {
+  server.post('/user/contact/queryAllDeleted', tools.concatJson(contacts.query, contacts.page), (data: BaseListResult<Contacts>) => {
     Loading.loading = false
     if (data.success) {
       contacts.delList = data.list
       contacts.delPage = data.page
     }
   })
+}
+const ClickDelsqueryContacts = () => {
+  contacts.page.pageNumber = 1
+  delsqueryContacts()
 }
 const AddRef = ref<FormInst | null>(null)
 const ModigyRef = ref<FormInst | null>(null)
@@ -279,7 +287,14 @@ const ModigyRules: FormRules = {
     },
   ],
 }
-const resetdel = () => {}
+const resetdel = () => {
+  contacts.page.pageNumber = 1
+  contacts.query.username = ''
+  contacts.query.phone = ''
+  contacts.query.wechat = ''
+  contacts.query.qq = ''
+  delsqueryContacts()
+}
 </script>
 <template>
   <div>
@@ -301,8 +316,8 @@ const resetdel = () => {}
           <NInput placeholder="QQ模糊查询" v-model:value="contacts.query.qq"></NInput>
         </NFormItem>
         <NFormItem>
-          <NButton v-if="!Loading.delLoaidng" type="success" dashed @click="queryContacts">查询</NButton>
-          <NButton v-if="Loading.delLoaidng" type="success" dashed @click="delsqueryContacts">查询</NButton>
+          <NButton v-if="!Loading.delLoaidng" type="success" dashed @click="ClickQueryContacts()">查询</NButton>
+          <NButton v-if="Loading.delLoaidng" type="success" dashed @click="ClickDelsqueryContacts()">查询</NButton>
         </NFormItem>
         <NFormItem>
           <NButton v-if="!Loading.delLoaidng" type="info" dashed @click="Loading.addNoeLoading = true">添加</NButton>
@@ -312,8 +327,8 @@ const resetdel = () => {}
           <NButton v-if="Loading.delLoaidng" type="warning" dashed @click="resetdel">重置</NButton>
         </NFormItem>
         <NFormItem>
-          <NButton v-if="!Loading.delLoaidng" type="primary" dashed @click="delsqueryContacts">已删除</NButton>
-          <NButton v-if="Loading.delLoaidng" type="primary" dashed @click="queryContacts">未删除</NButton>
+          <NButton v-if="!Loading.delLoaidng" type="primary" dashed @click="resetdel">已删除</NButton>
+          <NButton v-if="Loading.delLoaidng" type="primary" dashed @click="reset">未删除</NButton>
         </NFormItem>
         <NFormItem>
           <NButton type="error" dashed @click="router.back()">返回</NButton>
@@ -322,7 +337,7 @@ const resetdel = () => {}
       <NDataTable v-if="!Loading.delLoaidng" :columns="contactsColumns" :data="contacts.list" :loading="Loading.loading" />
       <NDataTable v-else :columns="delContactsColumns" :data="contacts.delList" :loading="Loading.loading" />
       <PageComp v-if="contacts.page.pageCount > 1 && !Loading.delLoaidng" :page="contacts.page" @number-change="queryContacts" @size-change="queryContacts" @page-change="queryContacts" :show-size-picker="true"></PageComp>
-      <PageComp v-if="contacts.page.pageCount > 1 && Loading.delLoaidng" :page="contacts.delList" @number-change="delsqueryContacts" @size-change="delsqueryContacts" @page-change="delsqueryContacts" :show-size-picker="true"></PageComp>
+      <PageComp v-if="contacts.page.pageCount > 1 && Loading.delLoaidng" :page="contacts.page" @number-change="delsqueryContacts" @size-change="delsqueryContacts" @page-change="delsqueryContacts" :show-size-picker="true"></PageComp>
       <NModal v-model:show="Loading.addNoeLoading" preset="dialog" :mask-closable="true" style="width: 50%">
         <template #header> 添加联系人信息 </template>
         <NForm ref="AddRef" :rules="AddRules" :model="contacts.add" label-placement="left" label-width="auto" require-mark-placement="right-hanging" :style="{ maxWidth: '700px' }">

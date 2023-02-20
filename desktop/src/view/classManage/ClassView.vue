@@ -147,6 +147,10 @@ function queryClass() {
     loading.loading = false
   })
 }
+const clickQueyClass = () => {
+  ClassData.page.pageNumber = 1
+  queryClass()
+}
 queryClass()
 // 重置
 function reset() {
@@ -214,7 +218,7 @@ function modifyClass() {
         <n-input v-model:value="query.querys.cname" placeholder="输入班级名称"> </n-input>
       </n-form-item>
       <n-form-item>
-        <n-button attr-type="button" @click="queryClass()"> 查询 </n-button>
+        <n-button attr-type="button" @click="clickQueyClass()"> 查询 </n-button>
       </n-form-item>
       <n-form-item>
         <n-button attr-type="button" @click="reset()">重置</n-button>

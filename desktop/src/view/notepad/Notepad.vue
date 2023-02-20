@@ -43,13 +43,17 @@ const notepad = reactive({
 const queryNotepad = () => {
   Loading.loading = true
   Loading.delLoaidng = false
-  server.post('/user/note/queryAll', notepad.query, (data: BaseListResult<ListNote>) => {
+  server.post('/user/note/queryAll', tools.concatJson(notepad.query, notepad.page), (data: BaseListResult<ListNote>) => {
     if (data.success) {
       Loading.loading = false
       notepad.list = data.list
       notepad.page = data.page
     }
   })
+}
+const ClickQueryNotepad = () => {
+  notepad.page.pageNumber = 1
+  queryNotepad()
 }
 queryNotepad()
 const notepadColumns: DataTableColumns<ListNote> = [
@@ -205,6 +209,7 @@ const modifyNotepad = () => {
   })
 }
 const reset = () => {
+  notepad.page.pageNumber = 1
   notepad.query.info = ''
   notepad.query.title = ''
   queryNotepad()
@@ -225,7 +230,7 @@ const addNotepad = () => {
 const delsQueryNotepad = () => {
   Loading.delLoaidng = true
   Loading.loading = true
-  server.post('/user/note/queryAllDeleted', notepad.query, (data: BaseListResult<ListNote>) => {
+  server.post('/user/note/queryAllDeleted', tools.concatJson(notepad.query, notepad.page), (data: BaseListResult<ListNote>) => {
     Loading.loading = false
     if (data.success) {
       notepad.delList = data.list
@@ -233,7 +238,12 @@ const delsQueryNotepad = () => {
     }
   })
 }
+const ClickDelsQueryNotepad = () => {
+  notepad.page.pageNumber = 1
+  delsQueryNotepad()
+}
 const resetdel = () => {
+  notepad.page.pageNumber = 1
   notepad.query.info = ''
   notepad.query.title = ''
   delsQueryNotepad()
@@ -253,8 +263,8 @@ const resetdel = () => {
           <NInput placeholder="内容模糊查询" v-model:value="notepad.query.info"></NInput>
         </NFormItem>
         <NFormItem>
-          <NButton v-if="!Loading.delLoaidng" type="success" dashed @click="queryNotepad">查询</NButton>
-          <NButton v-if="Loading.delLoaidng" type="success" dashed @click="delsQueryNotepad">查询</NButton>
+          <NButton v-if="!Loading.delLoaidng" type="success" dashed @click="ClickQueryNotepad">查询</NButton>
+          <NButton v-if="Loading.delLoaidng" type="success" dashed @click="ClickDelsQueryNotepad">查询</NButton>
         </NFormItem>
         <NFormItem>
           <NButton v-if="!Loading.delLoaidng" type="info" dashed @click="Loading.addNoeLoading = true">添加</NButton>
@@ -274,7 +284,7 @@ const resetdel = () => {
       <NDataTable v-if="!Loading.delLoaidng" :columns="notepadColumns" :data="notepad.list" :loading="Loading.loading" />
       <NDataTable v-else :columns="delNotepadColumns" :data="notepad.delList" :loading="Loading.loading" />
       <PageComp v-if="notepad.page.pageCount > 1 && !Loading.delLoaidng" :page="notepad.page" @number-change="queryNotepad" @size-change="queryNotepad" @page-change="queryNotepad" :show-size-picker="true"></PageComp>
-      <PageComp v-if="notepad.page.pageCount > 1 && Loading.delLoaidng" :page="notepad.delList" @number-change="delsQueryNotepad" @size-change="delsQueryNotepad" @page-change="delsQueryNotepad" :show-size-picker="true"></PageComp>
+      <PageComp v-if="notepad.page.pageCount > 1 && Loading.delLoaidng" :page="notepad.page" @number-change="delsQueryNotepad" @size-change="delsQueryNotepad" @page-change="delsQueryNotepad" :show-size-picker="true"></PageComp>
       <NModal v-model:show="Loading.infoLoading" preset="dialog" :mask-closable="true" style="width: 50%">
         <template #header>
           <div>标题：{{ notepad.info.title }}</div>

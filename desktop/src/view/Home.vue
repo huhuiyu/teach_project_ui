@@ -104,12 +104,6 @@ const listPush = (info: string) => {
       },
       {
         img: '',
-        title: '常用工具',
-        info: '常用工具',
-        path: '/toll',
-      },
-      {
-        img: '',
         title: 'OSS管理程序',
         info: 'OSS管理程序',
         path: '/osshome',
@@ -125,6 +119,12 @@ const listPush = (info: string) => {
         title: '文件管理',
         info: '文件管理',
         path: '/manage/file',
+      },
+      {
+        img: '',
+        title: '常用工具',
+        info: '常用工具',
+        path: '/toll',
       },
       {
         img: '',

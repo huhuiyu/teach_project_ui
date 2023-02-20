@@ -71,12 +71,17 @@ const queryOssInfo = () => {
   })
 }
 queryOssInfo()
+const ClickQueryOssInfo = () => {
+  OssInfoList.page.pageNumber = 1
+  queryOssInfo()
+}
 // 重置
 const resaqueryOssInf = () => {
   ossInfo.contentType = ''
   ossInfo.fileinfo = ''
   ossInfo.filename = ''
   ossInfo.obid = ''
+  OssInfoList.page.pageNumber = 1
   queryOssInfo()
 }
 
@@ -297,7 +302,7 @@ const addquery = (info: boolean) => {
     <main>
       <NForm class="queryobid" inline size="medium" style="justify-content: flex-end; padding-right: 3rem" :model="ossInfo" label-placement="left" label-width="auto" require-mark-placement="right-hanging">
         <NFormItem path="obid">
-          <NSelect @update:value="queryOssInfo()" v-model:value="ossInfo.obid" :options="selectBucket.list"> </NSelect>
+          <NSelect v-model:value="ossInfo.obid" :options="selectBucket.list"> </NSelect>
         </NFormItem>
         <NFormItem path="filename">
           <NInput v-model:value="ossInfo.filename" placeholder="文件名称"></NInput>
@@ -309,13 +314,13 @@ const addquery = (info: boolean) => {
           <NInput v-model:value="ossInfo.fileinfo" placeholder="文件描述信息"></NInput>
         </NFormItem>
         <NFormItem>
+          <NButton type="success" dashed @click="ClickQueryOssInfo()">查询</NButton>
+        </NFormItem>
+        <NFormItem>
           <NButton type="success" dashed @click="Loaidng.addossinfo = true">添加</NButton>
         </NFormItem>
         <NFormItem>
           <NButton type="success" dashed @click="resaqueryOssInf">重置</NButton>
-        </NFormItem>
-        <NFormItem>
-          <NButton type="success" dashed @click="queryOssInfo">查询</NButton>
         </NFormItem>
         <NFormItem>
           <NButton type="success" dashed @click="delOssInfos">批量删除</NButton>
