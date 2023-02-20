@@ -20,10 +20,6 @@ const routes = [
     component: () => import('../view/test/TestWangEditor.vue'),
   },
   {
-    path: '/test/wx',
-    component: () => import('../view/test/Wx.vue'),
-  },
-  {
     path: '/test/router',
     component: () => import('../view/test/TestRouter.vue'),
   },
