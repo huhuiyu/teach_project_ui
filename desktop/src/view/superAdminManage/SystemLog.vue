@@ -67,7 +67,7 @@ const queryLog = () => {
       <h1>系统日志管理</h1>
     </header>
     <main>
-      <n-form inline  :model="logData.queryInfo" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
+      <n-form inline :model="logData.queryInfo" size="medium" label-placement="left" style="justify-content: flex-end; padding-right: 3rem">
         <n-form-item>
           <n-input v-model:value="logData.queryInfo.logInfo" placeholder="输入日志内容" clearable />
         </n-form-item>

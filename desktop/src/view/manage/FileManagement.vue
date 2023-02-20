@@ -222,6 +222,10 @@ const upload = () => {
     }
   })
 }
+const queryAllByInfo = () => {
+  fileData.page.pageNumber = 1
+  queryFile()
+}
 </script>
 <template>
   <div>
@@ -240,7 +244,7 @@ const upload = () => {
           <n-input v-model:value="fileData.queryInfo.fileinfo" placeholder="输入文件描述" />
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="queryFile"> 查询 </n-button>
+          <n-button attr-type="button" @click="queryAllByInfo"> 查询 </n-button>
         </n-form-item>
         <n-form-item>
           <n-button attr-type="button" @click="reset"> 重置 </n-button>

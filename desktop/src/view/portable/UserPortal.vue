@@ -261,6 +261,10 @@ const importPortal = () => {
   })
   toolsData.loading.import = false
 }
+const queryUserAllByInfo = () => {
+  userPortalData.page.pageNumber = 1
+  queryUserAll()
+}
 </script>
 <template>
   <div>
@@ -273,7 +277,7 @@ const importPortal = () => {
       </n-form-item>
 
       <n-form-item>
-        <n-button dashed @click="queryUserAll"> 查询 </n-button>
+        <n-button dashed @click="queryUserAllByInfo"> 查询 </n-button>
       </n-form-item>
       <n-form-item>
         <n-button dashed type="info" @click="reset"> 重置 </n-button>

@@ -201,6 +201,10 @@ const kickUser = (uid: string | number) => {
     }
   })
 }
+const queryUserByInfo = () => {
+  userData.page.pageNumber = 1
+  queryUser()
+}
 </script>
 <template>
   <div>
@@ -222,7 +226,7 @@ const kickUser = (uid: string | number) => {
           <n-input v-model:value="userData.queryInfo.nickname" placeholder="请输入用户昵称" clearable />
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="queryUser"> 查询 </n-button>
+          <n-button attr-type="button" @click="queryUserByInfo"> 查询 </n-button>
         </n-form-item>
         <n-form-item>
           <n-button attr-type="button" @click="reset"> 重置 </n-button>

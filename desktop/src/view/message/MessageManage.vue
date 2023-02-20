@@ -409,6 +409,10 @@ const delComment = () => {
     }
   })
 }
+const queryAllByInfo = () => {
+  messageData.page.pageNumber = 1
+  queryMessageAll()
+}
 </script>
 <template>
   <div v-if="MessageMode != 'comment'">
@@ -421,7 +425,7 @@ const delComment = () => {
           <n-input v-model:value="messageData.queryInfo.info" placeholder="用户名，标题、内容模糊查询" />
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="queryMessageAll"> 查询 </n-button>
+          <n-button attr-type="button" @click="queryAllByInfo"> 查询 </n-button>
         </n-form-item>
         <n-form-item>
           <n-button attr-type="button" @click="reset"> 重置 </n-button>

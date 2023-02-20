@@ -230,6 +230,10 @@ function modifyDept() {
     }
   })
 }
+const queryAllByInfo = () => {
+  deptData.page.pageNumber = 1
+  queryDept()
+}
 </script>
 <template>
   <div>
@@ -242,7 +246,7 @@ function modifyDept() {
           <n-input v-model:value="deptData.query.deptName" placeholder="输入部门名称" />
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="queryDept"> 查询 </n-button>
+          <n-button attr-type="button" @click="queryAllByInfo"> 查询 </n-button>
         </n-form-item>
         <n-form-item>
           <n-button attr-type="button" @click="reset"> 重置 </n-button>

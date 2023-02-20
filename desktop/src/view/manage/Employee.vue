@@ -131,7 +131,6 @@ const deptColumns = reactive([
               if (!modal.add && !modal.modify) {
                 employeeData.query.deptId = row.deptId + ''
                 employeeData.query.deptName = row.deptName
-                queryEmployee()
                 modal.dept = false
               } else if (modal.add) {
                 addEmployeeInfo.deptId = row.deptId + ''
@@ -404,6 +403,11 @@ function exportEmployee() {
   logger.debug(params)
   window.open(url)
 }
+
+const queryAllByInfo = () => {
+  employeeData.page.pageNumber = 1
+  queryEmployee()
+}
 </script>
 <template>
   <div>
@@ -425,7 +429,7 @@ function exportEmployee() {
           <n-input v-model:value="employeeData.query.phone" placeholder="请输入员工电话" />
         </n-form-item>
         <n-form-item>
-          <n-button attr-type="button" @click="queryEmployee"> 查询 </n-button>
+          <n-button attr-type="button" @click="queryAllByInfo"> 查询 </n-button>
         </n-form-item>
         <n-form-item>
           <n-button attr-type="button" @click="reset"> 重置 </n-button>

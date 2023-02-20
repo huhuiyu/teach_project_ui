@@ -186,6 +186,10 @@ const reset = () => {
   emailData.queryAllEmailInfo.username = ''
   queryAll()
 }
+const queryAllByInfo = () => {
+  emailData.page.pageNumber = 1
+  queryAll()
+}
 </script>
 <template>
   <div>
@@ -198,10 +202,10 @@ const reset = () => {
           <n-input v-model:value="emailData.queryAllEmailInfo.email" placeholder="请输入留言邮箱" clearable />
         </n-form-item>
         <n-form-item>
-          <n-input v-model:value="emailData.queryAllEmailInfo.email" placeholder="请输入留言用户" clearable />
+          <n-input v-model:value="emailData.queryAllEmailInfo.username" placeholder="请输入留言用户" clearable />
         </n-form-item>
         <n-form-item>
-          <n-button dashed @click="queryAll"> 查询 </n-button>
+          <n-button dashed @click="queryAllByInfo"> 查询 </n-button>
         </n-form-item>
         <n-form-item>
           <n-button dashed type="info" @click="reset"> 重置 </n-button>
