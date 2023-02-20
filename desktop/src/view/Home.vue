@@ -43,7 +43,6 @@ const listPush = (info: string) => {
         path: '/toll',
       }
     )
-    portableQueryAll()
     return
   }
   // 登录超级管理员
@@ -93,6 +92,24 @@ const listPush = (info: string) => {
     list.push(
       {
         img: '',
+        title: '简易留言板',
+        info: '简介、多平台的留言板项目',
+        path: '/message/home',
+      },
+      {
+        img: '',
+        title: '教学演示项目',
+        info: '教学演示项目',
+        path: '/manage',
+      },
+      {
+        img: '',
+        title: '常用工具',
+        info: '常用工具',
+        path: '/toll',
+      },
+      {
+        img: '',
         title: 'OSS管理程序',
         info: 'OSS管理程序',
         path: '/osshome',
@@ -129,37 +146,37 @@ const listPush = (info: string) => {
       }
     )
   }
-  portableQueryAll()
+  // portableQueryAll()
 }
-const portableQueryAll = () => {
-  server.post(
-    '/portable/message/queryAll',
-    {
-      accessKey: serverInfo.accessKey,
-      messageGroup: 'homePathImg',
-      pageSize: 1000,
-      pageNumber: 1,
-    },
-    (data: BaseListResult<any>) => {
-      let i = 0
-      for (let i = 0; i < data.list.length; i++) {
-        for (let j = 0; j < list.length; j++) {
-          let abc = data.list[i].messageKey + ''
-          if (list[j].path.lastIndexOf('/') == 0) {
-            if (abc.indexOf(list[j].path.substring(1)) > -1) {
-              list[j].img = data.list[i].message
-            }
-          } else {
-            let middle = list[j].path.lastIndexOf('/')
-            if (abc.indexOf(list[j].path.substring(1, middle)) > -1 && abc.indexOf(list[j].path.substring(middle + 1))) {
-              list[j].img = data.list[i].message
-            }
-          }
-        }
-      }
-    }
-  )
-}
+// const portableQueryAll = () => {
+//   server.post(
+//     '/portable/message/queryAll',
+//     {
+//       accessKey: serverInfo.accessKey,
+//       messageGroup: 'homePathImg',
+//       pageSize: 1000,
+//       pageNumber: 1,
+//     },
+//     (data: BaseListResult<any>) => {
+//       let i = 0
+//       for (let i = 0; i < data.list.length; i++) {
+//         for (let j = 0; j < list.length; j++) {
+//           let abc = data.list[i].messageKey + ''
+//           if (list[j].path.lastIndexOf('/') == 0) {
+//             if (abc.indexOf(list[j].path.substring(1)) > -1) {
+//               list[j].img = data.list[i].message
+//             }
+//           } else {
+//             let middle = list[j].path.lastIndexOf('/')
+//             if (abc.indexOf(list[j].path.substring(1, middle)) > -1 && abc.indexOf(list[j].path.substring(middle + 1))) {
+//               list[j].img = data.list[i].message
+//             }
+//           }
+//         }
+//       }
+//     }
+//   )
+// }
 listPush('ceshi')
 </script>
 

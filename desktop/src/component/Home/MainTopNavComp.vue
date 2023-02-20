@@ -75,7 +75,7 @@ const handleSelect = (key: string | number) => {
     return
   }
 }
-const emits = defineEmits(['update-page']) // 退出登录
+const emits = defineEmits(['update-page']) // 退出登录后重新获取页面的list
 const logout = () => {
   server.post('/user/auth/logout', {}, () => {
     storeInfo.updateLoginUser(() => {
