@@ -16,7 +16,7 @@
             
         },
 		{
-		    "path" : "pages/login",
+		    "path" : "pages/Login",
 		    "style" :                                                                                    
 		    {
 		        "navigationBarTitleText": "登录 | 注册",
