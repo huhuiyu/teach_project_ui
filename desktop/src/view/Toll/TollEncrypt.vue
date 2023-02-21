@@ -35,7 +35,6 @@ const queryMD5 = () => {
 }
 const copyTest = () => {
   tools.copyText(query.copyText)
-  query.copyText = ''
 }
 const resets = () => {
   query.copyText = ''
