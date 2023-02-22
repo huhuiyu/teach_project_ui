@@ -5,66 +5,70 @@
 			"style": {
 				"navigationBarTitleText": "胡辉煜的教学演示项目"
 			}
-		}
-	    ,{
-            "path" : "pages/test/test",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
-            }
-            
-        },
-		{
-		    "path" : "pages/Login",
-		    "style" :                                                                                    
-		    {
-		        "navigationBarTitleText": "登录 | 注册",
-		        "enablePullDownRefresh": false
-		    }
-		    
+		}, {
+			"path": "pages/test/test",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
 		},
 		{
-            "path" : "pages/home",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "首页",
-                "enablePullDownRefresh": false
-            }
-            
-        },
-			{
-			    "path" : "pages/message/home",
-			    "style" :                                                                                    
-			    {
-			        "navigationBarTitleText": "留言板首页",
-			        "enablePullDownRefresh": false
-			    }
-			    
-			},
+			"path": "pages/Login",
+			"style": {
+				"navigationBarTitleText": "登录 | 注册",
+				"enablePullDownRefresh": false
+			}
+		},
 		{
-            "path" : "pages/message/personalHome",
+			"path": "pages/home",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/message/home",
+			"style": {
+				"navigationBarTitleText": "留言板首页",
+				// 下拉刷新列表
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+		},
+		{
+			"path": "pages/message/personalHome",
+			"style": {
+				"navigationBarTitleText": "留言板个人首页",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/message/detail",
+			"style": {
+				"navigationBarTitleText": "留言详情",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/message/privateMessage",
+			"style": {
+				"navigationBarTitleText": "私信",
+				"enablePullDownRefresh": false
+			}
+		}
+	    ,{
+            "path" : "pages/message/edit",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "留言板个人首页",
+                "navigationBarTitleText": "创造内容",
                 "enablePullDownRefresh": false
             }
             
         }
         ,{
-            "path" : "pages/message/detail",
+            "path" : "pages/findPwd",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "留言详情",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/message/privateMessage",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "私信",
+                "navigationBarTitleText": "找回密码",
                 "enablePullDownRefresh": false
             }
             
@@ -76,5 +80,58 @@
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},
-	"uniIdRouter": {}
+	"uniIdRouter": {},
+	"tabBar": {
+		// 未选中的tab
+		"color": "#2C405A",
+		// 选中的tab
+		"selectedColor": "#426ad9",
+		// 背景框颜色
+		"backgroundColor": "#ffffff",
+		// 上边框颜色
+		"borderStyle": "black",
+		"list": [{
+				"text": "首页",
+				"pagePath": "pages/message/home",
+				// 未选中的图标
+				"iconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=99",
+				// 选中的图标
+				"selectedIconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=100"
+
+			},
+			{
+				"text": "创作",
+				"pagePath": "pages/message/edit",
+				// 未选中的图标
+				"iconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=102",
+				// 选中的图标
+				"selectedIconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=101"
+			},
+			{
+				"text": "消息",
+				"pagePath": "pages/message/privateMessage",
+				// 未选中的图标
+				"iconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=103",
+				// 选中的图标
+				"selectedIconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=104"
+			},
+			{
+				"text": "我的",
+				"pagePath": "pages/message/personalHome",
+				// 未选中的图标
+				"iconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=106",
+				// 选中的图标
+				"selectedIconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=105"
+			}
+
+		]
+	},
+	"condition": { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [{
+			"name": "", //模式名称
+			"path": "pages/message/home", //启动页面，必选
+			"query": "" //启动参数，在页面的onLoad函数里面得到
+		}]
+	}
 }
