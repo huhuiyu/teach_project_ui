@@ -1,9 +1,5 @@
 <template>
-	<view class="container">
-		<view class="input-box">
-			<input type="text" v-model="messageData.queryInfo.info" class="uni-input" confirm-type="search"
-				placeholder="请输入你想搜索的" @confirm='queryAll' />
-		</view>
+	<view>
 		<view>
 			<view class="tabbar">
 				<view class="navigator">
@@ -17,7 +13,7 @@
 		</view>
 		<view v-for="d in messageData.list" :key="d.umid" class="box">
 			<view class="content">
-				<view class="userinfo" @click="jumpUserInfo(d.user.username)">
+				<view class="userinfo">
 					<image class="avatar"
 						:src="d.userInfo.img?d.userInfo.img:'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81'">
 					</image>
@@ -28,20 +24,15 @@
 				</view>
 				<view class="hr"></view>
 				<view class="title" @click="jumpDetail(d.umid)">
-					<text>{{d.title}}</text>
+					<text>{{d.info}}</text>
 				</view>
 				<view class="iconList">
 					<view @click="likeMessage(d.umid)">
 						<text :class="['iconfont',{'text-active':d.praise}]">&#xec7f;</text>
 						{{d.praiseCount}}
 					</view>
-					<view>
-						<text class="iconfont">&#xe60f;</text>
-						{{d.hits}}
-					</view>
-					<view>
-						<text class="iconfont">&#xe630;</text>
-						{{d.replyCount}}
+					<view @click="delComment(d)">
+						<text class="iconfont">&#xe68e;</text>
 					</view>
 				</view>
 			</view>
@@ -54,56 +45,42 @@
 				</view>
 			</view>
 		</view>
-		<view>
-			<messageTbaBar></messageTbaBar>
-		</view>
 	</view>
 </template>
 
 <script setup lang="ts">
-	import messageTbaBar from '../../component/messageTabBar.vue'
 	import {
 		reactive,
 
 	} from 'vue'
 	import {
 		onReachBottom,
-		onPullDownRefresh
+		onPullDownRefresh,
+		onLoad
 	} from "@dcloudio/uni-app";
 	import BaseResult, {
 		BaseListResult
-	} from '../../script/entity/BaseResult';
+	} from '../../../script/entity/BaseResult';
 	import {
-		MessageDetail
-	} from '../../script/entity/MessageDetailResult'
-	import server from '../../script/server'
-	import tools from '../../script/tools'
+		MessageReply
+	} from '../../../script/entity/MessageDetailResult'
+	import server from '../../../script/server'
+	import tools from '../../../script/tools'
 
 	const toolsData = reactive({
 		tabList: [{
-				id: 1,
+				id: 2,
 				text: "最新",
 			},
 			{
-				id: 7,
+				id: 3,
 				text: "最热",
 			},
-
-			{
-				id: 5,
-				text: "点赞量",
-			},
-			{
-				id: 3,
-				text: "评论量",
-			}
 		],
-
 	})
 	const messageData = reactive({
 		queryInfo: {
-			orderBy: 1,
-			info: '',
+			orderBy: 2,
 			username: ''
 		},
 		page: {
@@ -113,8 +90,20 @@
 			total: 0
 		},
 		level: 1,
-		list: [] as MessageDetail[],
+		list: [] as MessageReply[],
 	})
+
+	onLoad((option: any) => {
+		if (option.username) {
+			messageData.queryInfo.username = option.username
+			queryAll()
+		} else {
+			uni.navigateTo({
+				url: '/pages/message/personalHome'
+			})
+		}
+	})
+
 	const likeMessage = (umid: number) => {
 		server.post('/message/support', {
 			umid: umid
@@ -140,8 +129,8 @@
 		uni.showLoading({
 			title: '加载中',
 		})
-		server.post('/message/queryAll', tools.concatJson(messageData.queryInfo, messageData.page), (data:
-			BaseListResult < MessageDetail > ) => {
+		server.post('/message/queryReplyByUsername', tools.concatJson(messageData.queryInfo, messageData.page), (data:
+			BaseListResult < MessageReply > ) => {
 			uni.hideLoading()
 			if (messageData.level == 1) {
 				messageData.list = data.list
@@ -153,7 +142,31 @@
 			messageData.page = data.page
 		})
 	}
-	queryAll()
+	const delComment = (comment: MessageReply) => {
+		uni.showModal({
+			title: '提示',
+			content: '确认是否删除' + comment.info,
+			success: function(res) {
+				if (res.confirm) {
+					server.post('/manage/deletUserMessageReply', {}, function(data: BaseResult) {
+						if (data.success) {
+							uni.showToast({
+								title: data.message,
+								icon: 'none'
+							})
+						} else {
+							uni.showToast({
+								title: data.message,
+								icon: 'error'
+							})
+						}
+					})
+				} else if (res.cancel) {
+					console.log('用户点击取消');
+				}
+			}
+		});
+	}
 	const changeOrderBy = (orderBy: number) => {
 		messageData.level = 1
 		messageData.page.pageNumber = 1
@@ -163,20 +176,13 @@
 
 	const resetQueryAll = () => {
 		messageData.level = 1
-		messageData.queryInfo.info = ''
 		queryAll()
 	}
 	const jumpDetail = (umid: number) => {
 		uni.navigateTo({
-			url: '/pages/message/detail?umid=' + umid
+			url: '/pages/message/detail?umid' + umid
 		})
 	}
-	const jumpUserInfo = (username: string) => {
-		uni.navigateTo({
-			url: '/pages/message/personalHome?username=' + username
-		})
-	}
-
 	//加载更多的下拉----页面触底生命周期 
 	onReachBottom(() => {
 		messageData.level = 2
@@ -205,20 +211,12 @@
 </script>
 
 <style scoped>
-	@import url("../../static/iconfont/iconfont.css");
+	@import url("../../../static/iconfont/iconfont.css");
 
 	.tc {
 		text-align: center;
 	}
 
-	.pd0 {}
-
-	.input-box {
-		margin: 0.5rem;
-		border: 1px solid #ccc;
-		border-radius: 5px;
-		padding: 6px 12px;
-	}
 
 	.tabbar {
 		width: 100%;

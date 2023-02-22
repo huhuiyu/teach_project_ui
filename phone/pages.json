@@ -41,6 +41,7 @@
 			"style": {
 				"navigationBarTitleText": "留言板个人首页",
 				"enablePullDownRefresh": false
+
 			}
 		}, {
 			"path": "pages/message/detail",
@@ -68,65 +69,62 @@
 				"enablePullDownRefresh": false
 			}
 
+		}, {
+			"path": "pages/message/my/myMessage",
+			"style": {
+				"navigationBarTitleText": "我的留言",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+
+		}, {
+			"path": "pages/message/my/myComment",
+			"style": {
+				"navigationBarTitleText": "我的评论",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+
+		}, {
+			"path": "pages/message/my/followMe",
+			"style": {
+				"navigationBarTitleText": "关注我的",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+		}, {
+			"path": "pages/message/my/meFollow",
+			"style": {
+				"navigationBarTitleText": "我的关注",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+
+		}, {
+			"path": "pages/message/my/userInfo",
+			"style": {
+				"navigationBarTitleText": "用户信息",
+				"enablePullDownRefresh": false
+			}
+
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "胡辉煜的教学演示项目",
 		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"backgroundColor": "##f1f1f1"
 	},
 	"uniIdRouter": {},
-	"tabBar": {
-		// 未选中的tab
-		"color": "#2C405A",
-		// 选中的tab
-		"selectedColor": "#426ad9",
-		// 背景框颜色
-		"backgroundColor": "#ffffff",
-		// 上边框颜色
-		"borderStyle": "black",
-		"list": [{
-				"text": "首页",
-				"pagePath": "pages/message/home",
-				// 未选中的图标
-				"iconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=99",
-				// 选中的图标
-				"selectedIconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=100"
-
-			},
-			{
-				"text": "创作",
-				"pagePath": "pages/message/edit",
-				// 未选中的图标
-				"iconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=102",
-				// 选中的图标
-				"selectedIconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=101"
-			},
-			{
-				"text": "消息",
-				"pagePath": "pages/message/privateMessage",
-				// 未选中的图标
-				"iconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=103",
-				// 选中的图标
-				"selectedIconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=104"
-			},
-			{
-				"text": "我的",
-				"pagePath": "pages/message/personalHome",
-				// 未选中的图标
-				"iconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=106",
-				// 选中的图标
-				"selectedIconPath": "https://service.huhuiyu.top/teach_project_service/user/file/download?fid=105"
-			}
-
-		]
-	},
 	"condition": { //模式配置，仅开发期间生效
 		"current": 0, //当前激活的模式(list 的索引项)
 		"list": [{
 			"name": "", //模式名称
-			"path": "pages/Login", //启动页面，必选
+			"path": "", //启动页面，必选
 			"query": "" //启动参数，在页面的onLoad函数里面得到
 		}]
 	}

@@ -1,5 +1,5 @@
 <template>
-	<view class="container">
+	<view>
 		<view class="input-box">
 			<input type="text" v-model="messageData.queryInfo.info" class="uni-input" confirm-type="search"
 				placeholder="请输入你想搜索的" @confirm='queryAll' />
@@ -17,7 +17,7 @@
 		</view>
 		<view v-for="d in messageData.list" :key="d.umid" class="box">
 			<view class="content">
-				<view class="userinfo" @click="jumpUserInfo(d.user.username)">
+				<view class="userinfo">
 					<image class="avatar"
 						:src="d.userInfo.img?d.userInfo.img:'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81'">
 					</image>
@@ -43,6 +43,10 @@
 						<text class="iconfont">&#xe630;</text>
 						{{d.replyCount}}
 					</view>
+					<view @click="delMessage(d)">
+						<text class="iconfont">&#xe68e;</text>
+						{{d.replyCount}}
+					</view>
 				</view>
 			</view>
 		</view>
@@ -54,30 +58,27 @@
 				</view>
 			</view>
 		</view>
-		<view>
-			<messageTbaBar></messageTbaBar>
-		</view>
 	</view>
 </template>
 
 <script setup lang="ts">
-	import messageTbaBar from '../../component/messageTabBar.vue'
 	import {
 		reactive,
 
 	} from 'vue'
 	import {
 		onReachBottom,
-		onPullDownRefresh
+		onPullDownRefresh,
+		onLoad
 	} from "@dcloudio/uni-app";
 	import BaseResult, {
 		BaseListResult
-	} from '../../script/entity/BaseResult';
+	} from '../../../script/entity/BaseResult';
 	import {
 		MessageDetail
-	} from '../../script/entity/MessageDetailResult'
-	import server from '../../script/server'
-	import tools from '../../script/tools'
+	} from '../../../script/entity/MessageDetailResult'
+	import server from '../../../script/server'
+	import tools from '../../../script/tools'
 
 	const toolsData = reactive({
 		tabList: [{
@@ -98,7 +99,6 @@
 				text: "评论量",
 			}
 		],
-
 	})
 	const messageData = reactive({
 		queryInfo: {
@@ -115,6 +115,42 @@
 		level: 1,
 		list: [] as MessageDetail[],
 	})
+
+	onLoad((option: any) => {
+		if (option.username) {
+			messageData.queryInfo.username = option.username
+			queryAll()
+		} else {
+			uni.navigateTo({
+				url: '/pages/message/personalHome'
+			})
+		}
+	})
+	const delMessage = (message: MessageDetail) => {
+		uni.showModal({
+			title: '提示',
+			content: '确认是否删除' + message.title,
+			success: function(res) {
+				if (res.confirm) {
+					server.post('/manage/deletUserMessage', {}, function(data: BaseResult) {
+						if (data.success) {
+							uni.showToast({
+								title: data.message,
+								icon: 'none'
+							})
+						} else {
+							uni.showToast({
+								title: data.message,
+								icon: 'error'
+							})
+						}
+					})
+				} else if (res.cancel) {
+					console.log('用户点击取消');
+				}
+			}
+		});
+	}
 	const likeMessage = (umid: number) => {
 		server.post('/message/support', {
 			umid: umid
@@ -153,7 +189,6 @@
 			messageData.page = data.page
 		})
 	}
-	queryAll()
 	const changeOrderBy = (orderBy: number) => {
 		messageData.level = 1
 		messageData.page.pageNumber = 1
@@ -168,15 +203,9 @@
 	}
 	const jumpDetail = (umid: number) => {
 		uni.navigateTo({
-			url: '/pages/message/detail?umid=' + umid
+			url: '/pages/message/detail?umid' + umid
 		})
 	}
-	const jumpUserInfo = (username: string) => {
-		uni.navigateTo({
-			url: '/pages/message/personalHome?username=' + username
-		})
-	}
-
 	//加载更多的下拉----页面触底生命周期 
 	onReachBottom(() => {
 		messageData.level = 2
@@ -205,7 +234,7 @@
 </script>
 
 <style scoped>
-	@import url("../../static/iconfont/iconfont.css");
+	@import url("../../../static/iconfont/iconfont.css");
 
 	.tc {
 		text-align: center;
