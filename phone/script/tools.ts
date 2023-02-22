@@ -64,6 +64,17 @@ let tools = {
 		}
 		return json
 	},
+	regValidate: (value: string, reg: RegExp) => {
+		console.log(value)
+		let result: boolean = false
+		if (reg.test(value)) {
+			console.log(reg.test(value))
+			result = true
+		} else {
+			result = false
+		}
+		return result
+	}
 }
 
 export default tools

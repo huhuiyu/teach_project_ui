@@ -158,7 +158,7 @@
 			username: new RegExp(/^[a-zA-Z][a-zA-Z0-9_-]{4,16}$/g),
 			usernameMessage: '登录名必须是4-16位长度的字母和数字以及_-的组合，必须是字母开头',
 			password: new RegExp(/(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,16}$/g),
-			passwordMessage: '密码由8-16位数字、字母或符号组成 至少含2种以上字符',
+			passwordMessage: '密码由6-16位数字、字母或符号组成 至少含2种以上字符',
 			phone: new RegExp(/^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/),
 			phoneMessage: '请输入正确手机号格式',
 			email: new RegExp(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)+$/),
@@ -199,7 +199,6 @@
 		}
 	})
 	const login = () => {
-
 		if (userData.login.default.username == '') {
 			uni.showToast({
 				title: "用户名必须填写",
@@ -244,30 +243,29 @@
 		})
 	}
 	const register = () => {
-
-		if (userData.reg.default.username == '') {
+		if (!tools.regValidate(userData.reg.default.username, toolsData.rules.username)) {
 			uni.showToast({
-				title: "用户名必须填写",
-				duration: 300,
+				title: toolsData.rules.usernameMessage,
+				duration: 800,
 				position: 'top',
 				icon: 'error'
 			})
 			return
 		}
+
 		if (userData.reg.default.nickname == '') {
 			uni.showToast({
 				title: "昵称必须填写",
-				duration: 300,
+				duration: 500,
 				position: 'top',
 				icon: 'error'
 			})
 			return
 		}
-		if (userData.reg.default.password == '') {
+		if (!tools.regValidate(userData.reg.default.password, toolsData.rules.password)) {
 			uni.showToast({
-				title: '密码必须填写',
+				title: toolsData.rules.passwordMessage,
 				duration: 800,
-				position: 'top',
 				icon: 'error'
 			})
 			return
@@ -282,6 +280,7 @@
 				userData.login.default.password = result
 				userData.reg.default.password = ''
 				toolsData.mode.fristFloor = 'login'
+				toolsData.mode.twoFloor.login = 'default'
 				login()
 			} else {
 				uni.showToast({
@@ -309,11 +308,10 @@
 			phone = userData.reg.phone.phone
 			imgCode = userData.reg.phone.imgCode
 		}
-		if (phone == '') {
+		if (!tools.regValidate(phone, toolsData.rules.phone)) {
 			uni.showToast({
-				title: "手机号必须填写",
-				duration: 300,
-				position: 'top',
+				title: toolsData.rules.phoneMessage,
+				duration: 800,
 				icon: 'error'
 			})
 			return
@@ -343,10 +341,10 @@
 		})
 	}
 	const phoneLogin = () => {
-		if (userData.login.phone.phone == '') {
+		if (!tools.regValidate(userData.login.phone.phone, toolsData.rules.phone)) {
 			uni.showToast({
-				title: "手机号必须填写",
-				duration: 300,
+				title: toolsData.rules.phoneMessage,
+				duration: 800,
 				position: 'top',
 				icon: 'error'
 			})
@@ -387,10 +385,10 @@
 		})
 	}
 	const phoneReg = () => {
-		if (userData.reg.phone.phone == '') {
+		if (!tools.regValidate(userData.reg.phone.phone, toolsData.rules.phone)) {
 			uni.showToast({
-				title: "手机号必须填写",
-				duration: 300,
+				title: toolsData.rules.phoneMessage,
+				duration: 800,
 				position: 'top',
 				icon: 'error'
 			})
@@ -440,9 +438,9 @@
 		} else {
 			email = userData.reg.email.email
 		}
-		if (email == '') {
+		if (!tools.regValidate(email, toolsData.rules.email)) {
 			uni.showToast({
-				title: "邮箱必须填写",
+				title: toolsData.rules.emailMessage,
 				duration: 300,
 				position: 'top',
 				icon: 'error'
@@ -463,9 +461,9 @@
 		})
 	}
 	const emailLogin = () => {
-		if (userData.login.email.email == '') {
+		if (!tools.regValidate(userData.reg.email.email, toolsData.rules.email)) {
 			uni.showToast({
-				title: "邮箱必须填写",
+				title: toolsData.rules.emailMessage,
 				duration: 300,
 				position: 'top',
 				icon: 'error'
@@ -509,9 +507,9 @@
 
 	}
 	const emailReg = () => {
-		if (userData.reg.email.email == '') {
+		if (!tools.regValidate(userData.reg.email.email, toolsData.rules.email)) {
 			uni.showToast({
-				title: "邮箱必须填写",
+				title: toolsData.rules.emailMessage,
 				duration: 300,
 				position: 'top',
 				icon: 'error'
@@ -549,7 +547,6 @@
 					icon: 'error'
 				})
 			}
-
 		})
 
 	}
@@ -560,7 +557,11 @@
 			itemColor: "#55aaff",
 			success(res: any) {
 				// 选择其中任意一项后，获取其索引（res.tapIndex），从0开始
-				console.log(res.tapIndex)
+				if (res.tapIndex === 0) {
+					uni.navigateTo({
+						url: '/pages/findPwd'
+					})
+				}
 			},
 			fail(res: any) {
 				// 取消后的操作
