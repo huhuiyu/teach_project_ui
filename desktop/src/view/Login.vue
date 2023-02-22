@@ -184,7 +184,6 @@ const emailReg = () => {
         })
         emailLoginForm.loginInfo.email = emailRegisterForm.regInfo.email
         emailLoginForm.loginInfo.info = emailRegisterForm.regInfo.info
-
         emailLogin()
       }
       emailRegisterForm.regInfo.info = ''
