@@ -111,13 +111,24 @@
 				"enablePullDownRefresh": false
 			}
 
+		},
+		{
+			"path": "pages/message/my/myFriend",
+			"style": {
+				"navigationBarTitleText": "我的好友",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+
+			}
+
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "胡辉煜的教学演示项目",
 		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "##f1f1f1"
+		"backgroundColor": "#f1f1f1"
 	},
 	"uniIdRouter": {},
 	"condition": { //模式配置，仅开发期间生效

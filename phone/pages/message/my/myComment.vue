@@ -27,11 +27,11 @@
 					<text>{{d.info}}</text>
 				</view>
 				<view class="iconList">
-					<view @click="likeMessage(d.umid)">
+					<view @click="likeComment(d.umrid)">
 						<text :class="['iconfont',{'text-active':d.praise}]">&#xec7f;</text>
 						{{d.praiseCount}}
 					</view>
-					<view @click="delComment(d)">
+					<view @click="delComment(d)" v-if="d.mine">
 						<text class="iconfont">&#xe68e;</text>
 					</view>
 				</view>
@@ -92,7 +92,7 @@
 		level: 1,
 		list: [] as MessageReply[],
 	})
-
+	//初始化获取username
 	onLoad((option: any) => {
 		if (option.username) {
 			messageData.queryInfo.username = option.username
@@ -104,9 +104,10 @@
 		}
 	})
 
-	const likeMessage = (umid: number) => {
-		server.post('/message/support', {
-			umid: umid
+	//点赞评论
+	const likeComment = (umrid: number) => {
+		server.post('/message/supportReply', {
+			umrid: umrid
 		}, (data: BaseResult) => {
 			if (data.success) {
 				uni.showToast({
@@ -142,6 +143,7 @@
 			messageData.page = data.page
 		})
 	}
+	//删除评论
 	const delComment = (comment: MessageReply) => {
 		uni.showModal({
 			title: '提示',
@@ -167,6 +169,7 @@
 			}
 		});
 	}
+	//切换查询方式
 	const changeOrderBy = (orderBy: number) => {
 		messageData.level = 1
 		messageData.page.pageNumber = 1
@@ -174,6 +177,7 @@
 		queryAll()
 	}
 
+	//重置查询
 	const resetQueryAll = () => {
 		messageData.level = 1
 		queryAll()
@@ -216,7 +220,6 @@
 	.tc {
 		text-align: center;
 	}
-
 
 	.tabbar {
 		width: 100%;

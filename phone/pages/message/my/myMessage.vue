@@ -43,7 +43,7 @@
 						<text class="iconfont">&#xe630;</text>
 						{{d.replyCount}}
 					</view>
-					<view @click="delMessage(d)">
+					<view @click="delMessage(d)" v-if="d.mine">
 						<text class="iconfont">&#xe68e;</text>
 						{{d.replyCount}}
 					</view>

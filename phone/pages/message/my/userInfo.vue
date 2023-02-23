@@ -10,7 +10,7 @@
 		</view>
 		<view v-if="toolsData.sleceted=='nickname'">
 			<view class="input-box" v-if="toolsData.sleceted=='nickname'">
-				<input type="text" v-model="userInfo.nickname" placeholder="请输入昵称" />
+				<input type="text" maxlength="12" v-model="userInfo.nickname" placeholder="请输入昵称" />
 			</view>
 		</view>
 		<view class="input-box" v-if="toolsData.sleceted=='sex'">
@@ -46,10 +46,10 @@
 			</radio-group>
 		</view>
 		<view class="input-box" v-if="toolsData.sleceted=='wechat'">
-			<input type="text" v-model="userInfo.wechat" placeholder="请输入微信" />
+			<input type="text" maxlength="12" v-model="userInfo.wechat" placeholder="请输入微信" />
 		</view>
 		<view class="input-box" v-if="toolsData.sleceted=='qq'">
-			<input type="text" v-model="userInfo.qq" placeholder="请输入qq" />
+			<input type="text" maxlength="10" v-model="userInfo.qq" placeholder="请输入qq" />
 		</view>
 		<view class="input-box" v-if="toolsData.sleceted=='info'">
 			<input type="text" v-model="userInfo.info" placeholder="请输入描述" />
