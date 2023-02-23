@@ -14,6 +14,12 @@
 			</view>
 			<view v-if="toolsData.username==loginUser.tbUser.username" class="iconfont arrow" @click="selceted(0)">
 				&#xe615; </view>
+			<view class="btns" v-if="toolsData.username!=loginUser.tbUser.username">
+				<button size="mini" plain @click="followUser(toolsData.username)" :type="userInfo.mineFollow?'primary':'default'
+					">{{ userInfo.mineFollow ? '已关注' : '关注' }}</button>
+				<button size="mini" plain @click="addFriend">加好友</button>
+
+			</view>
 		</view>
 		<view class="list">
 			<view class="list_item" v-for="d in toolsData.list" :key="d.id" @click="selceted(d.id)">
@@ -38,47 +44,63 @@
 	} from "@dcloudio/uni-app";
 
 	import {
-		BaseUserInfoResult
+		BaseUserInfoResult,
+		BaseResult
 	} from '../../script/entity/BaseResult'
 	import server from '../../script/server'
 	import store from '../../store/index'
 	const {
 		loginUser
 	} = store()
-	if (!loginUser.isLogin) {
-		uni.showModal({
-			title: '请登录后访问！！！',
-			content: "是否跳转登录",
-			success: () => {
-				uni.navigateTo({
-					url: '/pages/Login'
-				})
-			},
-			fail: () => {
-				uni.navigateTo({
-					url: '/pages/message/home'
-				})
-			},
-		})
-	}
 	onLoad((option: any) => {
 		if (option.username) {
 			toolsData.username = option.username
 		} else {
-			toolsData.username = loginUser.tbUser.username
+			if (loginUser.isLogin) {
+				toolsData.username = loginUser.tbUser.username
+			} else {
+				uni.showModal({
+					title: '请登录后访问！！！',
+					content: "是否跳转登录",
+					success: () => {
+						uni.navigateTo({
+							url: '/pages/Login?oldUrl=' + OLD_URL
+						})
+					},
+					fail: () => {
+						uni.navigateTo({
+							url: '/pages/message/home'
+						})
+					},
+				})
+				return
+			}
+			if (toolsData.username == loginUser.tbUser.username) {
+				toolsData.list = toolsData.list.concat(toolsData.loginList)
+				console.log(toolsData.list);
 
+			}
 		}
 		queryUserInfoByUsername()
-		if (toolsData.username == loginUser.tbUser.username) {
-			toolsData.list.push({
+	})
+	const OLD_URL = '/pages/message/personalHome'
+	const toolsData = reactive({
+
+		loading: {
+			follow: false
+		},
+		username: '',
+		loginList: [{
+				id: 3,
+				text: "好友",
+				icon: '&#xe696;'
+			},
+			{
 				id: 6,
 				text: "退出登录",
 				icon: '&#xe79c;'
-			})
-		}
-	})
-	const toolsData = reactive({
-		username: 'longya_shadow',
+			}
+		],
 		list: [{
 				id: 1,
 				text: "留言",
@@ -88,11 +110,6 @@
 				id: 2,
 				text: "评论",
 				icon: '&#xe630;'
-			},
-			{
-				id: 3,
-				text: "好友",
-				icon: '&#xe696;'
 			},
 			{
 				id: 4,
@@ -132,6 +149,61 @@
 			}
 		})
 	}
+	// 关注或取消关注用户
+	const followUser = (username: string) => {
+		if (!loginUser.isLogin) {
+			uni.showModal({
+				title: '请登录后再操作！！！',
+				content: "是否跳转登录",
+				success: (res: any) => {
+					if (res.confirm) {
+						uni.navigateTo({
+							url: '/pages/Login?oldUrl=' + OLD_URL
+						})
+					} else if (res.cancel) {
+						console.log('用户点击取消');
+						return
+					}
+				},
+			})
+			return
+		}
+		toolsData.loading.follow = true
+		server.post('/message/followUser', {
+			username
+		}, () => {
+			toolsData.loading.follow = false
+			queryUserInfoByUsername()
+		})
+	}
+	//添加好友
+	const addFriend = () => {
+		if (!loginUser.isLogin) {
+			uni.showModal({
+				title: '请登录后再操作！！！',
+				content: "是否跳转登录",
+				success: (res: any) => {
+					if (res.confirm) {
+						uni.navigateTo({
+							url: '/pages/Login?oldUrl=' + OLD_URL
+						})
+					} else if (res.cancel) {
+						console.log('用户点击取消');
+						return
+					}
+				},
+			})
+			return
+		}
+		server.post('/user/auth/friend', {
+			username: toolsData.username
+		}, (data: BaseResult) => {
+			if (data.success) uni.showToast({
+				title: data.message,
+				icon: 'none'
+			})
+		})
+	}
 	//退出登录
 	const logOut = () => {
 		uni.showModal({
@@ -166,6 +238,10 @@
 		} else if (id == 2) {
 			uni.navigateTo({
 				url: '/pages/message/my/myComment?username=' + toolsData.username
+			})
+		} else if (id == 3) {
+			uni.navigateTo({
+				url: '/pages/message/my/myFriend'
 			})
 		} else if (id == 4) {
 			uni.navigateTo({
@@ -243,5 +319,10 @@
 
 	.iconfont>text {
 		font-size: 14px;
+	}
+
+	.btns>button {
+		margin: 0px 5px;
+		font-size: 12px;
 	}
 </style>

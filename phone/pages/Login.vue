@@ -109,11 +109,11 @@
 		<view>
 			<view class="bottomList" v-if="toolsData.mode.fristFloor=='login'">
 				<text v-if="toolsData.mode.twoFloor.login=='default'"
-					@click="toolsData.mode.twoFloor.login='phone'">手机号登录</text>
+					@click="toolsData.mode.twoFloor.login='phone'">手机登录</text>
 				<text v-if="toolsData.mode.twoFloor.login=='email'"
 					@click="toolsData.mode.twoFloor.login='default'">账号登录</text>
 				<text @click="toolsData.mode.twoFloor.login='email'">邮箱登录</text>
-				<text @click="toolsData.mode.fristFloor='reg'">新用户注册</text>
+				<text @click="toolsData.mode.fristFloor='reg'">注册</text>
 				<text @click="bottomModal">更多选项</text>
 			</view>
 			<view class="bottomList" v-else>
@@ -134,6 +134,9 @@
 	import {
 		reactive
 	} from 'vue'
+	import {
+		onLoad
+	} from "@dcloudio/uni-app";
 	import server from '../script/server'
 	import tools from '../script/tools'
 	import BaseResult from '../script/entity/BaseResult'
@@ -164,12 +167,21 @@
 			email: new RegExp(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)+$/),
 			emailMessage: '请输入正确的邮箱格式'
 		},
+		oldUrl: ''
 	})
+	onLoad((option: any) => {
+		if (option.oldUrl) {
+			toolsData.oldUrl = option.oldUrl
+		} else {
+			toolsData.oldUrl = '/pages/message/home'
+		}
+	})
+
 	const userData = reactive({
 		login: {
 			default: {
-				username: '',
-				password: ''
+				username: 'LongYa_Shadow',
+				password: '030623@gp'
 			},
 			phone: {
 				phone: "",
@@ -228,7 +240,7 @@
 				})
 				useStore().updateLoginUser(() => {
 					uni.navigateTo({
-						url: '/pages/test/test'
+						url: toolsData.oldUrl
 					})
 				})
 			} else {
@@ -372,7 +384,7 @@
 				})
 				useStore().updateLoginUser(() => {
 					uni.navigateTo({
-						url: '/pages/test/test'
+						url: toolsData.oldUrl
 					})
 				})
 			} else {
@@ -492,7 +504,7 @@
 				})
 				useStore().updateLoginUser(() => {
 					uni.navigateTo({
-						url: '/pages/test/test'
+						url: toolsData.oldUrl
 					})
 				})
 			} else {
@@ -563,9 +575,6 @@
 					})
 				}
 			},
-			fail(res: any) {
-				// 取消后的操作
-			}
 		})
 	}
 </script>
@@ -635,8 +644,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-evenly;
-		padding: 1rem;
-		font-size: 12px
+		padding: 1rem 0.8rem;
+		font-size: 12rpx
 	}
 
 	.imgCode {
