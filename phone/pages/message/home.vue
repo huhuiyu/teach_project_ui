@@ -46,7 +46,7 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="messageData.list.length==0">
+		<view v-if="messageData.list.length==0&&!toolsData.loading.queryAll">
 			<view class="box">
 				<view class="content tc">
 					<text>暂时没有找到哦</text>
@@ -98,7 +98,9 @@
 				text: "评论量",
 			}
 		],
-
+		loading: {
+			queryAll: false
+		}
 	})
 	const messageData = reactive({
 		queryInfo: {
@@ -140,8 +142,10 @@
 		uni.showLoading({
 			title: '加载中',
 		})
+		toolsData.loading.queryAll = true
 		server.post('/message/queryAll', tools.concatJson(messageData.queryInfo, messageData.page), (data:
 			BaseListResult < MessageDetail > ) => {
+			toolsData.loading.queryAll = false
 			uni.hideLoading()
 			if (messageData.level == 1) {
 				messageData.list = data.list
@@ -206,6 +210,10 @@
 
 <style scoped>
 	@import url("../../static/iconfont/iconfont.css");
+
+	.container {
+		padding-bottom: 3rem;
+	}
 
 	.tc {
 		text-align: center;
