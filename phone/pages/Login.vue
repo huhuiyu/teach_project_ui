@@ -180,8 +180,8 @@
 	const userData = reactive({
 		login: {
 			default: {
-				username: 'LongYa_Shadow',
-				password: '030623@gp'
+				username: '',
+				password: ''
 			},
 			phone: {
 				phone: "",
@@ -644,8 +644,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-evenly;
-		padding: 1rem 0.8rem;
-		font-size: 12rpx
+		padding: 1rem 0.5rem;
+		font-size: 14px
 	}
 
 	.imgCode {

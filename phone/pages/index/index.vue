@@ -26,7 +26,7 @@
 		if (viewdata.testCount >= 5) {
 			viewdata.testCount = 0
 			uni.navigateTo({
-				url: "/pages/test/test"
+				url: "/pages/Login"
 			})
 		}
 	}

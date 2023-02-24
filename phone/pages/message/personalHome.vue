@@ -18,7 +18,6 @@
 				<button size="mini" plain @click="followUser(toolsData.username)" :type="userInfo.mineFollow?'primary':'default'
 					">{{ userInfo.mineFollow ? '已关注' : '关注' }}</button>
 				<button size="mini" plain @click="addFriend">加好友</button>
-
 			</view>
 		</view>
 		<view class="list">
@@ -28,6 +27,12 @@
 					<text>{{d.text}}</text>
 				</view>
 				<view class="iconfont arrow">&#xe615; </view>
+			</view>
+		</view>
+		<view v-if="toolsData.username != loginUser.tbUser.username">
+			<view class="hr"></view>
+			<view class="privateMessage" @click="jumpPrivateMessage">
+				<view class="iconfont">&#xe89c;</view><text>私信</text>
 			</view>
 		</view>
 		<messageTbaBar v-if="toolsData.username==loginUser.tbUser.username"></messageTbaBar>
@@ -62,16 +67,19 @@
 				uni.showModal({
 					title: '请登录后访问！！！',
 					content: "是否跳转登录",
-					success: () => {
-						uni.navigateTo({
-							url: '/pages/Login?oldUrl=' + OLD_URL
-						})
+					success: (res: any) => {
+						if (res.confirm) {
+							uni.navigateTo({
+								url: '/pages/Login?oldUrl=' + OLD_URL
+							})
+						} else if (res.cancel) {
+							uni.navigateTo({
+								url: '/pages/message/home'
+							})
+							return
+						}
 					},
-					fail: () => {
-						uni.navigateTo({
-							url: '/pages/message/home'
-						})
-					},
+
 				})
 				return
 			}
@@ -85,7 +93,6 @@
 	})
 	const OLD_URL = '/pages/message/personalHome'
 	const toolsData = reactive({
-
 		loading: {
 			follow: false
 		},
@@ -255,6 +262,12 @@
 			logOut()
 		}
 	}
+	//跳转私信
+	const jumpPrivateMessage = () => {
+		uni.navigateTo({
+			url: `/pages/message/privateMessageDetails?username=${toolsData.username}&nickname=${userInfo.nickname}&img=${userInfo.img}`
+		})
+	}
 </script>
 
 <style scoped>
@@ -324,5 +337,23 @@
 	.btns>button {
 		margin: 0px 5px;
 		font-size: 12px;
+	}
+
+	.hr {
+		background-color: #f1f1f1;
+		padding: 5px;
+	}
+
+	.privateMessage {
+		color: #495a80;
+		padding: 20rpx 30rpx;
+		border-bottom: 1px solid #bdbdbd;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.privateMessage .iconfont {
+		margin-right: 5px;
 	}
 </style>
