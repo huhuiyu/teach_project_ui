@@ -519,7 +519,9 @@ const register = () => {
             </n-tabs>
           </n-tab-pane>
         </n-tabs>
-        <template #footer> <div style="font-size: 12px; color: #18a058">登录方式和注册方式相对应、绑定邮箱或手机并不影响。</div> </template>
+        <template #footer>
+          <div style="font-size: 12px; color: #18a058">登录方式和注册方式相对应、绑定邮箱或手机并不影响。<n-button text size="tiny" @click="router.push('/user/findpwd')">点击找回密码</n-button> </div>
+        </template>
       </n-card>
     </main>
   </div>
