@@ -45,7 +45,6 @@
 					</view>
 					<view @click="delMessage(d)" v-if="d.mine">
 						<text class="iconfont">&#xe68e;</text>
-						{{d.replyCount}}
 					</view>
 				</view>
 			</view>
@@ -132,8 +131,12 @@
 			content: '确认是否删除' + message.title,
 			success: function(res) {
 				if (res.confirm) {
-					server.post('/manage/deletUserMessage', {}, function(data: BaseResult) {
+					server.post('/message/manage/deletUserMessage', {
+						umid: message.umid
+					}, function(data: BaseResult) {
 						if (data.success) {
+							messageData.level = 1
+							queryAll()
 							uni.showToast({
 								title: data.message,
 								icon: 'none'
@@ -160,6 +163,7 @@
 					title: data.message,
 					duration: 500,
 				})
+				messageData.level = 1
 				queryAll()
 			} else {
 				uni.showToast({

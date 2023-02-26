@@ -126,6 +126,7 @@
 					title: data.message,
 					duration: 500,
 				})
+				messageData.level = 1
 				queryAll()
 			} else {
 				uni.showToast({

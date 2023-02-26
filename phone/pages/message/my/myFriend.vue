@@ -259,6 +259,7 @@
 							icon: 'none',
 						})
 						if (data.success) {
+							friendData.level = 1
 							queryFriend()
 						}
 					})
@@ -318,7 +319,6 @@
 	}
 	//加载更多的下拉----页面触底生命周期 
 	onReachBottom(() => {
-		console.log(toolsData.now);
 		if (toolsData.now == 'friend') {
 			friendData.level = 2
 			if (friendData.page.pageNumber < friendData.page.pageCount) {
@@ -381,7 +381,6 @@
 	})
 	// 刷新的生命周期
 	onPullDownRefresh(() => {
-		console.log(toolsData.now)
 		if (toolsData.now == 'friend') {
 			friendData.level = 1
 			queryFriend()

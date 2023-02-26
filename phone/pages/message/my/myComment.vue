@@ -11,7 +11,7 @@
 				</view>
 			</view>
 		</view>
-		<view v-for="d in messageData.list" :key="d.umid" class="box">
+		<view v-for="d in messageData.list" :key="d.lastupdate" class="box">
 			<view class="content">
 				<view class="userinfo">
 					<image class="avatar"
@@ -107,13 +107,14 @@
 	//点赞评论
 	const likeComment = (umrid: number) => {
 		server.post('/message/supportReply', {
-			umrid: umrid
+			umrid
 		}, (data: BaseResult) => {
 			if (data.success) {
 				uni.showToast({
 					title: data.message,
 					duration: 500,
 				})
+				messageData.level = 1
 				queryAll()
 			} else {
 				uni.showToast({
@@ -134,6 +135,7 @@
 			BaseListResult < MessageReply > ) => {
 			uni.hideLoading()
 			if (messageData.level == 1) {
+				console.log('0000');
 				messageData.list = data.list
 				uni.stopPullDownRefresh()
 			}
@@ -150,12 +152,16 @@
 			content: '确认是否删除' + comment.info,
 			success: function(res) {
 				if (res.confirm) {
-					server.post('/manage/deletUserMessageReply', {}, function(data: BaseResult) {
+					server.post('/message/manage/deletUserMessageReply', {
+						umrid: comment.umrid
+					}, function(data: BaseResult) {
 						if (data.success) {
 							uni.showToast({
 								title: data.message,
 								icon: 'none'
 							})
+							messageData.level = 1
+							queryAll()
 						} else {
 							uni.showToast({
 								title: data.message,
@@ -171,10 +177,8 @@
 	}
 	//切换查询方式
 	const changeOrderBy = (orderBy: number) => {
-		messageData.level = 1
-		messageData.page.pageNumber = 1
 		messageData.queryInfo.orderBy = orderBy
-		queryAll()
+		resetQueryAll()
 	}
 
 	//重置查询

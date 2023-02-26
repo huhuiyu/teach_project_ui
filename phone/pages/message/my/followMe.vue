@@ -9,7 +9,8 @@
 					<text>{{d.user.nickname}}</text>
 				</view>
 				<view>
-					<button size="mini" @click="followUser" plain :type="d.userOtherInfo.mineFollow?'primary':'default'"
+					<button size="mini" @click="followUser(d.user.username)" plain
+						:type="d.userOtherInfo.mineFollow?'primary':'default'"
 						:loading="toolsData.loading.follow">{{d.userOtherInfo.mineFollow ? '已关注' : '关注' }}</button>
 				</view>
 			</view>
@@ -34,7 +35,7 @@
 		onPullDownRefresh,
 		onLoad
 	} from "@dcloudio/uni-app";
-	import {
+	import BaseResult, {
 		BaseListResult
 	} from '../../../script/entity/BaseResult';
 	import {
@@ -102,10 +103,12 @@
 	const followUser = (username: string) => {
 		toolsData.loading.follow = true
 		server.post('/message/followUser', {
-			username
-		}, () => {
+			username: username
+		}, (data: BaseResult) => {
 			toolsData.loading.follow = false
-
+			if (data.success) {
+				queryAll()
+			}
 		})
 	}
 	//加载更多的下拉----页面触底生命周期 
