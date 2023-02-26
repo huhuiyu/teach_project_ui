@@ -7,7 +7,7 @@
 			</view>
 		</view>
 		<view class="main">
-			<view class="mainList" v-for="item in list" :key="item.path">
+			<view class="mainList" v-for="item in list" :key="item.path" @click="actionFunction(item.path)">
 				<image style="width: 100%;height: 100%;border-radius: 5px;" :src="item.img"></image>
 				<span>{{ item.info }}</span>
 			</view>
@@ -31,16 +31,6 @@
 				<view class="iconfont arrow">&#xe615;</view>
 			</view>
 		</view>
-		<view style="display: flex; justify-content: center;" v-else>
-			<view style="margin-top: 40%;width: 50%;">
-				<button style="background-color: rgba(0, 100, 100, 0.2);" @click="Login()">
-					<view style="display: flex;justify-content: space-around;">
-						<view>登</view>
-						<view>录</view>
-					</view>
-				</button>
-			</view>
-		</view>
 	</view>
 
 	<view class="bottomFixed">
@@ -50,7 +40,7 @@
 				:class="{ bottomActive: item.id == Data.bottonTabbarId }"
 				v-for="item in Data.bottonTabbar"
 				:key="item.text"
-				@click="Data.bottonTabbarId = item.id"
+				@click="actionFooterInfo(item.id)"
 			>
 				<image class="bottomTabbar" :src="item.image"></image>
 				<view>{{ item.text }}</view>
@@ -61,13 +51,10 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { storeToRefs } from 'pinia';
 import store from '../store/index';
 import server from '../script/server';
-import BaseResult from '../script/entity/BaseResult';
-const storeInfo = store();
-const { loginUser } = storeToRefs(storeInfo);
-console.log('chakna', loginUser.value);
+const { loginUser } = store();
+console.log('chakna', loginUser);
 const Data = reactive({
 	titleInfo: '',
 	bottonTabbarId: '1',
@@ -84,6 +71,34 @@ const Data = reactive({
 		}
 	]
 });
+const OLD_URL = '/pages/home';
+const actionFooterInfo = (id: number) => {
+	Data.bottonTabbarId = id;
+	if (id == 2 && !loginUser.isLogin) {
+		uni.showModal({
+			title: '请登录后访问！！！',
+			content: '是否跳转登录',
+			success: (res: any) => {
+				if (res.confirm) {
+					uni.navigateTo({
+						url: '/pages/Login?oldUrl=' + OLD_URL
+					});
+				} else if (res.cancel) {
+					uni.navigateTo({
+						url: '/pages/home'
+					});
+					return;
+				}
+			}
+		});
+	}
+};
+
+const actionFunction = (path: string) => {
+	uni.navigateTo({
+		url: path
+	});
+};
 const dataTime = () => {
 	const date = new Date().getHours();
 	if (date > 0 && date < 12) {
@@ -96,10 +111,10 @@ const dataTime = () => {
 };
 dataTime();
 const list = reactive([
-	{ path: '/page/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '简易留言板' },
-	{ path: '/page/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '简易留言板' },
-	{ path: '/page/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '简易留言板' },
-	{ path: '/page/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '简易留言板' }
+	{ path: '/pages/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '留言板' },
+	{ path: '/pages/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '简言板' },
+	{ path: '/pages/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '留言板' },
+	{ path: '/pages/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '留言板' }
 ]);
 const Login = () => {
 	uni.navigateTo({
@@ -130,7 +145,7 @@ const LogOut = () => {
 
 const ClickUserInfo = () => {
 	uni.navigateTo({
-		url: '/pages/message/my/userInfo?username=' + loginUser.value.tbUser.username
+		url: '/pages/message/my/userInfo?username=' + loginUser.tbUser.username
 	});
 };
 </script>
@@ -163,8 +178,8 @@ const ClickUserInfo = () => {
 }
 .mainList {
 	margin: 0 auto;
-	width: 80%;
-	height: 110%;
+	width: 60%;
+	height: 120%;
 }
 
 .bottomTabbar > img,
