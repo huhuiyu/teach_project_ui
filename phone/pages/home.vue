@@ -2,8 +2,8 @@
 	<view v-if="Data.bottonTabbarId == '1'">
 		<view class="header">
 			<view>
-				<view style="font-size: 2rem;">亲爱的教师</view>
-				<view style="text-indent: 7em;">{{ Data.titleInfo }},欢迎您来到校园</view>
+				<view style="font-size: 2rem;">Mr. or girl</view>
+				<view style="text-indent: 7em;">{{ Data.titleInfo }},欢迎您来到这</view>
 			</view>
 		</view>
 		<view class="main">

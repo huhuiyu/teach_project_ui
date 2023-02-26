@@ -8,20 +8,6 @@
       }
     },
     {
-      "path": "pages/user/userInfo",
-      "style": {
-        "navigationBarTitleText": "",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/user/userUpdateInfo",
-      "style": {
-        "navigationBarTitleText": "",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
       "path": "pages/test/test",
       "style": {
         "navigationBarTitleText": "",
