@@ -67,6 +67,9 @@
 	import BaseResult, {
 		BaseUserInfoResult
 	} from '../../../script/entity/BaseResult'
+	import {
+		onLoad
+	} from "@dcloudio/uni-app";
 	import server from '../../../script/server'
 	import store from '../../../store';
 	// import store from '../../../store/index'
@@ -74,7 +77,7 @@
 	// 	loginUser
 	// } = store()
 	const toolsData = reactive({
-		username: 'longya_shadow',
+		username: '',
 		sleceted: 'default',
 		loading: false,
 		list: [{
@@ -108,9 +111,18 @@
 		sex: '',
 		mineFollow: false,
 	})
+	onLoad((option: any) => {
+		if (option.username) {
+			toolsData.username = option.username
+			queryUserInfoByUsername()
+		} else {
+			uni.navigateTo({
+				url: '/pages/message/personalHome'
+			})
+		}
+	})
 	//单选框变化
 	const radioChange = (e: any) => {
-
 		userInfo.sex = e.detail.value
 	}
 	//查询用户信息
@@ -129,7 +141,6 @@
 			}
 		})
 	}
-	queryUserInfoByUsername()
 	const modifyUserInfo = () => {
 		toolsData.loading = true
 		server.post('/user/auth/updateUserInfo', userInfo, (data: BaseResult) => {
