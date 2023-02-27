@@ -1,97 +1,103 @@
 <template>
-	<view style="display: flex;justify-content: space-between;align-items: center;">
-		<view style="display: flex;align-items: center;">
-			<view @click="jumpUserInfo(d.user.username)">
-				<image
-					class="titleImg"
-					:src="messageData.info.userInfo.img ? messageData.info.userInfo.img : 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81'"
-				></image>
-			</view>
-			<view>
-				<view>{{ messageData.info.user.username }}</view>
-				<view>{{ messageData.info.title }}</view>
-				<view style="color: rgba(0, 0, 0, 0.4);">{{ tools.formatDate(messageData.info.lastupdate) }}</view>
-			</view>
-		</view>
-		<view style="margin-right: 10rpx;" v-if="loginUser.isLogin">
-			<view v-if="loginUser.tbUser.username == messageData.info.user.username"></view>
-			<view v-else>
-				<view @click="clickFollow(messageData.info.user.username)">
-					<button v-if="messageData.visible.FollowBotton">{{ messageData.info.userOtherInfo.mineFollow ? '已关注' : '关注' }}</button>
-					<view v-else id="loader"></view>
-				</view>
-			</view>
-		</view>
-		<view style="margin-right: 10rpx;" v-else><button>关注</button></view>
-	</view>
-	<view style="margin: 20rpx 20rpx 40rpx 0rpx;margin-left: 40rpx;">{{ messageData.info.info }}</view>
 	<view>
-		<view class="tabbar">
-			<view class="navigator">
-				<view class="navigator-item" v-for="item in messageData.tabList" :key="item.id" @click="changeOrderBy(item.id)">
-					<text :class="['item-text', { 'text-active': messageData.queryInfo.orderBy === item.id }]">{{ item.text }}</text>
+		<view style="display: flex;justify-content: space-between;align-items: center;">
+			<view style="display: flex;align-items: center;">
+				<view @click="jumpUserInfo(messageData.info.user.username)">
+					<image class="titleImg" :src="userInfo.img ? userInfo.img : 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81'"></image>
+				</view>
+				<view>
+					<view>{{ messageData.info.user.username }}</view>
+					<view>{{ messageData.info.title }}</view>
+					<view style="color: rgba(0, 0, 0, 0.4);">{{ tools.formatDate(messageData.info.lastupdate) }}</view>
+				</view>
+			</view>
+			<view style="margin-right: 10rpx;" v-if="loginUser.isLogin">
+				<view v-if="loginUser.tbUser.username == messageData.info.user.username"></view>
+				<view v-else>
+					<view @click="clickFollow(messageData.info.user.username)">
+						<button v-if="messageData.visible.FollowBotton">{{ messageData.info.userOtherInfo.mineFollow ? '已关注' : '关注' }}</button>
+						<view v-else id="loader"></view>
+					</view>
+				</view>
+			</view>
+			<view style="margin-right: 10rpx;" v-else><button>关注</button></view>
+		</view>
+		<view style="margin: 20rpx 20rpx 40rpx 0rpx;margin-left: 40rpx;" v-html="messageData.info.info"></view>
+		<view>
+			<view class="tabbar">
+				<view class="navigator">
+					<view class="navigator-item" v-for="item in messageData.tabList" :key="item.id" @click="changeOrderBy(item.id)">
+						<text :class="['item-text', { 'text-active': messageData.queryInfo.orderBy === item.id }]">{{ item.text }}</text>
+					</view>
 				</view>
 			</view>
 		</view>
-	</view>
-	<view v-for="d in messageData.list" :key="d.umid" class="box">
-		<view class="content">
-			<view class="userinfo" @click="jumpUserInfo(d.user.username)">
-				<image class="avatar" :src="d.userInfo.img ? d.userInfo.img : 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81'"></image>
-				<text>{{ d.user.nickname }}</text>
-			</view>
-			<view>
-				<text class="date">{{ tools.formatDate(d.lastupdate) }}</text>
-			</view>
-			<view class="hr"></view>
-			<view class="title">
-				<text>{{ d.info }}</text>
-			</view>
-			<view class="iconList">
-				<view @click="delumrid(d)" v-if="d.mine"><text class="iconfont">&#xe68e;</text></view>
-				<view @click="likeMessage(d.umrid)">
-					<text :class="['iconfont', { 'text-active': d.praise }]">&#xec7f;</text>
-					{{ d.praiseCount }}
+		<view class="messageListStyleLast">
+			<view v-for="d in messageData.list" :key="d.umid" class="box">
+				<view class="content">
+					<view class="userinfo">
+						<image
+							@click="jumpUserInfo(d.user.username)"
+							class="avatar"
+							:src="d.userInfo.img ? d.userInfo.img : 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81'"
+						></image>
+						<text @click="jumpUserInfo(d.user.username)">{{ d.user.nickname }}</text>
+					</view>
+					<view>
+						<text class="date">{{ tools.formatDate(d.lastupdate) }}</text>
+					</view>
+					<view class="hr"></view>
+					<view class="title">
+						<text>{{ d.info }}</text>
+					</view>
+					<view class="iconList">
+						<view @click="delumrid(d.info, d.umrid)" v-if="d.mine"><text class="iconfont">&#xe68e;</text></view>
+						<view @click="likeMessage(d.umrid)">
+							<text :class="['iconfont', { 'text-active': d.praise }]">&#xec7f;</text>
+							{{ d.praiseCount }}
+						</view>
+						<view @click="examineMessage(d.info, d.umrid, false)"><text class="iconfont">&#xe89d;</text></view>
+					</view>
 				</view>
-				<view><text class="iconfont">&#xe89d;</text></view>
 			</view>
 		</view>
-	</view>
-	<view v-if="messageData.page.total == 0">
-		<view class="box">
-			<view class="content tc">
-				<text>暂时没有找到哦</text>
-				<button size="mini" @click="resetQueryAll">重置刷新</button>
+		<view v-if="messageData.list && messageData.list.length == 0">
+			<view class="box">
+				<view class="content tc">
+					<text>暂时没有找到哦</text>
+					<button size="mini" @click="resetQueryAll()">重置刷新</button>
+				</view>
 			</view>
 		</view>
-	</view>
-	<view class="bottonStyle">
-		<view class="footerStyle">
-			<view :class="{ 'text-active': messageData.info.praise }" @click="messageTitle(messageData.info.umid)">
-				<view class="iconfont">&#xec7f;</view>
-				<view>点赞</view>
-			</view>
-			<view>
-				<view class="iconfont">&#xe630;</view>
-				<view>评论</view>
-			</view>
-			<view>
-				<view class="iconfont">&#xe89d;</view>
-				<view>举报</view>
+		<view class="bottonStyle">
+			<view class="footerStyle">
+				<view :class="{ 'text-active': messageData.info.praise }" @click="messageTitle(messageData.info.umid)">
+					<view class="iconfont">&#xec7f;</view>
+					<view>{{ messageData.info.praiseCount }}点赞</view>
+				</view>
+				<view @click="showDetail()">
+					<view class="iconfont">&#xe630;</view>
+					<view>评论</view>
+				</view>
+				<view @click="examineMessage(messageData.info.title, messageData.info.umid, true)">
+					<view class="iconfont">&#xe89d;</view>
+					<view>举报</view>
+				</view>
 			</view>
 		</view>
+		<view style="width: 100%;background-color: antiquewhite;height: 200rpx;" v-if="messageData.ifInputShow">
+			<input
+				type="text"
+				confirm-type="send"
+				@confirm="pushDetailclick"
+				v-model="messageData.pushDetail.info"
+				class="input-my"
+				@blur="disappearDetailInfo"
+				:focus="messageData.focus"
+				placeholder="请输入评论的内容"
+			/>
+		</view>
 	</view>
-	<view style="height: 0px;overflow: hidden;">
-		<input
-			@confirm="pushDetail(messageData.info.umid)"
-			v-model="messageData.detailInfo"
-			adjust-position="false"
-			confirm-type="search"
-			:focus="messageData.focus"
-			auto-blur="true"
-		/>
-	</view>
-	
 </template>
 
 <script setup lang="ts">
@@ -103,8 +109,20 @@ import server from '../../script/server';
 import tools from '../../script/tools';
 import store from '../../store/index';
 const { loginUser } = store();
+const userInfo = reactive({
+	img: '',
+});
 const messageData = reactive({
-	detailInfo: '',
+	examineInfo: {
+		info: '举报',
+		umid: '',
+		umrid: ''
+	},
+	pushDetail: {
+		info: '',
+		umid: ''
+	},
+	ifInputShow: false,
 	focus: false,
 	level: 1,
 	queryInfo: {
@@ -136,13 +154,15 @@ const queryAll = () => {
 	uni.showLoading({
 		title: '加载中'
 	});
-	messageData.page.total == 0;
-	server.post('/message/queryDetail', tools.concatJson(messageData.queryInfo), (data: MessageDetailResult) => {
+	server.post('/message/queryDetail', tools.concatJson(messageData.queryInfo, messageData.page), (data: MessageDetailResult) => {
 		messageData.page = data.page;
 		messageData.visible.FollowBotton = true;
 		uni.hideLoading();
 		if (messageData.level == 1) {
-			messageData.info = data.info;
+			if (data.info != null) {
+				userInfo.img = data.info.userInfo.img;
+				messageData.info = data.info;
+			}
 			messageData.list = data.list;
 		}
 		if (messageData.level == 2) {
@@ -174,16 +194,49 @@ const clickFollow = (username: string) => {
 	});
 };
 const changeOrderBy = (umid: number) => {
-	messageData.queryInfo.orderBy = umid;
+	messageData.queryInfo.orderBy = umid + '';
 	messageData.page.pageNumber = 1;
 	queryAll();
 };
-const jumpDetail = (abc: number) => {
-	console.log(abc);
+const examineMessage = (title: string, message: number, messageDetailbollean: boolean) => {
+	let url = '';
+	let stringtitle = title;
+	if (messageDetailbollean) {
+		url = '/message/examine';
+		messageData.examineInfo.umid = message + '';
+	} else {
+		url = '/message/examineReply';
+		messageData.examineInfo.umrid = message + '';
+	}
+	uni.showModal({
+		title: '举报' + stringtitle,
+		content: messageData.examineInfo.info,
+		confirmText: '举报',
+		placeholderText: '请输入举报内容',
+		editable: true,
+		success: function(res: any) {
+			if (res.confirm) {
+				server.post(url, messageData.examineInfo, (data: BaseResult) => {
+					uni.showToast({
+						title: data.message,
+						icon: 'none'
+					});
+					if (data.success) {
+						messageData.level = 1;
+						queryAll();
+					}
+				});
+			} else if (res.cancel) {
+				uni.showToast({
+					title: '已取消',
+					icon: 'none'
+				});
+			}
+		}
+	});
 };
 const resetQueryAll = () => {
-	messageData.queryInfo.orderBy = 1;
-	messageData.page.pageNumber = 1;
+	messageData.queryInfo.orderBy = '1';
 	queryAll();
 };
 const likeMessage = (umrid: number) => {
@@ -197,22 +250,20 @@ const likeMessage = (umrid: number) => {
 		}
 	});
 };
-const delumrid = (item: number) => {
+const delumrid = (item: string, umrid: number) => {
 	uni.showModal({
 		title: '提示',
-		content: '确定删除' + item.info,
+		content: '确定删除' + item,
 		success: function(res: any) {
 			if (res.confirm) {
-				toolsData.loading.del = true;
-				server.post('/message/manage/deletUserMessageReply', { umrid: item.umrid }, (data: BaseResult) => {
-					toolsData.loading.del = false;
+				server.post('/message/manage/deletUserMessageReply', { umrid: umrid }, (data: BaseResult) => {
 					uni.showToast({
 						title: data.message,
 						icon: 'none'
 					});
 					if (data.success) {
-						friendData.level = 1;
-						queryFriend();
+						messageData.level = 1;
+						queryAll();
 					}
 				});
 			} else if (res.cancel) {
@@ -238,8 +289,9 @@ const messageTitle = (umid: number) => {
 	});
 };
 // 发表评论
-const pushDetail = (umid: number) => {
-	server.post('/message/addReply', tools.concatJson(umid, messageData.detailInfo), (data: BaseResult) => {
+const pushDetailclick = () => {
+	console.log('发布评论的内容', messageData.pushDetail.info);
+	server.post('/message/addReply', messageData.pushDetail, (data: BaseResult) => {
 		uni.showToast({
 			title: data.message,
 			duration: 500
@@ -248,6 +300,16 @@ const pushDetail = (umid: number) => {
 			queryAll();
 		}
 	});
+};
+const showDetail = () => {
+	messageData.pushDetail.umid = messageData.info.umid + '';
+	messageData.focus = true;
+	messageData.ifInputShow = true;
+};
+const disappearDetailInfo = () => {
+	messageData.pushDetail.info = '';
+	messageData.focus = false;
+	messageData.ifInputShow = false;
 };
 //加载更多的下拉----页面触底生命周期
 onReachBottom(() => {
@@ -406,10 +468,19 @@ onPullDownRefresh(() => {
 .bottonStyle {
 	width: 100%;
 	height: 98upx;
+	background-color: aliceblue;
 	display: flex;
 	align-items: center;
 	position: fixed;
 	left: 0;
 	bottom: 0;
+}
+.input-my {
+	width: 100%;
+	height: 50rpx;
+	border: 1rpx solid #bbbbbb;
+}
+.messageListStyleLast > view:last-child {
+	padding-bottom: 200rpx;
 }
 </style>

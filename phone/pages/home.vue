@@ -73,7 +73,7 @@ const Data = reactive({
 });
 const OLD_URL = '/pages/home';
 const actionFooterInfo = (id: number) => {
-	Data.bottonTabbarId = id;
+	Data.bottonTabbarId = id + '';
 	if (id == 2 && !loginUser.isLogin) {
 		uni.showModal({
 			title: '请登录后访问！！！',
@@ -116,12 +116,6 @@ const list = reactive([
 	{ path: '/pages/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '留言板' },
 	{ path: '/pages/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '留言板' }
 ]);
-const Login = () => {
-	uni.navigateTo({
-		url: '/pages/Login'
-	});
-};
-
 const LogOut = () => {
 	uni.showModal({
 		title: '提示',
@@ -131,7 +125,7 @@ const LogOut = () => {
 				server.post('/user/auth/logout', {}, function() {
 					store().updateLoginUser(() => {
 						uni.navigateTo({
-							url: '/pages/Login'
+							url: '/pages/home'
 						});
 					});
 				});
