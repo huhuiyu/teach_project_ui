@@ -9,7 +9,6 @@ import dialog from '../../tools/dialog'
 import server from '../../tools/server'
 import tools from '../../tools/tools'
 import { useRoute, useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
 import store from '../../store'
 const router = useRouter()
 const route = useRoute()
@@ -19,8 +18,6 @@ const toolsData = reactive({
     del: false,
   },
 })
-const storeInfo = store()
-const { loginUser } = storeToRefs(storeInfo)
 
 const MessageMode = computed(() => {
   return route.query.mode + ''
@@ -70,7 +67,7 @@ const commentColumns: DataTableColumns<MessageReply> = [
       ]
     },
   },
-  { title: '评论信息', key: 'info' },
+  { title: '评论信息', key: 'info', width: 500 },
   {
     title: '是否屏蔽',
     key: 'disable',
@@ -152,7 +149,7 @@ const commentColumns: DataTableColumns<MessageReply> = [
               delData.commentInfo = row
             },
           },
-          { default: () => '删除' }
+          { default: () => '屏蔽' }
         ),
         h(
           NButton,
@@ -207,7 +204,7 @@ const messageColumns: DataTableColumns<MessageDetail> = [
       ]
     },
   },
-  { title: '标题', key: 'title' },
+  { title: '标题', key: 'title', width: 500 },
   {
     title: '是否屏蔽',
     key: 'disable',
@@ -289,7 +286,7 @@ const messageColumns: DataTableColumns<MessageDetail> = [
               delData.messageInfo = row
             },
           },
-          { default: () => '删除' }
+          { default: () => '屏蔽' }
         ),
         h(
           NButton,
@@ -358,7 +355,7 @@ const delData = reactive({
 })
 const delMessage = () => {
   if (delData.disableReason == '') {
-    dialog.messageWarning('删除必须填写原因')
+    dialog.messageWarning('屏蔽必须填写原因')
     return
   }
   messageData.loading = true
@@ -395,7 +392,7 @@ queryCommentAll()
 
 const delComment = () => {
   if (delData.disableReason == '') {
-    dialog.messageWarning('删除必须填写原因')
+    dialog.messageWarning('屏蔽必须填写原因')
     return
   }
   commentData.loading = true
@@ -490,18 +487,18 @@ const queryAllByInfo = () => {
       </div>
     </template>
   </n-modal>
-  <n-modal v-model:show="toolsData.modelVisible.del" preset="dialog">
+  <n-modal v-model:show="toolsData.modelVisible.del" preset="dialog" @after-leave="delData.disableReason = ''">
     <template #header>
-      <div v-if="MessageMode == 'message'">删除标题为'{{ delData.messageInfo.title }}'留言</div>
-      <div v-if="MessageMode == 'comment'">删除评论信息为'{{ delData.commentInfo.info }}'评论</div>
+      <div v-if="MessageMode == 'message'">屏蔽标题为'{{ delData.messageInfo.title }}'留言</div>
+      <div v-if="MessageMode == 'comment'">屏蔽评论信息为'{{ delData.commentInfo.info }}'评论</div>
     </template>
     <n-form-item>
-      <n-input v-model:value="delData.disableReason" placeholder="请输入删除原因" />
+      <n-input v-model:value="delData.disableReason" placeholder="请输入屏蔽原因" />
     </n-form-item>
     <n-space justify="end" align="center">
-      <n-gradient-text type="error" size="12"> 删除之后不可撤回，谨慎操作 </n-gradient-text>
-      <n-button type="error" size="small" v-if="MessageMode == 'message'" @click="delMessage()" v-loading="messageData.loading">删除</n-button>
-      <n-button type="error" size="small" v-if="MessageMode == 'comment'" @click="delComment()" v-loading="commentData.loading">删除</n-button>
+      <n-gradient-text type="error" size="12"> 屏蔽之后不可撤回，谨慎操作 </n-gradient-text>
+      <n-button type="error" size="small" v-if="MessageMode == 'message'" @click="delMessage()" v-loading="messageData.loading">屏蔽</n-button>
+      <n-button type="error" size="small" v-if="MessageMode == 'comment'" @click="delComment()" v-loading="commentData.loading">屏蔽</n-button>
       <n-button type="info" size="small" @click="toolsData.modelVisible.del = false">关闭</n-button>
       <br />
     </n-space>
