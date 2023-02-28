@@ -173,7 +173,7 @@
 		if (option.oldUrl) {
 			toolsData.oldUrl = option.oldUrl
 		} else {
-			toolsData.oldUrl = '/pages/message/home'
+			toolsData.oldUrl = '/pages/index/index'
 		}
 	})
 
