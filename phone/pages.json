@@ -22,13 +22,6 @@
       }
     },
     {
-      "path": "pages/home",
-      "style": {
-        "navigationBarTitleText": "首页",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
       "path": "pages/message/home",
       "style": {
         "navigationBarTitleText": "留言板首页",
@@ -133,7 +126,25 @@
         "onReachBottomDistance": 20
       }
     }
-  ],
+      ,{
+            "path" : "pages/encrypt/encrypt",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/encrypt/userEncrypt",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "胡辉煜的教学演示项目",
@@ -147,7 +158,7 @@
     "list": [
       {
         "name": "", //模式名称
-        "path": "pages/message/home", //启动页面，必选
+        "path": "pages/index/index", //启动页面，必选
         "query": "" //启动参数，在页面的onLoad函数里面得到
       }
     ]
