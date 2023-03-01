@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { NPagination } from 'naive-ui'
-import { computed } from 'vue'
+import { computed, PropType } from 'vue'
 import { PageInfo } from '../entity/BaseResult'
 import logger from '../tools/logger'
 
 const props = defineProps({
   page: {
-    type: Object,
+    type: Object as PropType<PageInfo>,
     required: true,
     default: new PageInfo(),
   },
