@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
     "@types/axios": "^0.14.0",
     "@types/qs": "^6.9.7",
     "@wangeditor/editor": "^5.1.23",

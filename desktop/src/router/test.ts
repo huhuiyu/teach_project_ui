@@ -27,6 +27,10 @@ const routes = [
     path: '/test/portable',
     component: () => import('../view/test/TestPortable.vue'),
   },
+  {
+    path: '/test/amap',
+    component: () => import('../view/test/AMap.vue'),
+  },
 ]
 
 let exportRouter = routes
