@@ -110,7 +110,7 @@ import tools from '../../script/tools';
 import store from '../../store/index';
 const { loginUser } = store();
 const userInfo = reactive({
-	img: '',
+	img: ''
 });
 const messageData = reactive({
 	examineInfo: {
@@ -210,12 +210,12 @@ const examineMessage = (title: string, message: number, messageDetailbollean: bo
 	}
 	uni.showModal({
 		title: '举报' + stringtitle,
-		content: messageData.examineInfo.info,
-		confirmText: '举报',
-		placeholderText: '请输入举报内容',
 		editable: true,
+		showCancel: false,
+		placeholderText: '请输入举报内容',
 		success: function(res: any) {
 			if (res.confirm) {
+				messageData.examineInfo.info=res.content
 				server.post(url, messageData.examineInfo, (data: BaseResult) => {
 					uni.showToast({
 						title: data.message,

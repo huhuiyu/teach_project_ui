@@ -1,15 +1,15 @@
 <template>
 	<view v-if="Data.bottonTabbarId == '1'">
 		<view class="header">
-			<view>
-				<view style="font-size: 2rem;">Mr. or girl</view>
-				<view style="text-indent: 7em;">{{ Data.titleInfo }},欢迎您来到这</view>
+			<view style=" padding: 3rem 0 0 1rem;letter-spacing: 1px;">
+				<view style="font-size: 2rem;color: #fff;">Mr. or girl</view>
+				<view style="text-indent: 7em;color: #fff;">{{ Data.titleInfo }},欢迎您来到这</view>
 			</view>
 		</view>
 		<view class="main">
 			<view class="mainList" v-for="item in list" :key="item.path" @click="actionFunction(item.path)">
-				<image style="width: 100%;height: 100%;border-radius: 5px;" :src="item.img"></image>
-				<span>{{ item.info }}</span>
+				<image style="width: 110%;height: 250%;border-radius: 5px;" :src="item.img"></image>
+				<view style="white-space: nowrap;position: absolute;left: 50%;transform: translateX(-50%);">{{ item.info }}</view>
 			</view>
 		</view>
 	</view>
@@ -95,6 +95,7 @@ const actionFooterInfo = (id: string) => {
 };
 
 const actionFunction = (path: string) => {
+	console.log('进入uni管理地址', path);
 	uni.navigateTo({
 		url: path
 	});
@@ -110,7 +111,14 @@ const dataTime = () => {
 	}
 };
 dataTime();
-const list = reactive([{ path: '/pages/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '留言板' }]);
+const list = reactive([
+	{ path: '/pages/message/home', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '简易留言板' },
+	{ path: '/pages/encrypt/encrypt', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '加密' }
+]);
+if (loginUser.isLogin) {
+	list.push({ path: '/pages/encrypt/userEncrypt', img: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=95', info: '用户级加密' });
+}
+// 退出登录后返回
 const LogOut = () => {
 	uni.showModal({
 		title: '提示',
@@ -120,7 +128,7 @@ const LogOut = () => {
 				server.post('/user/auth/logout', {}, function() {
 					store().updateLoginUser(() => {
 						uni.navigateTo({
-							url: '/pages/home'
+							url: '/pages/index/index'
 						});
 					});
 				});
@@ -131,7 +139,7 @@ const LogOut = () => {
 		}
 	});
 };
-
+// 跳转用户信息界面
 const ClickUserInfo = () => {
 	uni.navigateTo({
 		url: '/pages/message/my/userInfo?username=' + loginUser.tbUser.username
@@ -152,11 +160,7 @@ const ClickUserInfo = () => {
 	background-repeat: no-repeat;
 	background-position: center;
 }
-.header > uni-view {
-	padding: 3rem 0 0 1rem;
-	letter-spacing: 1px;
-	color: #fff;
-}
+
 .main {
 	margin: 2rem 1rem;
 	display: grid;
@@ -168,13 +172,14 @@ const ClickUserInfo = () => {
 .mainList {
 	margin: 0 auto;
 	width: 60%;
-	height: 120%;
+	height: 70%;
+	position: relative;
 }
 
 .bottomTabbar > img,
 .bottomTabbar {
 	width: 55rpx;
-	height: 55rpx;
+	height:50rpx;
 }
 
 .bottom {
