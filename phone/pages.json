@@ -130,7 +130,7 @@
             "path" : "pages/encrypt/encrypt",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "",
+                "navigationBarTitleText": "加密信息管理",
                 "enablePullDownRefresh": false
             }
             
@@ -139,11 +139,12 @@
             "path" : "pages/encrypt/userEncrypt",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "",
+                "navigationBarTitleText": "用户级加密信息管理",
                 "enablePullDownRefresh": false
             }
             
         }
+        
     ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
