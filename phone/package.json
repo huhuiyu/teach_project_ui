@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "胡辉煜的教学演示项目",
 	"dependencies": {
+		"@amap/amap-jsapi-loader": "^1.0.1",
 		"pinia": "^2.0.30",
 		"qs": "^6.11.0",
 		"spark-md5": "^3.0.2"

@@ -1,167 +1,178 @@
 {
-  "pages": [
-    //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-    {
-      "path": "pages/index/index",
-      "style": {
-        "navigationBarTitleText": "胡辉煜的教学演示项目"
-      }
-    },
-    {
-      "path": "pages/test/test",
-      "style": {
-        "navigationBarTitleText": "",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/Login",
-      "style": {
-        "navigationBarTitleText": "登录 | 注册",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/message/home",
-      "style": {
-        "navigationBarTitleText": "留言板首页",
-        // 下拉刷新列表
-        "enablePullDownRefresh": true,
-        // 触底距离，刷新数据
-        "onReachBottomDistance": 20
-      }
-    },
-    {
-      "path": "pages/message/personalHome",
-      "style": {
-        "navigationBarTitleText": "留言板个人首页",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/message/detail",
-      "style": {
-        "navigationBarTitleText": "留言详情",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/message/privateMessage",
-      "style": {
-        "navigationBarTitleText": "消息",
-        "enablePullDownRefresh": true,
-        // 触底距离，刷新数据
-        "onReachBottomDistance": 20
-      }
-    },
-    {
-      "path": "pages/message/edit",
-      "style": {
-        "navigationBarTitleText": "创造内容",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/message/privateMessageDetails",
-      "style": {
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/findPwd",
-      "style": {
-        "navigationBarTitleText": "找回密码",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/message/my/myMessage",
-      "style": {
-        "navigationBarTitleText": "我的留言",
-        "enablePullDownRefresh": true,
-        // 触底距离，刷新数据
-        "onReachBottomDistance": 20
-      }
-    },
-    {
-      "path": "pages/message/my/myComment",
-      "style": {
-        "navigationBarTitleText": "我的评论",
-        "enablePullDownRefresh": true,
-        // 触底距离，刷新数据
-        "onReachBottomDistance": 20
-      }
-    },
-    {
-      "path": "pages/message/my/followMe",
-      "style": {
-        "navigationBarTitleText": "关注我的",
-        "enablePullDownRefresh": true,
-        // 触底距离，刷新数据
-        "onReachBottomDistance": 20
-      }
-    },
-    {
-      "path": "pages/message/my/meFollow",
-      "style": {
-        "navigationBarTitleText": "我的关注",
-        "enablePullDownRefresh": true,
-        // 触底距离，刷新数据
-        "onReachBottomDistance": 20
-      }
-    },
-    {
-      "path": "pages/message/my/userInfo",
-      "style": {
-        "navigationBarTitleText": "用户信息",
-        "enablePullDownRefresh": false
-      }
-    },
-    {
-      "path": "pages/message/my/myFriend",
-      "style": {
-        "navigationBarTitleText": "我的好友",
-        "enablePullDownRefresh": true,
-        // 触底距离，刷新数据
-        "onReachBottomDistance": 20
-      }
-    }
-      ,{
-            "path" : "pages/encrypt/encrypt",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "加密信息管理",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        ,{
-            "path" : "pages/encrypt/userEncrypt",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "用户级加密信息管理",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-        
-    ],
-  "globalStyle": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "胡辉煜的教学演示项目",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#f1f1f1"
-  },
-  "uniIdRouter": {},
-  "condition": {
-    //模式配置，仅开发期间生效
-    "current": 0, //当前激活的模式(list 的索引项)
-    "list": [
-      {
-        "name": "", //模式名称
-        "path": "pages/index/index", //启动页面，必选
-        "query": "" //启动参数，在页面的onLoad函数里面得到
-      }
-    ]
-  }
+	"pages": [
+		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "胡辉煜的教学演示项目"
+			}
+		},
+		{
+			"path": "pages/test/test",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/Login",
+			"style": {
+				"navigationBarTitleText": "登录 | 注册",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/message/home",
+			"style": {
+				"navigationBarTitleText": "留言板首页",
+				// 下拉刷新列表
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+		},
+		{
+			"path": "pages/message/personalHome",
+			"style": {
+				"navigationBarTitleText": "留言板个人首页",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/message/detail",
+			"style": {
+				"navigationBarTitleText": "留言详情",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/message/privateMessage",
+			"style": {
+				"navigationBarTitleText": "消息",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+		},
+		{
+			"path": "pages/message/edit",
+			"style": {
+				"navigationBarTitleText": "创造内容",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/message/privateMessageDetails",
+			"style": {
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/findPwd",
+			"style": {
+				"navigationBarTitleText": "找回密码",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/message/my/myMessage",
+			"style": {
+				"navigationBarTitleText": "我的留言",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+		},
+		{
+			"path": "pages/message/my/myComment",
+			"style": {
+				"navigationBarTitleText": "我的评论",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+		},
+		{
+			"path": "pages/message/my/followMe",
+			"style": {
+				"navigationBarTitleText": "关注我的",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+		},
+		{
+			"path": "pages/message/my/meFollow",
+			"style": {
+				"navigationBarTitleText": "我的关注",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+		},
+		{
+			"path": "pages/message/my/userInfo",
+			"style": {
+				"navigationBarTitleText": "用户信息",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/message/my/myFriend",
+			"style": {
+				"navigationBarTitleText": "我的好友",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+		}, {
+			"path": "pages/encrypt/encrypt",
+			"style": {
+				"navigationBarTitleText": "加密信息管理",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/encrypt/userEncrypt",
+			"style": {
+				"navigationBarTitleText": "用户级加密信息管理",
+				"enablePullDownRefresh": false
+			}
+
+		},
+		{
+			"path": "pages/map/amap",
+			"style": {
+				"navigationBarTitleText": "高德地图演示",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/map/addressManage",
+			"style": {
+				"navigationBarTitleText": "我的地址管理",
+				"enablePullDownRefresh": true,
+				// 触底距离，刷新数据
+				"onReachBottomDistance": 20
+			}
+
+		}
+
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "胡辉煜的教学演示项目",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#f1f1f1"
+	},
+	"uniIdRouter": {},
+	"condition": {
+		//模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [{
+			"name": "", //模式名称
+			"path": "pages/index/index", //启动页面，必选
+			"query": "" //启动参数，在页面的onLoad函数里面得到
+		}]
+	}
 }

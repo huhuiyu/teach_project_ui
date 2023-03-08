@@ -58,7 +58,7 @@
         "usingComponents" : true,
         "permission" : {
             "scope.userLocation" : {
-                "desc" : "程序需要演示地址信息收集和地图调用"
+                "desc" : ""
             }
         }
     },
@@ -79,6 +79,15 @@
         "router" : {
             "mode" : "history",
             "base" : "/teach_project_ui_phone/"
+        },
+        "sdkConfigs" : {
+            "maps" : {
+                "amap" : {
+                    "key" : "7b23a894e66de98084f3b7dcda096457",
+                    "securityJsCode" : "",
+                    "serviceHost" : "https://huhuiyu.top/_AMapService"
+                }
+            }
         }
     }
 }
