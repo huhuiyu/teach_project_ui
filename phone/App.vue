@@ -5,6 +5,9 @@
 		},
 		onShow: function() {
 			console.log('App Show')
+			if (top) {
+				top.postMessage('loaded', '*');
+			}
 		},
 		onHide: function() {
 			console.log('App Hide')
