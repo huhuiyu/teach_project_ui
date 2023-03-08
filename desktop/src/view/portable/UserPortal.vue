@@ -11,6 +11,7 @@ import dialogApi from '../../tools/dialog'
 import store from '../../store'
 import { storeToRefs } from 'pinia'
 import logger from '../../tools/logger'
+import { ro } from 'date-fns/locale'
 const storeInfo = store()
 const router = useRouter()
 const { loginUser } = storeToRefs(storeInfo)
@@ -22,8 +23,24 @@ const columns = reactive([
   { title: '信息编号', key: 'pmid' },
   { title: '信息分组', key: 'messageGroup' },
   { title: '信息的标志键名', key: 'messageKey' },
-  { title: '信息内容', key: 'message' },
-  { title: '开发者key', key: 'accessKey' },
+  {
+    title: '信息内容',
+    key: 'message',
+    titleColSpan: 0,
+    render(row: PortableInfo) {
+      return [
+        h(
+          NSpace,
+          {
+            justify: 'center',
+            title: row.message,
+          },
+          { default: () => row.message }
+        ),
+      ]
+    },
+  },
+  // { title: '开发者key', key: 'accessKey' },
   {
     title: '信息最后修改时间',
     key: 'lastupdate',
@@ -409,5 +426,12 @@ const queryUserAllByInfo = () => {
 }
 :deep() .n-data-table-td {
   text-align: center;
+}
+:deep() .n-data-table-td[data-col-key='message'] > div > div {
+  max-width: 20vw !important;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 </style>
