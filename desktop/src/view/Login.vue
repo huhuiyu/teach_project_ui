@@ -115,42 +115,40 @@ const emailRegisterForm = reactive({
 })
 //发送邮箱验证码（登录/注册）
 const sendEmailCode = (mode: string) => {
-  logger.debug(emailRegisterForm.rules)
-  mode == 'login'
-    ? emailLoginRef
-    : emailRegRef.value?.validate(
-        (errors) => {
-          if (!errors) {
-            mode == 'login' ? (emailLoginForm.codeLoading = true) : (emailRegisterForm.codeLoading = true)
-            server.post(
-              '/tool/sendEmailCode',
-              {
-                email: mode == 'login' ? emailLoginForm.loginInfo.email : emailRegisterForm.regInfo.email,
-              },
-              (data: BaseResult) => {
-                mode == 'login' ? (emailLoginForm.codeLoading = false) : (emailRegisterForm.codeLoading = false)
-                if (data.success) {
-                  dialog.notifyInfo({
-                    content: data.message,
-                    duration: 2000,
-                    keepAliveOnHover: true,
-                  })
-                } else {
-                  dialog.notifyError({
-                    content: data.message,
-                    duration: 2000,
-                    keepAliveOnHover: true,
-                  })
-                }
-              },
-              true
-            )
-          }
-        },
-        (rule) => {
-          return rule?.key === 'email'
-        }
-      )
+  let result = mode == 'login' ? emailLoginRef.value : emailRegRef.value
+  result?.validate(
+    (errors) => {
+      if (!errors) {
+        mode == 'login' ? (emailLoginForm.codeLoading = true) : (emailRegisterForm.codeLoading = true)
+        server.post(
+          '/tool/sendEmailCode',
+          {
+            email: mode == 'login' ? emailLoginForm.loginInfo.email : emailRegisterForm.regInfo.email,
+          },
+          (data: BaseResult) => {
+            mode == 'login' ? (emailLoginForm.codeLoading = false) : (emailRegisterForm.codeLoading = false)
+            if (data.success) {
+              dialog.notifyInfo({
+                content: data.message,
+                duration: 2000,
+                keepAliveOnHover: true,
+              })
+            } else {
+              dialog.notifyError({
+                content: data.message,
+                duration: 2000,
+                keepAliveOnHover: true,
+              })
+            }
+          },
+          true
+        )
+      }
+    },
+    (rule) => {
+      return rule?.key === 'email'
+    }
+  )
 }
 const emailLogin = () => {
   emailLoginRef.value?.validate().then(() => {
@@ -266,52 +264,51 @@ const sendImgCode = () => {
 }
 sendImgCode()
 const sendPhoneCode = (mode: string) => {
-  mode == 'login'
-    ? phoneLoginRef.value
-    : phoneRegRef.value
+  let result = mode == 'login' ? phoneLoginRef.value : phoneRegRef.value
+  result
+    ?.validate(
+      () => {},
+      (rule) => {
+        return rule?.key === 'phone'
+      }
+    )
+    .then(() => {
+      logger.debug('then')
+      // if (1 == 1) return
+      result
         ?.validate(
           () => {},
-          (rule) => {
-            return rule?.key === 'phone'
+          (rule2) => {
+            return rule2?.key === 'imgCodeKey'
           }
         )
         .then(() => {
-          mode == 'login'
-            ? phoneLoginRef
-            : phoneRegRef.value
-                ?.validate(
-                  () => {},
-                  (rule2) => {
-                    return rule2?.key === 'imgCodeKey'
-                  }
-                )
-                .then(() => {
-                  mode == 'login' ? (phoneLoginForm.loading = true) : (phoneRegForm.loading = true)
-                  server.post(
-                    '/tool/sendValidateCode',
-                    {
-                      imageCode: mode == 'login' ? phoneLoginForm.code.imgCode : phoneRegForm.code.imgCode,
-                      phone: mode == 'login' ? phoneLoginForm.loginInfo.phone : phoneRegForm.regInfo.phone,
-                    },
-                    (data: BaseResult) => {
-                      mode == 'login' ? (phoneLoginForm.loading = false) : (phoneRegForm.loading = false)
-                      dialog.notifyWarning({
-                        content: data.message,
-                        duration: 2000,
-                        keepAliveOnHover: true,
-                      })
-                      if (!data.success) sendImgCode()
-                    },
-                    true
-                  )
-                })
-                .catch((error) => {
-                  logger.error(error)
-                })
+          mode == 'login' ? (phoneLoginForm.loading = true) : (phoneRegForm.loading = true)
+          server.post(
+            '/tool/sendValidateCode',
+            {
+              imageCode: mode == 'login' ? phoneLoginForm.code.imgCode : phoneRegForm.code.imgCode,
+              phone: mode == 'login' ? phoneLoginForm.loginInfo.phone : phoneRegForm.regInfo.phone,
+            },
+            (data: BaseResult) => {
+              mode == 'login' ? (phoneLoginForm.loading = false) : (phoneRegForm.loading = false)
+              dialog.notifyWarning({
+                content: data.message,
+                duration: 2000,
+                keepAliveOnHover: true,
+              })
+              if (!data.success) sendImgCode()
+            },
+            true
+          )
         })
         .catch((error) => {
-          logger.error(error)
+          logger.error(error, 'code')
         })
+    })
+    .catch((error) => {
+      logger.error(error, 'phone')
+    })
 }
 const phoneLogin = () => {
   phoneLoginRef.value?.validate().then(() => {
