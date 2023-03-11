@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FormInst, FormItemInst, NAvatar, NButton, NCard, NForm, NFormItem, NInput, NSpin } from 'naive-ui'
+import { dataTableDark, FormInst, FormItemInst, NAvatar, NButton, NCard, NForm, NFormItem, NInput, NSpin } from 'naive-ui'
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseResult from '../../entity/BaseResult'
@@ -265,7 +265,7 @@ function sendImgCode() {
   loading.imgCode = true
   server.post('/tool/getImageCode', {}, (data: BaseResult) => {
     loading.imgCode = false
-    imgCode.url = data.message
+    if (data.success) imgCode.url = data.message
   })
 }
 sendImgCode()

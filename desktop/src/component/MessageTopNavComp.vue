@@ -34,7 +34,7 @@ const options = [
     },
   },
   {
-    label: '用户设置(暂未开发)',
+    label: '用户设置',
     key: 'setup',
     icon: () => {
       return h('i', { class: 'iconfont', innerHTML: '&#xe602;' })
@@ -83,9 +83,11 @@ const handleSelect = (key: string | number) => {
   if (key == 'logOut') {
     logOut()
     return
-  }
-  if (key == 'personalHome ') {
+  } else if (key == 'personalHome ') {
     tools.jumpRoute_Blank('/message/personal/' + loginUser.value.tbUser.username)
+    return
+  } else if (key == 'setup') {
+    tools.jumpRoute_Blank('/user/userinfo')
     return
   }
 }

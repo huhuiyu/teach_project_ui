@@ -260,8 +260,10 @@ const phoneRegForm = reactive({
 })
 const sendImgCode = () => {
   server.post('/tool/getImageCode', {}, (data: BaseResult) => {
-    phoneLoginForm.code.imgUrl = data.message
-    phoneRegForm.code.imgUrl = data.message
+    if (data.success) {
+      phoneLoginForm.code.imgUrl = data.message
+      phoneRegForm.code.imgUrl = data.message
+    }
   })
 }
 sendImgCode()

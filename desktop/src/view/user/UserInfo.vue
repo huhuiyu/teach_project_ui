@@ -262,9 +262,9 @@ const phoneInfo = reactive({
 const sendImgCode = () => {
   loading.phone = true
   server.post('/tool/getImageCode', {}, (data: BaseResult) => {
-    phoneInfo.imgUrl = data.message
+    loading.phone = false
+    if (data.success) phoneInfo.imgUrl = data.message
   })
-  loading.phone = false
 }
 sendImgCode()
 //发送手机验证码
