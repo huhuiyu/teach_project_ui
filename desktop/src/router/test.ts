@@ -31,6 +31,14 @@ const routes = [
     path: '/test/amap',
     component: () => import('../view/test/AMap.vue'),
   },
+  {
+    path: '/test/tree',
+    component: () => import('../view/test/Tree.vue'),
+  },
+  {
+    path: '/test/arrtotree',
+    component: () => import('../view/test/ArrayToTree.vue'),
+  },
 ]
 
 let exportRouter = routes
