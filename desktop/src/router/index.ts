@@ -11,6 +11,7 @@ import portableRouter from './portable'
 import toll from './toll'
 import contacts from './contacts'
 import notepad from './notepad'
+import charts from './charts'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -41,6 +42,7 @@ const routes: RouteRecordRaw[] = [
   .concat(notepad)
   .concat(toll)
   .concat(contacts)
+  .concat(charts)
 
 // 创建router
 const router = createRouter({
