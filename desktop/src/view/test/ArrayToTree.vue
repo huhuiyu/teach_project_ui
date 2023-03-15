@@ -785,6 +785,46 @@ const list = [
     parent: '433100',
   },
 ]
+
+const arrToTree1 = (arr: Array<any>) => {
+  let objMap = {}
+  let result = [] as any
+
+  arr.forEach((element) => {
+    /* 
+    430001 43000
+    430001=[]
+    430001.children = 430001=[]
+    43000=[]
+    43000=[430001]
+    */
+    //没有找到直接赋值key=[]
+    if (!objMap[element.value]) {
+      objMap[element.value] = []
+    }
+    //找到直接将当前对象将当前对象设置为当前对象子
+    if (objMap[element.value]) {
+      element.children = objMap[element.value]
+    }
+    //父节点部位顶级给父节点添加进去父节点:[]
+    if (element.parent != '-1') {
+      if (!objMap[element.parent]) {
+        objMap[element.parent] = []
+      }
+      //找到父节点将对象添加进入
+      objMap[element.parent].push(element)
+    }
+    //顶级节点直接添加到返回数组
+    if (element.parent == '-1') {
+      result.push(element)
+    }
+  })
+  console.log(Object.keys(objMap).length)
+
+  return result
+}
+
+console.log('==========>', arrToTree1(list))
 //流式api
 const arrToTree = (arr: any) => {
   console.log(arr)
