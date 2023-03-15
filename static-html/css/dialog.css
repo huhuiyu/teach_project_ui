@@ -1,0 +1,20 @@
+#dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#dialog {
+  border-width: 0px;
+  border-radius: 1rem;
+  padding: 0px;
+}
+
+
+#dialog .title {
+  background-color: #dcdcdc;
+  padding: 1rem;
+  text-align: center;
+}
+
+#dialog > div:last-of-type {
+  padding: 1rem;
+}

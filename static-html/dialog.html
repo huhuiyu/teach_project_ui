@@ -11,16 +11,26 @@
   <meta name="description" content="胡辉煜-程序猿学习">
   <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
   <link rel="shortcut icon" href="https://media.huhuiyu.top/huhuiyu.top/hu-logo.jpg" type="image/jpeg">
-
+  <link rel="stylesheet" href="./css/dialog.css">
 </head>
 
 <body>
+  <div>
+    <button id="openDialog">打开对话框</button>
+    <input type="text">
+    <dialog id="dialog">
 
-  <a href="dialog.html">对话框</a>
-  |
-  <a href="vue3-html/h01.html">vue3基础1-option</a>
-  |
-  <a href="vue3-html/h02.html">vue3基础2-setup</a>
+      <div class="title">对话框</div>
+      <div>
+        <div id="divInfo"></div>
+        <form method="dialog"><button>关闭</button></form>
+
+      </div>
+    </dialog>
+  </div>
+
+
+  <script src="./js/dialog.js" type="module"></script>
 </body>
 
 </html>
