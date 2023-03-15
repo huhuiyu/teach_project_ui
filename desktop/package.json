@@ -18,6 +18,7 @@
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.2.2",
+    "echarts": "^5.4.1",
     "pinia": "^2.0.28",
     "plupload": "^2.3.9",
     "qs": "^6.11.0",
