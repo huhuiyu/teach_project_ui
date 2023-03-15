@@ -8,13 +8,17 @@
 		</view>
 		<view class="main">
 			<view class="mainList" v-for="item in list" :key="item.path" @click="actionFunction(item.path)">
-				<image style="width: 110%;height: 250%;border-radius: 5px;" :src="item.img"></image>
+				<image style="width: 110%;height: 250%;border-radius: 5px;object-fit: cover;" :src="item.img"></image>
 				<view style="white-space: nowrap;position: absolute;left: 50%;transform: translateX(-50%);">
 					{{ item.info }}
 				</view>
 			</view>
 		</view>
+		<view style="width: 100vw;height: 15vh;">
+			
+		</view>
 	</view>
+	
 	<view v-else>
 		<view class="userInfo" v-if="loginUser.isLogin">
 			<view class="userInfoImgNickname">
@@ -188,13 +192,12 @@
 		grid-template-columns: repeat(3, 1fr);
 		text-align: center;
 		box-sizing: border-box;
-		gap: 3rem 1rem;
+		gap: 4rem 1rem;
 	}
 
 	.mainList {
 		margin: 0 auto;
 		width: 60%;
-		height: 70%;
 		position: relative;
 	}
 
@@ -217,6 +220,7 @@
 		width: 100vw;
 		bottom: 0px;
 		border-top: 1px solid #000;
+		background-color: #fff;
 	}
 
 	.bottomTabbarStyle {
@@ -246,6 +250,7 @@
 	.UserInfoImg {
 		width: 200rpx;
 		height: 200rpx;
+		object-fit: cover;
 		border-radius: 10px;
 		border: 1px solid #000;
 	}

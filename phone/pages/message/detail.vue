@@ -20,7 +20,7 @@
 					</view>
 				</view>
 			</view>
-			<view style="margin-right: 10rpx;" v-else><button>关注</button></view>
+			<view @click="clickFollow(messageData.info.user.username)" style="margin-right: 10rpx;" v-else><button>关注</button></view>
 		</view>
 		<view style="margin: 20rpx 20rpx 40rpx 0rpx;margin-left: 40rpx;" v-html="messageData.info.info"></view>
 		<view>
@@ -188,6 +188,23 @@ const jumpUserInfo = (username: string) => {
 };
 
 const clickFollow = (username: string) => {
+	if (!loginUser.isLogin) {
+		let OLD_URL = '/pages/message/detail?umid=' + messageData.queryInfo.umid;
+		uni.showModal({
+			title: '请登录后访问！！！',
+			content: '是否跳转登录',
+			success: (res: any) => {
+				if (res.confirm) {
+					uni.navigateTo({
+						url: '/pages/Login?oldUrl=' + OLD_URL
+					});
+				} else if (res.cancel) {
+					return;
+				}
+			}
+		});
+		return
+	}
 	messageData.visible.FollowBotton = false;
 	server.post('/message/followUser', { username: username }, (data: BaseResult) => {
 		queryAll();
@@ -199,6 +216,23 @@ const changeOrderBy = (umid: number) => {
 	queryAll();
 };
 const examineMessage = (title: string, message: number, messageDetailbollean: boolean) => {
+	if (!loginUser.isLogin) {
+		let OLD_URL = '/pages/message/detail?umid=' + messageData.queryInfo.umid;
+		uni.showModal({
+			title: '请登录后访问！！！',
+			content: '是否跳转登录',
+			success: (res: any) => {
+				if (res.confirm) {
+					uni.navigateTo({
+						url: '/pages/Login?oldUrl=' + OLD_URL
+					});
+				} else if (res.cancel) {
+					return;
+				}
+			}
+		});
+		return
+	}
 	let url = '';
 	let stringtitle = title;
 	if (messageDetailbollean) {
@@ -215,7 +249,7 @@ const examineMessage = (title: string, message: number, messageDetailbollean: bo
 		placeholderText: '请输入举报内容',
 		success: function(res: any) {
 			if (res.confirm) {
-				messageData.examineInfo.info=res.content
+				messageData.examineInfo.info = res.content;
 				server.post(url, messageData.examineInfo, (data: BaseResult) => {
 					uni.showToast({
 						title: data.message,
@@ -251,6 +285,7 @@ const likeMessage = (umrid: number) => {
 	});
 };
 const delumrid = (item: string, umrid: number) => {
+	
 	uni.showModal({
 		title: '提示',
 		content: '确定删除' + item,
@@ -278,6 +313,23 @@ const delumrid = (item: string, umrid: number) => {
 // 点赞帖子
 
 const messageTitle = (umid: number) => {
+	if (!loginUser.isLogin) {
+		let OLD_URL = '/pages/message/detail?umid=' + messageData.queryInfo.umid;
+		uni.showModal({
+			title: '请登录后访问！！！',
+			content: '是否跳转登录',
+			success: (res: any) => {
+				if (res.confirm) {
+					uni.navigateTo({
+						url: '/pages/Login?oldUrl=' + OLD_URL
+					});
+				} else if (res.cancel) {
+					return;
+				}
+			}
+		});
+		return
+	}
 	server.post('/message/support', { umid: umid }, (data: BaseResult) => {
 		uni.showToast({
 			title: data.message,
@@ -290,7 +342,7 @@ const messageTitle = (umid: number) => {
 };
 // 发表评论
 const pushDetailclick = () => {
-	console.log('发布评论的内容', messageData.pushDetail.info);
+	
 	server.post('/message/addReply', messageData.pushDetail, (data: BaseResult) => {
 		uni.showToast({
 			title: data.message,
@@ -302,6 +354,23 @@ const pushDetailclick = () => {
 	});
 };
 const showDetail = () => {
+	if (!loginUser.isLogin) {
+		let OLD_URL = '/pages/message/detail?umid=' + messageData.queryInfo.umid;
+		uni.showModal({
+			title: '请登录后访问！！！',
+			content: '是否跳转登录',
+			success: (res: any) => {
+				if (res.confirm) {
+					uni.navigateTo({
+						url: '/pages/Login?oldUrl=' + OLD_URL
+					});
+				} else if (res.cancel) {
+					return;
+				}
+			}
+		});
+		return
+	}
 	messageData.pushDetail.umid = messageData.info.umid + '';
 	messageData.focus = true;
 	messageData.ifInputShow = true;
@@ -311,6 +380,7 @@ const disappearDetailInfo = () => {
 	messageData.focus = false;
 	messageData.ifInputShow = false;
 };
+
 //加载更多的下拉----页面触底生命周期
 onReachBottom(() => {
 	messageData.level = 2;
@@ -330,6 +400,7 @@ onReachBottom(() => {
 		});
 	}
 });
+
 // 刷新的生命周期
 onPullDownRefresh(() => {
 	messageData.level = 1;

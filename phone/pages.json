@@ -140,14 +140,15 @@
 			}
 
 		},
-		{
-			"path": "pages/map/amap",
-			"style": {
-				"navigationBarTitleText": "高德地图演示",
-				"enablePullDownRefresh": false
-			}
+		// {
+		// 	"path": "pages/map/amap",
+		// 	"style": {
+		// 		"navigationBarTitleText": "高德地图演示",
+		// 		"enablePullDownRefresh": false
+		// 	}
 
-		}, {
+		// },
+		{
 			"path": "pages/map/addressManage",
 			"style": {
 				"navigationBarTitleText": "我的地址管理",
