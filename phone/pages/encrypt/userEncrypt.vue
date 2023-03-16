@@ -1,7 +1,13 @@
 <template>
 	<view>
-		<view @click="encrypt(1)" class="buttonmartop"><button class="buttonbackclolor">加密信息</button></view>
-		<view @click="encrypt(2)" class="buttontowmartop"><button class="buttontwobackclolor">解密信息</button></view>
+		<textarea class="testTop" v-model="dataInfo.encrypt" placeholder-style="color:#F76260" placeholder="请输入需要加密的信息" />
+		<view class="buttonmartop">
+			<button @click="clickEncrypt" class="buttonbackclolor">加密信息</button>
+			<button @click="clickMD" class="buttonbackclolorMD">md5加密（不可逆）</button>
+			<button @click="copyTest" class="outcomebackclolor">复制结果</button>
+			<button @click="clickDecrypt" class="buttontwobackclolor">解密信息</button>
+		</view>
+		<textarea v-model="dataInfo.decrypt" placeholder-style="color:#F76260" placeholder="请输入需要解密的信息" />
 	</view>
 </template>
 
@@ -9,56 +15,55 @@
 import { reactive } from 'vue';
 import BaseResult from '../../script/entity/BaseResult';
 import server from '../../script/server';
-const encryptInfo = reactive({
-	urlOne: '/tool/userEncrypt',
-	urlTwo: '/tool/userDecrypt',
-	titleOne: '输入需要加密的信息',
-	titleTwo: '输入需要解密密的信息',
-	title: '',
-	url: ''
+const dataInfo = reactive({
+	copyVisible: false,
+	copyText: '',
+	encrypt: '',
+	decrypt: ''
 });
-const encrypt = (value: number) => {
-	if (value == 1) {
-		encryptInfo.title = encryptInfo.titleOne;
-		encryptInfo.url = encryptInfo.urlOne;
-	} else if (value == 2) {
-		encryptInfo.title = encryptInfo.titleTwo;
-		encryptInfo.url = encryptInfo.urlTwo;
-	}
-	uni.showModal({
-		title: encryptInfo.title,
-		showCancel: false,
-		editable: true,
-		placeholderText: '请输入需要加密的信息',
-		success: function(res) {
-			console.log('查看内容', res.content);
-			if (res.confirm) {
-				uni.showLoading({
-					title: '加载中'
-				});
-				server.post(encryptInfo.url, { info: res.content }, (data: BaseResult) => {
-					uni.hideLoading();
-					if (data.success && data.message != '请输入要加密的信息') {
-						uni.setClipboardData({
-							data: data.message,
-							showToast: true
-						});
-					} else {
-						uni.showToast({
-							title: '请求失败',
-							icon: 'error'
-						});
-					}
-				});
-			} else if (res.cancel) {
-				return;
-			}
+const copyTest = () => {
+	uni.setClipboardData({
+		data: dataInfo.copyText,
+		showToast: true
+	});
+};
+const clickEncrypt = () => {
+	server.post('/tool/userEncrypt', { info: dataInfo.encrypt }, (data: BaseResult) => {
+		if (data.success) {
+			dataInfo.copyText = data.message;
+			// dataInfo.encrypt = '';
+			dataInfo.decrypt = data.message;
+		}
+	});
+};
+const clickDecrypt = () => {
+	server.post('/tool/userDecrypt', { info: dataInfo.decrypt }, (data: BaseResult) => {
+		if (data.success) {
+			dataInfo.copyText = data.message;
+			// dataInfo.decrypt = '';
+			dataInfo.encrypt = data.message;
+		}
+	});
+};
+
+const clickMD = () => {
+	server.post('/tool/md5', { info: dataInfo.encrypt }, (data: BaseResult) => {
+		if (data.success) {
+			dataInfo.copyText = data.message;
+			// dataInfo.encrypt = '';
+			dataInfo.decrypt = data.message;
 		}
 	});
 };
 </script>
 
 <style scoped>
+.buttonbackclolorMD {
+	background-color: aqua;
+}
+.testTop {
+	margin-top: 30rpx;
+}
 .buttonmartop {
 	margin-top: 100rpx;
 }
@@ -73,5 +78,8 @@ const encrypt = (value: number) => {
 
 .buttontwobackclolor {
 	background-color: aquamarine;
+}
+.outcomebackclolor {
+	background-color: bisque;
 }
 </style>
