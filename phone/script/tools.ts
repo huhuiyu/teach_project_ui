@@ -74,7 +74,20 @@ let tools = {
 			result = false
 		}
 		return result
+	},
+	//性别反转
+	sexReverse: function(info: any) {
+		if (info.trim() == 'n'.trim()) {
+			return '保密'
+		} else if (info.trim() == 'f'.trim()) {
+			return '女生'
+		} else if (info.trim() == 'm'.trim()) {
+			return '男生'
+		} else {
+			return '没有此性别'
+		}
 	}
+
 }
 
 export default tools

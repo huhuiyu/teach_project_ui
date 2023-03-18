@@ -1,10 +1,10 @@
-class Ajax {
 
+class Ajax {
 	// 发起请求前的处理函数，参数是AajxConfig
 	before: Function
 	// 应答回来之后的处理函数，参数是应答服务端数据
 	after: Function
-
+	// 文件上传的axios实例
 	constructor(before: Function, after: Function) {
 		this.before = before
 		this.after = after
@@ -31,6 +31,7 @@ class Ajax {
 			}
 		})
 	}
+
 }
 
 // ajax配置信息对象
