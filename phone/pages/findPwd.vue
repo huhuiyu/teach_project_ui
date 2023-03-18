@@ -126,7 +126,7 @@
 	// 查询图片验证码
 	const queryImgCode = () => {
 		server.post('/tool/getImageCode', {}, (data: BaseResult) => {
-			toolsData.imgUrl = data.message
+			if (data.success) toolsData.imgUrl = data.message
 		})
 	}
 	queryImgCode()

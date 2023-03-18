@@ -5,7 +5,16 @@
 				<view>
 					<text>{{d.text}}</text>
 				</view>
-				<view class="iconfont arrow">&#xe615; </view>
+				<view style="display: flex;align-items: center;">
+					<view v-if="d.id=='avatar'">
+						<image :src="d.value" style="width:40px;height: 40px;margin-right: 5px;" lazy-load>
+						</image>
+					</view>
+					<view v-else style="margin-right: 5px;">
+						{{d.value}}
+					</view>
+					<view class="iconfont arrow">&#xe615; </view>
+				</view>
 			</view>
 		</view>
 		<view v-if="toolsData.sleceted=='nickname'">
@@ -62,45 +71,61 @@
 
 <script setup lang="ts">
 	import {
+		computed,
 		reactive,
 	} from 'vue'
 	import BaseResult, {
+		BaseDataResult,
 		BaseUserInfoResult
 	} from '../../../script/entity/BaseResult'
 	import {
 		onLoad
 	} from "@dcloudio/uni-app";
 	import server from '../../../script/server'
-	import store from '../../../store';
-	// import store from '../../../store/index'
-	// const {
-	// 	loginUser
-	// } = store()
+	import tools from '../../../script/tools';
+	import store from '../../../store/index'
+	import logger from '../../../script/logger';
+	import {
+		FileInfoResult
+	} from '../../../script/entity/FileInfoResult';
+	const {
+		loginUser
+	} = store()
+	const user = computed(() => loginUser)
 	const toolsData = reactive({
 		username: '',
 		sleceted: 'default',
 		loading: false,
 		list: [{
+				id: 'avatar',
+				text: "头像",
+				value: user.value.tbUserInfo.img
+			}, {
 				id: 'sex',
 				text: "性别",
+				value: tools.sexReverse(user.value.tbUserInfo.sex)
 			},
 			{
 				id: 'nickname',
 				text: "昵称",
+				value: user.value.tbUser.nickname
 			},
 			{
 				id: 'wechat',
 				text: "微信",
+				value: user.value.tbUserInfo.wechat
 			},
 			{
 				id: 'qq',
 				text: "QQ",
+				value: user.value.tbUserInfo.qq
 			},
 			{
 				id: 'info',
 				text: "个人描述",
 			}
-		]
+		],
+		file: null
 	})
 	const userInfo = reactive({
 		img: '',
@@ -121,6 +146,49 @@
 			})
 		}
 	})
+
+	console.log(toolsData.list);
+	//打开文件
+	const openImg = () => {
+		uni.chooseImage({
+			count: 1,
+			sizeType: ['original', 'compressed'],
+			sourceType: ['album'],
+			extension: ['image'],
+			success: function(res) {
+				console.log('files===》', res.tempFiles, res.tempFilePaths);
+				toolsData.file = res.tempFiles[0]
+				upload()
+			}
+		})
+	}
+
+	//上传文件，修改头像，删除之前头像
+	const upload = () => {
+		if (toolsData.file == null) {
+			return
+		}
+		let fid = server.isDownloadUrl(userInfo.img)
+		server.upload(
+			toolsData.file, {
+				fileinfo: loginUser.tbUser.nickname + '的头像',
+			},
+			(data: BaseDataResult < FileInfoResult > ) => {
+				if (data.success) {
+					userInfo.img = server.getDownloadUrl(data.data.fid)
+					modifyUserInfo()
+					if (fid != -1) {
+						server.post('/user/file/delete', {
+							fid
+						}, (data: any) => {
+							logger.debug(data)
+						})
+					}
+				}
+			}
+		)
+	}
+
 	//单选框变化
 	const radioChange = (e: any) => {
 		userInfo.sex = e.detail.value
@@ -162,6 +230,10 @@
 	}
 	//点击列表跳转
 	const selceted = (info: string) => {
+		if (info == 'avatar') {
+			openImg()
+			return
+		}
 		for (let key in userInfo) {
 			if (key == info) {
 				toolsData.sleceted = info
