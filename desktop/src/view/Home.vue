@@ -39,6 +39,12 @@ const listPush = (info: string) => {
         title: '常用工具',
         info: '常用工具',
         path: '/toll',
+      },
+      {
+        img: '',
+        title: '用户菜单',
+        info: '动态用户菜单',
+        path: '/tree/user',
       }
     )
     return
@@ -64,6 +70,12 @@ const listPush = (info: string) => {
         title: '系统用户管理',
         info: '全系统用户的启用、禁用、下线。',
         path: '/admin/user',
+      },
+      {
+        img: '',
+        title: '系统菜单管理',
+        info: '系统菜单管理添加、删除、修改',
+        path: '/tree/admin',
       }
     )
   }

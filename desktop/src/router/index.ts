@@ -12,6 +12,7 @@ import toll from './toll'
 import contacts from './contacts'
 import notepad from './notepad'
 import charts from './charts'
+import tree from './tree'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -43,6 +44,7 @@ const routes: RouteRecordRaw[] = [
   .concat(toll)
   .concat(contacts)
   .concat(charts)
+  .concat(tree)
 
 // 创建router
 const router = createRouter({
