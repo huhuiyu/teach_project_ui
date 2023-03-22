@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { NButton, NAvatar, NSpace, NDropdown, NText } from 'naive-ui'
 import store from '../../store'
 import server, { serverInfo } from '../../tools/server'
-import { h, defineProps, reactive } from 'vue'
+import { h, reactive } from 'vue'
 import { BaseListResult } from '../../entity/BaseResult'
 const router = useRouter()
 const route = useRoute()
