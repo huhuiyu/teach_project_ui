@@ -164,7 +164,7 @@ let tools = {
   },
   // 合并json
   concatJson: (...jsons: any) => {
-    let json = {}
+    let json:any = {}
     for (let index = 0; index < jsons.length; index++) {
       const element = jsons[index]
       for (let key in element) {

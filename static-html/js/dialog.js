@@ -10,3 +10,8 @@ openDialog.addEventListener('click', () => {
 dialog.addEventListener('close', () => {
   console.log('对话框关闭');
 });
+
+btnOther.addEventListener('click', () => {
+  divInfo.innerHTML = new Date().getTime();
+  document.getElementById('otherDialog').showModal();
+});
