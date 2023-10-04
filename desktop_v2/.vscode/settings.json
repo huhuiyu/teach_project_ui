@@ -1,0 +1,55 @@
+{
+  // 文件视图排除的配置
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true
+  },
+  // typescript使用prettier格式化功能（需要安装prettier插件）
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // html单行最大字符数量，配合prettier.htmlWhitespaceSensitivit配置可以避免较长的代码出现结束标签断行
+  "html.format.wrapLineLength": 400,
+  "prettier.htmlWhitespaceSensitivity": "strict",
+  // 散文换行配置
+  "prettier.proseWrap": "preserve",
+  // javascript字符串变单引号（需要安装prettier插件）
+  "prettier.singleQuote": true,
+  // javascript行尾自动分号（需要安装prettier插件）
+  "prettier.semi": false,
+  // json项后面自动补逗号
+  "prettier.trailingComma": "es5",
+  // 换行符：crlf为windows平台，考虑跨平台可以修改了lf
+  "prettier.endOfLine": "crlf",
+  // html使用内置格式化功能
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  // css文件格式化功能为prettier（需要安装prettier插件）
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // javascript使用prettier格式化功能（需要安装prettier插件）
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // json使用prettier格式化功能（需要安装prettier插件）
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // vue文件格式化为prettier（需要安装prettier插件）
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
