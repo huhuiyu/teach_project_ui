@@ -5,13 +5,13 @@ import logger from './logger'
 import BaseResult from '../entity/BaseResult'
 
 let serverInfo = {
-  url: 'https://service.huhuiyu.top/teach_project_service',
-  websocket: 'wss://service.huhuiyu.top/teach_project_service/ws/',
+  url: 'https://service.huhuiyu.top',
+  websocket: 'wss://service.huhuiyu.top/ws/',
   tokenKey: 'teach_project_service_token',
   counterKey: 'teach_project_service_counter',
   counterMessageKey: 'teach_project_service_counter',
   accessKey: '18c4e6cf-e54b-4e64-a764-c3fdd15226f8',
-  ossUrl: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=',
+  ossUrl: 'https://service.huhuiyu.top/oss/ossinfo/openOssFile?oiid=',
   saveToken: (data: BaseResult) => {
     if (data && data.token) {
       localStorage.setItem(serverInfo.tokenKey, data.token)
