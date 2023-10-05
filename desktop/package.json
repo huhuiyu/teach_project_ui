@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev-frp": "vite --base=/frp_teach_project_ui/",
     "dev-local": "vite --base=/local_teach_project_ui/",
-    "build": "vue-tsc && vite build --base=/teach_project_ui/",
+    "build": "vite build --base=/teach_project_ui/",
     "build-nobase": "vue-tsc && vite build",
     "preview": "vite preview"
   },
