@@ -69,7 +69,7 @@ const queryUserInfoByUsername = () => {
 }
 queryUserInfoByUsername()
 //懒加载默认图片
-const lazyImg = 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81'
+const lazyImg = 'https://service.huhuiyu.top/oss/ossinfo/openOssFile?oiid=81'
 const obj = reactive({
   editUserinfo: false,
 })

@@ -165,7 +165,7 @@ const logout = () => {
     </n-breadcrumb>
     <NSpace v-if="loginUser.isLogin">
       <NDropdown trigger="hover" :options="options" :show-arrow="true" @select="handleSelect">
-        <n-avatar round :src="loginUser.tbUserInfo.img ? loginUser.tbUserInfo.img : 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81'"></n-avatar>
+        <n-avatar round :src="loginUser.tbUserInfo.img ? loginUser.tbUserInfo.img : 'https://service.huhuiyu.top/oss/ossinfo/openOssFile?oiid=81'"></n-avatar>
       </NDropdown>
     </NSpace>
     <n-space v-else>

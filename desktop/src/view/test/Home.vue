@@ -133,7 +133,7 @@ const upload = () => {
     }
   )
 }
-logger.debug('下载地址信息判定：', server.isDownloadUrl('https://service.huhuiyu.top/teach_project_service/user/file/download?fid=32'), server.isDownloadUrl('1https://service.huhuiyu.top/teach_project_service/user/file/download?fid=32'), server.isDownloadUrl('https://service.huhuiyu.top/teach_project_download/32bataman-01.jpg'))
+logger.debug('下载地址信息判定：', server.isDownloadUrl('https://service.huhuiyu.top/user/file/download?fid=32'), server.isDownloadUrl('1https://service.huhuiyu.top/user/file/download?fid=32'), server.isDownloadUrl('https://service.huhuiyu.top/teach_project_download/32bataman-01.jpg'))
 
 // 生命周期和计算属性================================================
 onBeforeMount(() => {

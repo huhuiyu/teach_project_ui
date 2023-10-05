@@ -27,7 +27,7 @@ const toolsData = reactive({
     carousel3: '',
     carousel4: '',
   },
-  lazyUrl: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81',
+  lazyUrl: 'https://service.huhuiyu.top/oss/ossinfo/openOssFile?oiid=81',
 })
 const queryMessageCarousel = () => {
   server.post(

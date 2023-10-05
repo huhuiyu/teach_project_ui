@@ -21,7 +21,7 @@ const toolsData = reactive({
     queryFriend: false,
   },
   twoMenuValue: route.query.mode + '',
-  lazyImg: 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81',
+  lazyImg: 'https://service.huhuiyu.top/oss/ossinfo/openOssFile?oiid=81',
 })
 const changeRouteInfo = (info: string) => {
   if (info == route.query.mode) {

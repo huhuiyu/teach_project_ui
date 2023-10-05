@@ -106,7 +106,7 @@ const logOut = () => {
   <div>
     <n-space justify="space-around" align="center" size="large" class="header">
       <n-space align="center">
-        <div><n-avatar round src="https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81"></n-avatar></div>
+        <div><n-avatar round src="https://service.huhuiyu.top/oss/ossinfo/openOssFile?oiid=81"></n-avatar></div>
         <n-space class="left_Menu" style="column-gap: 25px; margin-left: 2rem">
           <n-button text @click="router.push('/')"> 主站 </n-button>
           <n-button text @click="router.push('/message/home')"> 首页 </n-button>
@@ -126,7 +126,7 @@ const logOut = () => {
       <n-space align="center">
         <n-space v-if="loginUser.isLogin" class="avatar">
           <n-dropdown trigger="hover" :options="options" :show-arrow="true" @select="handleSelect">
-            <n-avatar round :src="loginUser.tbUserInfo.img ? loginUser.tbUserInfo.img : 'https://service.huhuiyu.top/teach_project_service/oss/ossinfo/openOssFile?oiid=81'"></n-avatar>
+            <n-avatar round :src="loginUser.tbUserInfo.img ? loginUser.tbUserInfo.img : 'https://service.huhuiyu.top/oss/ossinfo/openOssFile?oiid=81'"></n-avatar>
           </n-dropdown>
         </n-space>
         <n-space v-else>
