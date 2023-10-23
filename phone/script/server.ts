@@ -6,8 +6,8 @@ import { BaseResult } from './entity/BaseResult'
 import logger from './logger'
 
 let serverInfo = {
-	url: 'https://service.huhuiyu.top/teach_project_service',
-	websocket: 'wss://service.huhuiyu.top/teach_project_service/ws/',
+	url: 'https://service.huhuiyu.top',
+	websocket: 'wss://service.huhuiyu.top/ws/',
 	uploadUrl: '/user/file/upload',
 	tokenKey: 'teach_project_service_token',
 	counterKey: 'teach_project_service_counter',
